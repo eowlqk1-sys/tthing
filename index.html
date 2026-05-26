@@ -1,0 +1,459 @@
+<!--@layout(/layout/basic/layout.html)-->
+<!--@js(/layout/basic/js/main.js)-->
+<!--@css(/layout/basic/css/main.css)-->
+<!--@import(/smart-banner/shop1/smart-banner-admin-RES00020.html)-->
+<section class="section" data-ez-module="html/1" data-ez-name="CUSTOM HTML" data-ez-type="plain" data-ez="contents-0lg0ebh-1" style="margin-bottom: 80px;"><!-- 안내 박스 4종 (tthing.store / Cafe24 호환) -->
+<style>
+  /* ====== 디자인 변수 ====== */
+  :root {
+    --card-bg: #ffffff;
+    --head-bg: #111111;
+    --text: #1a1a1a;
+    --muted: #666;
+    --accent-green: #27c399;
+    --accent-pink: #ff4b78;
+    --accent-yellow: #ffd24d;
+    --radius: 18px;
+    --shadow: 0 8px 20px rgba(0,0,0,.08);
+    --gap: 18px;
+    --head-h: 64px;
+  }
+
+  /* ====== 레이아웃 ====== */
+  .ti-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--gap);
+    margin: 24px 0;
+    color: var(--text);
+    font-family: Pretendard, "Noto Sans KR", Apple SD Gothic Neo, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  }
+  @media (max-width: 1024px) {
+    .ti-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 560px) {
+    .ti-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ====== 카드 ====== */
+  .ti-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,.06);
+  }
+  .ti-head {
+    height: var(--head-h);
+    background: var(--head-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 6px;
+  }
+  .ti-title {
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.2px;
+    color: #fff;
+    line-height: 1;
+  }
+  .ti-sub {
+    font-size: 12px;
+    color: #c7c7c7;
+    text-transform: none;
+    letter-spacing: 0.2px;
+  }
+  .ti-body {
+    padding: 18px 22px 20px;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ====== 텍스트 유틸 ====== */
+  .ti-center { text-align: center; }
+  .ti-strong { font-weight: 800; }
+  .ti-note { color: var(--muted); font-size: 13px; }
+  .ti-bullet {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 10px; border-radius: 999px;
+    background: #f4f6f7; font-size: 13px;
+  }
+
+  .ti-em-pink   { color: var(--accent-pink); font-weight: 800; }
+  .ti-em-green  { color: var(--accent-green); font-weight: 800; }
+  .ti-em-yellow { background: rgba(255,210,77,.25); padding: 0 6px; border-radius: 6px; font-weight: 800; }
+
+  .ti-kicker {
+    display: inline-block;
+    margin: 0 auto 6px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: #f8f8f8;
+    font-size: 13px;
+  }
+
+  /* 링크/전화 */
+  .ti-link { color: #1a73e8; text-decoration: underline; }
+  .ti-tel  { color: #1a73e8; text-decoration: none; font-weight: 800; }
+</style>
+
+<div class="ti-grid" role="list">
+<!-- 1. 회원가입 혜택 3,000원 적립금 -->
+<section class="ti-card" role="listitem" aria-label="회원가입 혜택 3,000원 적립금">
+  <header class="ti-head">
+    <div class="ti-title">회원가입 혜택</div>
+    <div class="ti-sub">signup benefit</div>
+  </header>
+  <div class="ti-body ti-center">
+    <div class="ti-kicker">신규 회원 전용</div>
+    <p>
+      가입 즉시 <span class="ti-em-pink">3,000원 적립금</span> 지급!<br>
+      <span class="ti-note">첫 주문부터 사용 가능 (2만원이상 사용가능)</span>
+    </p>
+  </div>
+</section>
+
+
+  <!-- 2. 택배 마감 시간 안내 -->
+  <section class="ti-card" role="listitem" aria-label="택배 마감 시간 안내">
+    <header class="ti-head">
+      <div class="ti-title">택배 마감 시간 안내</div>
+      <div class="ti-sub">Delivery closing time</div>
+    </header>
+    <div class="ti-body ti-center">
+      <p>
+        평일 <span class="ti-strong">오후 4시</span> 전까지 결제 된<br>
+        주문 건은 <span class="ti-em-pink">당일 출고</span> 되며,<br>
+        이후 주문 건은 익일 출고 됩니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- 3. CS 관련 문의 안내 -->
+  <section class="ti-card" role="listitem" aria-label="CS 관련 문의 안내">
+    <header class="ti-head">
+      <div class="ti-title">CS 관련 문의 안내</div>
+      <div class="ti-sub">CS Inquiry Time</div>
+    </header>
+    <div class="ti-body ti-center">
+      <p>평일 : <span class="ti-strong">오전 10시 - 오후 18시</span></p>
+      <p>점심 : <span class="ti-strong">오후 12시 - 오후 13시</span></p>
+      <p class="ti-note">
+        <span class="ti-bullet">※ 휴무 : 토·일요일, 공휴일</span>
+      </p>
+    </div>
+  </section>
+<!-- 4. 2% 적립 · 정품보장 · 100% 환불 -->
+<section class="ti-card" role="listitem" aria-label="2% 적립 · 정품보장 · 100% 환불">
+  <header class="ti-head">
+    <div class="ti-title">정품보장 &amp; 2% 적립</div>
+    <div class="ti-sub">genuine guarantee &amp; rewards</div>
+  </header>
+  <div class="ti-body ti-center">
+    <p class="ti-bullet">상시 <span class="ti-em-green">2% 적립</span></p>
+    <p class="ti-bullet">전 상품 <span class="ti-strong">정품 보장</span></p>
+    <p class="ti-bullet">정품이 아닐 시 <span class="ti-em-pink">100% 환불</span></p>
+      </div>
+</section>
+
+</div></section>
+<section class="section main_product_category" data-ez-module="product-list-category/2" data-ez-layout="grid5" data-ez="contents-1j0c54n-1">
+	<ez-prop data-version="1.0.0" type="layout">
+		<ez-var data-prop="layout" data-namespace="ez.module.product-list-category.layout" data-type="array">
+			<ez-item data-id="grid3" data-name="일반3단형(PC 3열/MOBILE 2열)"></ez-item>
+			<ez-item data-id="grid4" data-name="일반4단형(PC 4열/MOBILE 2열)"></ez-item>
+			<ez-item data-id="grid5" data-name="일반5단형(PC 5열/MOBILE 3열)"></ez-item>
+			<ez-item data-id="grid3 list_gallery" data-name="이미지강조3단형(PC 3열/MOBILE 2열)"></ez-item>
+			<ez-item data-id="grid4 list_gallery" data-name="이미지강조4단형(PC 4열/MOBILE 2열)"></ez-item>
+			<ez-item data-id="grid5 list_gallery" data-name="이미지강조5단형(PC 5열/MOBILE 3열)"></ez-item>
+		</ez-var>
+	</ez-prop>
+	<div class="main_product_inner">
+		<div class="main_title ez-align-center" data-ez-role="ez-align" data-ez-align="center"><!-- 메인 베스트셀러 수정하는곳 -->
+			<div class="main_title_txt01" data-ez-role="title">BEST! SELLER</div>
+			<div class="main_title_txt02" data-ez-role="subtitle">베스트 셀러를 만나보세요</div>
+		</div><!-- //main_title -->
+
+		<ul class="main_product_tab" data-ez-role="tab-list">
+			<li data-ez-role="tab-item"><button type="button" class="button" data-id="tabContent1" data-ez-role="name" data-name="무니코틴 액상">무니코틴 액상</button></li>
+			<li data-ez-role="tab-item"><button type="button" class="button" data-id="tabContent2" data-ez-role="name" data-name="무니코틴 일회용">무니코틴 일회용</button></li>
+			<li data-ez-role="tab-item"><button type="button" class="button" data-id="tabContent3" data-ez-role="name" data-name="전자담배 기기">전자담배 기기</button></li>
+			<li data-ez-role="tab-item"><button type="button" class="button" data-id="tabContent4" data-ez-role="name" data-name="코일 팟 모음">코일 팟 모음</button></li>
+		</ul><!-- //main_product_tab -->
+	</div><!-- //main_product_inner -->
+
+	<div class="content_list" data-ez-role="content-list">
+		<div class="tabcontent" id="tabContent1" data-ez-role="content-item">
+			<div data-ez-holder="product_listmain">
+				<div module="product_listmain_28" class="ec-base-product">
+					<!--
+						$count = 100
+						$basket_result = /product/add_basket.html
+						$basket_option = /product/basket_option.html
+						$moreview = yes
+						$cache = yes
+					-->
+					<ul class="prdList grid5" data-ez-role="layout ez-discount-tag">
+						<!--@import(/product/list_product.html)-->
+					</ul>
+				</div>
+				<div module="product_listmore_1" class="more">
+					<a href="#none" onclick="{$more_action}" class="btnMore">
+						상품 더보기<div>(<span id="more_current_page_{$display_group}">{$current_page}</span>/<span id="more_total_page_{$display_group}">{$total_page}</span>)</div>
+					</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="tabcontent" id="tabContent2" data-ez-role="content-item">
+			<div data-ez-holder="product_listmain">
+				<div module="product_listmain_29" class="ec-base-product">
+					<!--
+						$count = 100
+						$basket_result = /product/add_basket.html
+						$basket_option = /product/basket_option.html
+						$moreview = yes
+						$cache = yes
+					-->
+					<ul class="prdList grid5" data-ez-role="layout ez-discount-tag">
+						<!--@import(/product/list_product.html)-->
+					</ul>
+				</div>
+				<div module="product_listmore_2" class="more">
+					<a href="#none" onclick="{$more_action}" class="btnMore">
+						상품 더보기<div>(<span id="more_current_page_{$display_group}">{$current_page}</span>/<span id="more_total_page_{$display_group}">{$total_page}</span>)</div>
+					</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="tabcontent" id="tabContent3" data-ez-role="content-item">
+			<div data-ez-holder="product_listmain">
+				<div module="product_listmain_10" class="ec-base-product">
+					<!--
+						$count = 100
+						$basket_result = /product/add_basket.html
+						$basket_option = /product/basket_option.html
+						$moreview = yes
+						$cache = yes
+					-->
+					<ul class="prdList grid5" data-ez-role="layout ez-discount-tag">
+						<!--@import(/product/list_product.html)-->
+					</ul>
+				</div>
+				<div module="product_listmore_3" class="more">
+					<a href="#none" onclick="{$more_action}" class="btnMore">
+						상품 더보기<div>(<span id="more_current_page_{$display_group}">{$current_page}</span>/<span id="more_total_page_{$display_group}">{$total_page}</span>)</div>
+					</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="tabcontent" id="tabContent4" data-ez-role="content-item">
+			<div data-ez-holder="product_listmain">
+				<div module="product_listmain_30" class="ec-base-product">
+					<!--
+						$count = 100
+						$basket_result = /product/add_basket.html
+						$basket_option = /product/basket_option.html
+						$moreview = yes
+						$cache = yes
+					-->
+					<ul class="prdList grid5" data-ez-role="layout ez-discount-tag">
+						<!--@import(/product/list_product.html)-->
+					</ul>
+				</div>
+				<div module="product_listmore_4" class="more">
+					<a href="#none" onclick="{$more_action}" class="btnMore">
+						상품 더보기<div>(<span id="more_current_page_{$display_group}">{$current_page}</span>/<span id="more_total_page_{$display_group}">{$total_page}</span>)</div>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div><!-- //content-list -->
+</section>
+<section class="section main_product_slide" data-ez-module="product-list-slide/2" data-ez-layout="grid5_slide" data-ez="contents-10lxrkp-1">
+	<ez-prop data-version="1.0.0" type="layout">
+		<ez-var data-prop="layout" data-namespace="ez.module.product-list-slide.layout" data-type="array">
+			<ez-item data-id="grid3_slide" data-name="일반3단형(PC 3열/MOBILE 2열)"></ez-item>
+			<ez-item data-id="grid4_slide" data-name="일반4단형(PC 4열/MOBILE 2열)"></ez-item>
+			<ez-item data-id="grid5_slide" data-name="일반5단형(PC 5열/MOBILE 3열)"></ez-item>
+			<ez-item data-id="grid3_slide list_gallery" data-name="이미지강조3단형(PC 3열/MOBILE 2열)"></ez-item>
+			<ez-item data-id="grid4_slide list_gallery" data-name="이미지강조4단형(PC 4열/MOBILE 2열)"></ez-item>
+			<ez-item data-id="grid5_slide list_gallery" data-name="이미지강조5단형(PC 5열/MOBILE 3열)"></ez-item>
+		</ez-var>
+	</ez-prop>
+
+	<div class="main_title ez-align-left" data-ez-role="ez-align" data-ez-align="left"><!-- 온라인 타이틀 수정하는곳 -->
+		<div class="main_title_txt01" data-ez-role="title">타임세일</div>
+		<div class="main_title_txt02" data-ez-role="subtitle">오직 온라인에서만 만나보세요</div>
+	</div><!-- //main_title -->
+
+	<div data-ez-holder="product_listmain">
+		<div module="product_listmain_15" class="ec-base-product swiper-container special_slide">
+			<ul class="swiper-wrapper prdList grid5_slide" data-ez-role="layout ez-discount-tag">
+				<!--@import(/product/list_product_slide.html)-->
+			</ul>
+			<div class="swiper-scrollbar"></div>
+		</div>
+	</div>
+	<div class="swiper-button-prev swiper-button-prev-special_slide"></div>
+	<div class="swiper-button-next swiper-button-next-special_slide"></div>
+</section>
+<section class="section main_product_list" data-ez-module="product-list/1" data-ez-layout="grid5" data-ez="contents-0mhemn7-1">
+	<ez-prop data-version="1.0.0" type="layout">
+		<ez-var data-prop="layout" data-namespace="ez.module.product-list.layout" data-type="array">
+			<ez-item data-id="grid3" data-name="일반3단형(PC 3열/MOBILE 1열)"></ez-item>
+			<ez-item data-id="grid4" data-name="일반4단형(PC 4열/MOBILE 2열)"></ez-item>
+			<ez-item data-id="grid5" data-name="일반5단형(PC 5열/MOBILE 2열)"></ez-item>
+			<ez-item data-id="grid3 list_gallery" data-name="이미지강조3단형(PC 3열/MOBILE 1열)"></ez-item>
+			<ez-item data-id="grid4 list_gallery" data-name="이미지강조4단형(PC 4열/MOBILE 2열)"></ez-item>
+			<ez-item data-id="grid5 list_gallery" data-name="이미지강조5단형(PC 5열/MOBILE 2열)"></ez-item>
+		</ez-var>
+	</ez-prop>
+	<div class="main_title ez-align-center" data-ez-role="ez-align" data-ez-align="center"><!-- 메인 새로운신상품 타이틀 수정하는곳 -->
+		<div class="main_title_txt01" data-ez-role="title">신규 상품</div>
+		<div class="main_title_txt02" data-ez-role="subtitle">언제나 새로운 신상품</div>
+	</div><!-- //main_title -->
+	<div data-ez-holder="product_listmain">
+		<div module="product_listmain_9" class="ec-base-product">
+			<!--
+				$count = 5
+				$basket_result = /product/add_basket.html
+				$basket_option = /product/basket_option.html
+				$moreview = yes
+				$cache = yes
+			-->
+			<ul class="prdList ez-discount-tag-off grid5" data-ez-role="layout ez-discount-tag" data-ez-discount-tag="off">
+				<!--@import(/product/list_product.html)-->
+			</ul>
+		</div>
+		<div module="product_listmore_9" class="more">
+			<a href="#none" onclick="{$more_action}" class="btnMore">
+				상품 더보기<div>(<span id="more_current_page_{$display_group}">{$current_page}</span>/<span id="more_total_page_{$display_group}">{$total_page}</span>)</div>
+			</a>
+		</div>
+	</div>
+</section>
+<section class="section main_product_list" data-ez-module="product-list/1" data-ez-layout="grid4 list_gallery" data-ez="contents-1urwyl4-1">
+	<ez-prop data-version="1.0.0" type="layout">
+		<ez-var data-prop="layout" data-namespace="ez.module.product-list.layout" data-type="array">
+			<ez-item data-id="grid3" data-name="일반3단형(PC 3열/MOBILE 1열)"></ez-item>
+			<ez-item data-id="grid4" data-name="일반4단형(PC 4열/MOBILE 2열)"></ez-item>
+			<ez-item data-id="grid5" data-name="일반5단형(PC 5열/MOBILE 2열)"></ez-item>
+			<ez-item data-id="grid3 list_gallery" data-name="이미지강조3단형(PC 3열/MOBILE 1열)"></ez-item>
+			<ez-item data-id="grid4 list_gallery" data-name="이미지강조4단형(PC 4열/MOBILE 2열)"></ez-item>
+			<ez-item data-id="grid5 list_gallery" data-name="이미지강조5단형(PC 5열/MOBILE 2열)"></ez-item>
+		</ez-var>
+	</ez-prop>
+	<div class="main_title ez-align-center" data-ez-role="ez-align" data-ez-align="center"><!-- 메인 새로운신상품 타이틀 수정하는곳 -->
+		<div class="main_title_txt01" data-ez-role="title">BEST 상품</div>
+		<div class="main_title_txt02" data-ez-role="subtitle"></div>
+	</div><!-- //main_title -->
+	<div data-ez-holder="product_listmain">
+		<div module="product_listmain_1" class="ec-base-product">
+			<!--
+				$count = 8
+				$basket_result = /product/add_basket.html
+				$basket_option = /product/basket_option.html
+				$moreview = yes
+				$cache = yes
+			-->
+			<ul class="prdList grid4 list_gallery" data-ez-role="layout ez-discount-tag">
+				<!--@import(/product/list_product.html)-->
+			</ul>
+		</div>
+		<div module="product_listmore_1" class="more">
+			<a href="#none" onclick="{$more_action}" class="btnMore">
+				상품 더보기<div>(<span id="more_current_page_{$display_group}">{$current_page}</span>/<span id="more_total_page_{$display_group}">{$total_page}</span>)</div>
+			</a>
+		</div>
+	</div>
+</section>
+<section class="section" data-ez-module="html/1" data-ez-name="CUSTOM HTML" data-ez-type="plain" data-ez="contents-0x5n7xf-1"><!-- ====== Quick Shortcuts (4 items centered incl. Kakao) ====== -->
+<style>
+  .quick-wrap{ margin:32px 0; }
+  .quick-list{
+    display:flex; justify-content:center; align-items:flex-start;
+    gap:48px; flex-wrap:wrap; list-style:none; padding:0; margin:0;
+    font-family:Pretendard,"Noto Sans KR",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  }
+  .quick-list li{ text-align:center; }
+  .quick-list a{ text-decoration:none; color:#1a1a1a; }
+  .quick-list .icon{
+    width:96px; height:96px; border-radius:50%;
+    background:#f6f6f6; display:grid; place-items:center;
+    box-shadow:0 6px 14px rgba(0,0,0,.06) inset;
+    margin:0 auto 12px; transition:transform .2s, box-shadow .2s;
+    overflow:hidden;
+  }
+  .quick-list .icon img{ width:64px; height:64px; object-fit:contain; display:block; }
+  .quick-list .label{ font-size:15px; font-weight:700; letter-spacing:-.2px; }
+  .quick-list li:hover .icon{
+    transform:translateY(-2px) scale(1.03);
+    box-shadow:0 10px 22px rgba(0,0,0,.08), 0 6px 14px rgba(0,0,0,.06) inset;
+  }
+  /* Kakao 노란 배경 */
+  .quick-list .icon.kakao{ background:#FEE500; }
+
+  @media (max-width:560px){
+    .quick-list{ gap:28px; }
+    .quick-list .icon{ width:88px; height:88px; }
+    .quick-list .icon img{ width:56px; height:56px; }
+  }
+</style>
+
+<div class="quick-wrap" aria-label="바로가기">
+  <ul class="quick-list">
+    <!-- 1) 로젠 배송조회 -->
+    <li>
+      <a href="https://www.ilogen.com/web/personal/tkSearch" target="_blank" rel="noopener">
+        <div class="icon">
+          <img src="https://cdn-icons-png.flaticon.com/512/9131/9131593.png" alt="로젠 배송조회" loading="lazy" ez-prevent="img">
+        </div>
+        <div class="label">로젠 배송조회</div>
+      </a>
+    </li>
+
+    <!-- 2) 판매랭킹 -->
+    <li>
+      <a href="/product/best.html">
+        <div class="icon">
+          <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="판매랭킹" loading="lazy" ez-prevent="img">
+        </div>
+        <div class="label">판매랭킹</div>
+      </a>
+    </li>
+
+    <!-- 3) 이벤트 -->
+    <li>
+      <a href="/board/event/list.html">
+        <div class="icon">
+          <img src="https://cdn-icons-png.flaticon.com/512/3159/3159066.png" alt="이벤트" loading="lazy" ez-prevent="img">
+        </div>
+        <div class="label">이벤트</div>
+      </a>
+    </li>
+
+    <!-- 4) 카카오톡 문의하기 (오픈채팅 링크 적용) -->
+    <li>
+      <a href="https://open.kakao.com/o/spYq1sTf" target="_blank" rel="noopener">
+        <div class="icon kakao">
+          <!-- SVG 아이콘 -->
+          <svg width="56" height="56" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3C6.97 3 3 6.02 3 9.74c0 2.36 1.61 4.43 4.06 5.6l-.8 3.02a.6.6 0 0 0 .9.66l3.46-2c.42.05.85.08 1.29.08 5.03 0 9-3.02 9-6.74S17.03 3 12 3z" fill="#181600"></path>
+            <path d="M9.2 10.7h-.86V8.4H9.2v2.3zm1.6 0h-.86V8.4h.86v2.3zm1.6 0h-.86V8.4h.86v2.3zm1.6 0h-.86V8.4h.86v2.3z" fill="#FEE500"></path>
+          </svg>
+        </div>
+        <div class="label">카카오톡 문의</div>
+      </a>
+    </li>
+  </ul>
+</div>
+</section>
+<!--@import(/apps/cafe24plusapp/marketing/recommend_install.html)-->
+<!--@define(cmc_log)-->
+<!--#ez="1/2"-->
