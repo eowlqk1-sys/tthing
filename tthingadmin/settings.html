@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+  <meta name="naver-site-verification" content="f0d8a36999fb828fa450253fabd13b9a46fb66a4" />
+  <meta name="google-site-verification" content="gDtEYejHbF6qjSawFMhzVKlWjfb9Jpnam0xdz5c_uko" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>쇼핑몰 설정 - 띵베이프 관리자</title>
+  <style>
+:root{--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--bg:#f4f6f8;--sidebar:#172033;--sidebar-2:#111827;--blue:#2563eb;--green:#15803d;--red:#dc2626;--shadow:0 16px 36px rgba(15,23,42,.08)}*{box-sizing:border-box}body{margin:0;color:var(--ink);font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg)}a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit}button{cursor:pointer}.app{min-height:100vh;display:grid;grid-template-columns:232px 1fr}.sidebar{position:sticky;top:0;height:100vh;background:linear-gradient(180deg,var(--sidebar),var(--sidebar-2));color:#dbe4ff;overflow-y:auto}.brand{height:72px;display:flex;align-items:center;gap:10px;padding:0 20px;border-bottom:1px solid rgba(255,255,255,.08)}.brand-mark{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(135deg,#4ade80,#2f7df6);color:#fff;font-weight:900}.brand-text strong{display:block;color:#fff;font-size:17px}.brand-text span{display:block;margin-top:2px;color:#9fb1d7;font-size:11px;font-weight:800}.nav-section{padding:14px 12px 6px}.nav-title{padding:10px;color:#8ea0c7;font-size:11px;font-weight:900}.nav-link{width:100%;min-height:42px;margin:2px 0;padding:0 11px;border-radius:8px;display:flex;align-items:center;gap:10px;color:#cbd6f4;font-size:14px;font-weight:800}.nav-link:hover,.nav-link.active{background:rgba(255,255,255,.1);color:#fff}.nav-ico{width:22px;text-align:center;color:#93c5fd;font-size:15px}.main{min-width:0}.topbar{position:sticky;top:0;z-index:20;min-height:64px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.92);backdrop-filter:blur(12px);display:flex;align-items:center;gap:14px;padding:0 24px}.menu-toggle{display:none;width:38px;height:38px;border:1px solid var(--line);border-radius:8px;background:#fff}.util-btn{min-height:36px;display:inline-flex;align-items:center;justify-content:center;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:#fff;color:#374151;font-size:13px;font-weight:800}.profile{margin-left:auto;display:flex;align-items:center;gap:9px;font-size:13px;font-weight:900}.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--blue);color:#fff}.content{padding:24px}.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:18px}h1{margin:0;font-size:26px}.page-head p{margin:7px 0 0;color:var(--muted);font-size:14px}.grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px}.card{border:1px solid var(--line);border-radius:10px;background:#fff;box-shadow:var(--shadow);overflow:hidden}.card-head{min-height:56px;padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}.card-title{font-weight:900;font-size:17px}.card-body{padding:18px}.section{padding:18px;border-bottom:1px solid var(--line)}.section:last-child{border-bottom:0}.section h2{margin:0 0 14px;font-size:17px}.form-grid{display:grid;grid-template-columns:180px minmax(0,1fr);gap:12px 16px;align-items:start}.field-label{padding-top:10px;color:#374151;font-size:13px;font-weight:900}.field{display:grid;gap:7px}.field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:8px;background:#fff;padding:10px 11px;outline:0}.field input{height:40px}.field textarea{min-height:92px;resize:vertical;line-height:1.5}.hint{color:var(--muted);font-size:12px;line-height:1.55}.primary,.ghost,.danger{min-height:38px;border-radius:8px;padding:0 13px;font-weight:900}.primary{border:0;background:var(--blue);color:#fff}.ghost{border:1px solid var(--line);background:#fff;color:#374151}.danger{border:0;background:var(--red);color:#fff}.actions{display:flex;gap:8px;flex-wrap:wrap}.preview-box{border:1px solid var(--line);border-radius:10px;padding:16px;background:#fff}.search-preview{display:grid;gap:8px}.preview-url{color:#15803d;font-size:13px}.preview-title{color:#1a0dab;font-size:18px;line-height:1.35}.preview-desc{color:#4b5563;font-size:13px;line-height:1.55}.image-preview{width:100%;min-height:150px;border:1px dashed var(--line);border-radius:8px;background:#fafafa;display:grid;place-items:center;overflow:hidden}.image-preview img{width:100%;height:auto;display:block}.status{display:none;margin-top:12px;padding:10px 12px;border-radius:8px;background:#ecfdf3;color:var(--green);font-size:13px;font-weight:900}.mobile-overlay{display:none;position:fixed;inset:0;z-index:30;background:rgba(15,23,42,.46)}@media(max-width:1100px){.grid{grid-template-columns:1fr}.preview-card{order:-1}}@media(max-width:840px){html,body{overflow-x:hidden}.app{grid-template-columns:1fr}.sidebar{position:fixed;z-index:40;left:0;top:0;width:232px;transform:translateX(-100%);transition:transform .18s ease}body.nav-open .sidebar{transform:translateX(0)}body.nav-open .mobile-overlay{display:block}.menu-toggle{display:inline-grid;place-items:center}.topbar{height:auto;min-height:58px;padding:8px 12px}.profile span:not(.avatar){display:none}.content{padding:14px 12px 22px}.page-head{align-items:stretch;flex-direction:column}.card-body,.section{padding:14px}.form-grid{grid-template-columns:1fr;gap:7px}.field-label{padding-top:0}.actions .primary,.actions .ghost,.actions .danger{flex:1 1 140px}}
+  </style>
+  <script id="tthingAdminAuthGuard">
+  (function(){
+    const KEY='tthingAdminSession';
+    function valid(){try{const session=JSON.parse(localStorage.getItem(KEY)||'{}');return session.authenticated===true&&session.user==='eowlqk1'&&Number(session.expiresAt||0)>Date.now()}catch(e){return false}}
+    if(!valid()){
+      const next=encodeURIComponent(location.pathname.split('/').pop()+location.search+location.hash);
+      location.replace('login.html?next='+next);
+      return;
+    }
+    window.tthingAdminLogout=function(){localStorage.removeItem(KEY);location.href='login.html'};
+    document.addEventListener('DOMContentLoaded',function(){
+      document.querySelectorAll('.profile').forEach(function(profile){
+        if(profile.querySelector('[data-admin-logout]'))return;
+        const button=document.createElement('button');
+        button.type='button';
+        button.textContent='로그아웃';
+        button.setAttribute('data-admin-logout','');
+        button.style.cssText='min-height:30px;border:1px solid #e5e7eb;border-radius:7px;background:#fff;color:#374151;padding:0 9px;font-size:12px;font-weight:900;cursor:pointer';
+        button.addEventListener('click',window.tthingAdminLogout);
+        profile.appendChild(button);
+      });
+    });
+  })();
+  </script>
+</head>
+<body>
+<div class="mobile-overlay" id="overlay"></div>
+<div class="app">
+  <aside class="sidebar">
+    <a class="brand" href="index.html"><span class="brand-mark">띵</span><span class="brand-text"><strong>띵베이프</strong><span>ADMIN CENTER</span></span></a>
+    <nav>
+      <div class="nav-section"><div class="nav-title">쇼핑몰</div>
+        <a class="nav-link" href="index.html"><span class="nav-ico">⌂</span>홈</a>
+        
+        <a class="nav-link" href="orders.html"><span class="nav-ico">≡</span>주문</a>
+        <a class="nav-link" href="product.html"><span class="nav-ico">□</span>상품</a>
+        <a class="nav-link" href="customer.html"><span class="nav-ico">◎</span>고객</a>
+        <a class="nav-link" href="#"><span class="nav-ico">✉</span>메시지</a>
+        <a class="nav-link" href="board.html"><span class="nav-ico">◫</span>게시판</a>
+        <a class="nav-link" href="popup.html"><span class="nav-ico">▣</span>팝업</a>
+      </div>
+      <div class="nav-section"><div class="nav-title">채널/설정</div>
+        <a class="nav-link active" href="settings.html"><span class="nav-ico">⚙</span>쇼핑몰 설정</a>
+      </div>
+    </nav>
+  </aside>
+  <main class="main">
+    <header class="topbar"><button class="menu-toggle" id="menuToggle" type="button">☰</button><a class="util-btn" href="/tthingading/index.html" target="_blank" rel="noopener">PC 쇼핑몰</a><div class="profile"><span class="avatar">E</span><span>eowlqk1 대표운영자</span></div></header>
+    <section class="content">
+      <div class="page-head"><div><h1>쇼핑몰 설정</h1><p>저장한 SEO, 오픈그래프, 파비콘 정보가 고객 홈페이지에 바로 적용됩니다.</p></div><div class="actions"><button class="ghost" id="resetBtn" type="button">기본값</button><button class="primary" id="saveBtn" type="button">저장하기</button></div></div>
+      <div class="grid">
+        <section class="card">
+          <div class="card-head"><div class="card-title">검색엔진 최적화(SEO)</div></div>
+          <div class="section"><h2>기본설정</h2><div class="form-grid">
+            <div class="field-label">쇼핑몰 이름</div><div class="field"><input id="title" type="text"><p class="hint">검색결과와 브라우저 제목에 반영됩니다.</p></div>
+            <div class="field-label">쇼핑몰 안내</div><div class="field"><textarea id="description"></textarea><p class="hint">검색결과 설명문과 SNS 공유 설명에 사용됩니다.</p></div>
+            <div class="field-label">키워드</div><div class="field"><textarea id="keywords"></textarea></div>
+            <div class="field-label">대표 URL</div><div class="field"><input id="canonical" type="url" placeholder="https://tthing.store/"></div>
+          </div></div>
+          <div class="section"><h2>검색엔진 서비스 연결</h2><div class="form-grid">
+            <div class="field-label">네이버 인증코드</div><div class="field"><input id="naverVerification" type="text" placeholder="content 값만 입력"></div>
+            <div class="field-label">구글 인증코드</div><div class="field"><input id="googleVerification" type="text" placeholder="content 값만 입력"></div>
+            <div class="field-label">페이스북 인증코드</div><div class="field"><input id="facebookVerification" type="text" placeholder="content 값만 입력"></div>
+          </div></div>
+          <div class="section"><h2>오픈그래프 및 공유 이미지</h2><div class="form-grid">
+            <div class="field-label">og:site_name</div><div class="field"><input id="ogSiteName" type="text"></div>
+            <div class="field-label">og:title</div><div class="field"><input id="ogTitle" type="text"></div>
+            <div class="field-label">og:description</div><div class="field"><textarea id="ogDescription"></textarea></div>
+            <div class="field-label">og:url</div><div class="field"><input id="ogUrl" type="url"></div>
+            <div class="field-label">og:image</div><div class="field"><input id="ogImageInput" type="file" accept="image/*"><p class="hint">이미지는 브라우저 저장공간에 맞게 자동 압축됩니다.</p><div class="image-preview" id="ogImagePreview"><span class="hint">공유 이미지 없음</span></div></div>
+            <div class="field-label">파비콘</div><div class="field"><input id="faviconInput" type="file" accept="image/*,.ico"><div class="image-preview" id="faviconPreview" style="min-height:74px"><span class="hint">파비콘 없음</span></div></div>
+          </div></div>
+          <div class="section"><h2>코드 직접입력</h2><div class="form-grid">
+            <div class="field-label">Head 영역</div><div class="field"><textarea id="extraHead" placeholder="추가 meta, link 코드를 입력"></textarea></div>
+            <div class="field-label">Body 영역</div><div class="field"><textarea id="extraBody" placeholder="추가 noscript, 배너 코드를 입력"></textarea></div>
+          </div></div>
+        </section>
+        <aside class="card preview-card"><div class="card-head"><div class="card-title">미리보기</div></div><div class="card-body"><div class="preview-box search-preview"><div class="preview-url" id="previewUrl"></div><div class="preview-title" id="previewTitle"></div><div class="preview-desc" id="previewDesc"></div></div><div class="status" id="statusText">저장되었습니다. 고객 홈페이지에 반영됩니다.</div></div></aside>
+      </div>
+    </section>
+  </main>
+</div>
+<script>
+const STORAGE_KEY='tthingSeoSettings';
+const defaults={title:'띵베이프 - 무니코틴 전자담배 액상 쇼핑몰',description:'띵베이프는 무니코틴 입호흡 액상, 무니코틴 폐호흡 액상, 일회용 전자담배, 코일과 팟 소모품을 판매하는 전자담배 전문 쇼핑몰입니다. 인기제품, 신상품, 타임세일 상품을 확인해보세요.',keywords:'띵베이프, 무니코틴 액상, 무니코틴 전자담배, 입호흡 액상, 폐호흡 액상, 일회용 전자담배, 전자담배 코일, 전자담배 팟',canonical:'https://tthing.kr/',ogSiteName:'띵베이프',ogTitle:'띵베이프 - 무니코틴 전자담배 액상 쇼핑몰',ogDescription:'무니코틴 액상, 일회용 전자담배, 코일, 팟 소모품까지 한 번에 확인할 수 있는 전자담배 전문 쇼핑몰 띵베이프입니다.',ogUrl:'https://tthing.kr/',ogImage:'',favicon:'',naverVerification:'',googleVerification:'',facebookVerification:'',extraHead:'',extraBody:''};
+let state=Object.assign({},defaults,loadSettings());
+const fields=['title','description','keywords','canonical','ogSiteName','ogTitle','ogDescription','ogUrl','naverVerification','googleVerification','facebookVerification','extraHead','extraBody'];
+function loadSettings(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}')}catch(e){return {}}}
+function collect(){fields.forEach(id=>state[id]=document.getElementById(id).value.trim());return state}
+function fill(){fields.forEach(id=>document.getElementById(id).value=state[id]||'');renderImages();renderPreview()}
+function renderPreview(){previewUrl.textContent=canonical.value||ogUrl.value||defaults.canonical;previewTitle.textContent=title.value||defaults.title;previewDesc.textContent=description.value||defaults.description}
+function renderImages(){ogImagePreview.innerHTML=state.ogImage?'<img src="'+state.ogImage+'" alt="공유 이미지">':'<span class="hint">공유 이미지 없음</span>';faviconPreview.innerHTML=state.favicon?'<img src="'+state.favicon+'" alt="파비콘" style="max-width:48px">':'<span class="hint">파비콘 없음</span>'}
+function compactImage(file,done){const reader=new FileReader();reader.onload=function(){if(file.type==='image/gif'||file.name.toLowerCase().endsWith('.ico')){done(reader.result);return}const img=new Image();img.onload=function(){const max=1200;const scale=Math.min(1,max/Math.max(img.width,img.height));const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);try{done(canvas.toDataURL('image/webp',0.86))}catch(e){done(reader.result)}};img.onerror=function(){done(reader.result)};img.src=reader.result};reader.readAsDataURL(file)}
+ogImageInput.addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;compactImage(file,src=>{state.ogImage=src;renderImages()})});
+faviconInput.addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;compactImage(file,src=>{state.favicon=src;renderImages()})});
+fields.forEach(id=>document.getElementById(id).addEventListener('input',renderPreview));
+saveBtn.addEventListener('click',()=>{collect();try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));statusText.style.display='block';setTimeout(()=>statusText.style.display='none',2400);alert('저장되었습니다. 고객 홈페이지에 반영됩니다.')}catch(e){alert('저장공간이 부족합니다. 이미지 용량을 줄여주세요.')}});
+resetBtn.addEventListener('click',()=>{if(!confirm('기본값으로 되돌릴까요?'))return;state=Object.assign({},defaults);fill()});
+menuToggle.addEventListener('click',()=>document.body.classList.toggle('nav-open'));overlay.addEventListener('click',()=>document.body.classList.remove('nav-open'));
+fill();
+</script>
+</body>
+</html>

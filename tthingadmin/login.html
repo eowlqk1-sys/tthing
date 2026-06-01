@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+  <meta name="naver-site-verification" content="f0d8a36999fb828fa450253fabd13b9a46fb66a4" />
+  <meta name="google-site-verification" content="gDtEYejHbF6qjSawFMhzVKlWjfb9Jpnam0xdz5c_uko" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>관리자 로그인 - 띵베이프</title>
+  <style>
+    :root{--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--bg:#f4f6f8;--blue:#2563eb;--red:#dc2626;--sidebar:#172033;--sidebar-2:#111827;--shadow:0 22px 52px rgba(15,23,42,.16)}*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--ink);font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(135deg,var(--sidebar),var(--sidebar-2));display:grid;place-items:center;padding:24px}button,input{font:inherit}.login{width:min(420px,100%);border:1px solid rgba(255,255,255,.16);border-radius:14px;background:#fff;box-shadow:var(--shadow);overflow:hidden}.brand{padding:28px 28px 18px;display:flex;align-items:center;gap:12px}.brand-mark{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(135deg,#4ade80,#2f7df6);color:#fff;font-weight:950}.brand strong{display:block;font-size:20px}.brand span span{display:block;margin-top:3px;color:var(--muted);font-size:12px;font-weight:900}.body{padding:0 28px 28px}.field{display:grid;gap:8px;margin-top:14px}.field label{font-size:13px;font-weight:900;color:#374151}.field input{width:100%;height:44px;border:1px solid var(--line);border-radius:9px;padding:0 12px;outline:0}.field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.12)}.primary{width:100%;height:44px;margin-top:20px;border:0;border-radius:9px;background:var(--blue);color:#fff;font-weight:950;cursor:pointer}.error{display:none;margin-top:12px;padding:10px 12px;border-radius:8px;background:#fef2f2;color:var(--red);font-size:13px;font-weight:900}.hint{margin:14px 0 0;color:var(--muted);font-size:12px;line-height:1.55}@media(max-width:520px){body{padding:14px}.brand{padding:24px 22px 14px}.body{padding:0 22px 24px}}
+  </style>
+</head>
+<body>
+  <main class="login">
+    <div class="brand"><span class="brand-mark">띵</span><span><strong>띵베이프 관리자</strong><span>ADMIN CENTER LOGIN</span></span></div>
+    <form class="body" id="loginForm">
+      <div class="field"><label for="adminId">아이디</label><input id="adminId" autocomplete="username" autofocus></div>
+      <div class="field"><label for="adminPw">비밀번호</label><input id="adminPw" type="password" autocomplete="current-password"></div>
+      <button class="primary" type="submit">로그인</button>
+      <div class="error" id="errorText">아이디 또는 비밀번호가 맞지 않습니다.</div>
+      <p class="hint">관리자 계정으로 로그인해야 관리자 페이지를 볼 수 있습니다.</p>
+    </form>
+  </main>
+  <script>
+    const ADMIN_ID='eowlqk1';
+    const ADMIN_PW='gksaod88';
+    const SESSION_KEY='tthingAdminSession';
+    const form=document.getElementById('loginForm');
+    const errorText=document.getElementById('errorText');
+    const next=new URLSearchParams(location.search).get('next')||'index.html';
+    function isSafeNext(value){return value && !/^https?:\/\//i.test(value) && !value.startsWith('//')}
+    form.addEventListener('submit',event=>{event.preventDefault();const id=document.getElementById('adminId').value.trim();const pw=document.getElementById('adminPw').value;if(id===ADMIN_ID&&pw===ADMIN_PW){localStorage.setItem(SESSION_KEY,JSON.stringify({user:id,authenticated:true,loggedAt:Date.now(),expiresAt:Date.now()+1000*60*60*12}));location.href=isSafeNext(next)?next:'index.html';return}errorText.style.display='block';document.getElementById('adminPw').value='';document.getElementById('adminPw').focus()});
+  </script>
+</body>
+</html>

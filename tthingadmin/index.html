@@ -936,7 +936,7 @@
           <input type="search" placeholder="상품명, 주문번호, 회원명 검색">
         </label>
         <div class="top-actions">
-          <a class="util-btn" href="/tthing/index.html" target="_blank" rel="noopener">PC 쇼핑몰</a>
+          <a class="util-btn" href="/tthingading/index.html" target="_blank" rel="noopener">PC 쇼핑몰</a>
           <button class="util-btn" type="button">모바일</button>
           <button class="util-btn" type="button">알림 3</button>
           <div class="profile">
@@ -1107,7 +1107,10 @@
                     <div class="status-row"><span>입금전</span><div class="bar-track"><div class="bar-fill" data-bar="unpaidOrders" style="--value:4%"></div></div><strong data-live="unpaidOrders">0건</strong></div>
                     <div class="status-row"><span>배송준비중</span><div class="bar-track"><div class="bar-fill orange" data-bar="readyOrders" style="--value:38%"></div></div><strong data-live="readyOrders">8건</strong></div>
                     <div class="status-row"><span>배송중</span><div class="bar-track"><div class="bar-fill green" data-bar="shippingOrders" style="--value:29%"></div></div><strong data-live="shippingOrders">6건</strong></div>
-                    <div class="status-row"><span>취소/교환/반품</span><div class="bar-track"><div class="bar-fill pink" data-bar="claimOrders" style="--value:6%"></div></div><strong data-live="claimOrders">1건</strong></div>
+                    <div class="status-row"><span>취소</span><div class="bar-track"><div class="bar-fill pink" data-bar="cancelOrders" style="--value:6%"></div></div><strong data-live="cancelOrders">0건</strong></div>
+                    <div class="status-row"><span>교환</span><div class="bar-track"><div class="bar-fill pink" data-bar="exchangeOrders" style="--value:6%"></div></div><strong data-live="exchangeOrders">0건</strong></div>
+                    <div class="status-row"><span>반품</span><div class="bar-track"><div class="bar-fill pink" data-bar="returnOrders" style="--value:6%"></div></div><strong data-live="returnOrders">0건</strong></div>
+                    <div class="status-row"><span>입금취소</span><div class="bar-track"><div class="bar-fill pink" data-bar="depositCancelOrders" style="--value:6%"></div></div><strong data-live="depositCancelOrders">0건</strong></div>
                   </div>
                 </div>
 
@@ -1154,21 +1157,100 @@
   <script>
     const menuToggle = document.getElementById('menuToggle');
     const overlay = document.getElementById('overlay');
+    const ORDER_STORAGE_KEY = 'tthingAdminOrders';
+    const ORDER_UPDATED_KEY = 'tthingAdminOrdersUpdatedAt';
     menuToggle.addEventListener('click', () => document.body.classList.toggle('nav-open'));
     overlay.addEventListener('click', () => document.body.classList.remove('nav-open'));
 
-    function getRealOrderCounts() {
-      const orders = JSON.parse(localStorage.getItem("tthingAdminOrders") || "[]");
-      return {
-        unpaid: orders.filter(o => o.status === "unpaid").length,
-        ready: orders.filter(o => o.status === "ready").length,
-        ship: orders.filter(o => o.status === "ship").length,
-        done: orders.filter(o => o.status === "done").length,
-        claim: orders.filter(o => o.status === "cancel").length
-      };
+    function readOrders() {
+      try { return JSON.parse(localStorage.getItem(ORDER_STORAGE_KEY) || '[]'); }
+      catch (error) { return []; }
     }
 
-    const realCounts = getRealOrderCounts();
+    function formatOrderCount(value) {
+      return value + '건';
+    }
+
+    function applyOrderStats() {
+      const orders = readOrders();
+      const stats = { unpaidOrders: 0, readyOrders: 0, shippingOrders: 0, doneOrders: 0, cancelOrders: 0, exchangeOrders: 0, returnOrders: 0, depositCancelOrders: 0, claimOrders: 0 };
+      orders.forEach((order) => {
+        if (order.status === 'unpaid') stats.unpaidOrders += 1;
+        else if (order.status === 'ready') stats.readyOrders += 1;
+        else if (order.status === 'ship') stats.shippingOrders += 1;
+        else if (order.status === 'done') stats.doneOrders += 1;
+        else if (order.status === 'cancel') {
+          stats.claimOrders += 1;
+          if (order.cancelReasonType === 'exchange') stats.exchangeOrders += 1;
+          else if (order.cancelReasonType === 'return') stats.returnOrders += 1;
+          else if (order.cancelReasonType === 'deposit') stats.depositCancelOrders += 1;
+          else stats.cancelOrders += 1;
+        }
+      });
+      if (typeof liveState !== 'undefined') {
+        liveState.unpaidOrders = stats.unpaidOrders;
+        liveState.readyOrders = stats.readyOrders;
+        liveState.shippingOrders = stats.shippingOrders;
+        liveState.doneOrders = stats.doneOrders;
+        liveState.claimOrders = stats.claimOrders;
+      }
+      document.querySelectorAll('[data-live]').forEach((node) => {
+        if (node.dataset.live === 'unpaidOrders') node.textContent = formatOrderCount(stats.unpaidOrders);
+        if (node.dataset.live === 'readyOrders') node.textContent = formatOrderCount(stats.readyOrders);
+        if (node.dataset.live === 'shippingOrders') node.textContent = formatOrderCount(stats.shippingOrders);
+        if (node.dataset.live === 'doneOrders') node.textContent = formatOrderCount(stats.doneOrders);
+        if (node.dataset.live === 'cancelOrders') node.textContent = formatOrderCount(stats.cancelOrders);
+        if (node.dataset.live === 'exchangeOrders') node.textContent = formatOrderCount(stats.exchangeOrders);
+        if (node.dataset.live === 'returnOrders') node.textContent = formatOrderCount(stats.returnOrders);
+        if (node.dataset.live === 'depositCancelOrders') node.textContent = formatOrderCount(stats.depositCancelOrders);
+        if (node.dataset.live === 'claimOrders') node.textContent = formatOrderCount(stats.claimOrders);
+      });
+      document.querySelectorAll('.todo-grid .todo').forEach((card) => {
+        const label = card.querySelector('span')?.textContent.trim() || '';
+        const strong = card.querySelector('strong');
+        if (!strong) return;
+        if (label === '입금전') strong.textContent = formatOrderCount(stats.unpaidOrders);
+        else if (label === '배송준비중') strong.textContent = formatOrderCount(stats.readyOrders);
+        else if (label === '배송중') strong.textContent = formatOrderCount(stats.shippingOrders);
+        else if (label === '배송완료') strong.textContent = formatOrderCount(stats.doneOrders);
+        else if (label === '취소신청') strong.textContent = formatOrderCount(stats.cancelOrders);
+        else if (label === '교환신청') strong.textContent = formatOrderCount(stats.exchangeOrders);
+        else if (label === '반품신청') strong.textContent = formatOrderCount(stats.returnOrders);
+        else if (label === '배송보류중' || label === '배송대기') strong.textContent = '0건';
+      });
+      const orderPanel = document.querySelector('[data-panel-content="orders"]');
+      if (orderPanel) {
+        orderPanel.querySelectorAll('.status-row').forEach((row) => {
+          const label = row.querySelector('span')?.textContent.trim() || '';
+          const strong = row.querySelector('strong[data-live]');
+          const bar = row.querySelector('[data-bar]');
+          if (label === '입금전') {
+            if (strong) strong.textContent = formatOrderCount(stats.unpaidOrders);
+            if (bar) bar.style.setProperty('--value', Math.max(4, stats.unpaidOrders * 4) + '%');
+          } else if (label === '배송준비중') {
+            if (strong) strong.textContent = formatOrderCount(stats.readyOrders);
+            if (bar) bar.style.setProperty('--value', Math.max(4, stats.readyOrders * 4) + '%');
+          } else if (label === '배송중') {
+            if (strong) strong.textContent = formatOrderCount(stats.shippingOrders);
+            if (bar) bar.style.setProperty('--value', Math.max(4, stats.shippingOrders * 4) + '%');
+          } else if (label === '취소') {
+            if (strong) strong.textContent = formatOrderCount(stats.cancelOrders);
+            if (bar) bar.style.setProperty('--value', Math.max(4, stats.cancelOrders * 4) + '%');
+          } else if (label === '교환') {
+            if (strong) strong.textContent = formatOrderCount(stats.exchangeOrders);
+            if (bar) bar.style.setProperty('--value', Math.max(4, stats.exchangeOrders * 4) + '%');
+          } else if (label === '반품') {
+            if (strong) strong.textContent = formatOrderCount(stats.returnOrders);
+            if (bar) bar.style.setProperty('--value', Math.max(4, stats.returnOrders * 4) + '%');
+          } else if (label === '입금취소') {
+            if (strong) strong.textContent = formatOrderCount(stats.depositCancelOrders);
+            if (bar) bar.style.setProperty('--value', Math.max(4, stats.depositCancelOrders * 4) + '%');
+          }
+        });
+      }
+      return stats;
+    }
+
     const liveState = {
       activeUsers: 18,
       todayVisitors: 1284,
@@ -1178,11 +1260,15 @@
       pathDirect: 31,
       pathKakao: 16,
       pathInsta: 12,
-      unpaidOrders: realCounts.unpaid,
-      readyOrders: realCounts.ready,
-      shippingOrders: realCounts.ship,
-      doneOrders: 148 + realCounts.done,
-      claimOrders: 1 + realCounts.claim,
+      unpaidOrders: 0,
+      readyOrders: 0,
+      shippingOrders: 0,
+      doneOrders: 0,
+      claimOrders: 0,
+      cancelOrders: 0,
+      exchangeOrders: 0,
+      returnOrders: 0,
+      depositCancelOrders: 0,
       newMembers: 5,
       totalMembers: 2418,
       pointIssued: 86000,
@@ -1206,6 +1292,10 @@
       shippingOrders: '건',
       doneOrders: '건',
       claimOrders: '건',
+      cancelOrders: '건',
+      exchangeOrders: '건',
+      returnOrders: '건',
+      depositCancelOrders: '건',
       newMembers: '명',
       totalMembers: '명',
       pointIssued: '원',
@@ -1243,24 +1333,6 @@
       });
     }
 
-    function updateDashboardFromStorage() {
-      const realCounts = getRealOrderCounts();
-      liveState.unpaidOrders = realCounts.unpaid;
-      liveState.readyOrders = realCounts.ready;
-      liveState.shippingOrders = realCounts.ship;
-      liveState.doneOrders = 148 + realCounts.done;
-      liveState.claimOrders = 1 + realCounts.claim;
-      
-      Object.keys(liveState).forEach(setLiveText);
-      updateBars();
-    }
-
-    window.addEventListener('storage', (event) => {
-      if (event.key === 'tthingAdminOrders') {
-        updateDashboardFromStorage();
-      }
-    });
-
     function updateLiveDashboard() {
       liveState.activeUsers = clamp(liveState.activeUsers + randomStep(3), 8, 44);
       liveState.todayVisitors += Math.max(0, randomStep(2));
@@ -1270,14 +1342,10 @@
       liveState.pathDirect = clamp(liveState.pathDirect + randomStep(2), 18, 55);
       liveState.pathKakao = clamp(liveState.pathKakao + randomStep(1), 7, 30);
       liveState.pathInsta = clamp(liveState.pathInsta + randomStep(1), 4, 26);
-      
-      // 주문 관련 데이터는 storage 기반 실시간 데이터 사용 (랜덤 업데이트 제외)
-      const realCounts = getRealOrderCounts();
-      liveState.unpaidOrders = realCounts.unpaid;
-      liveState.readyOrders = realCounts.ready;
-      liveState.shippingOrders = realCounts.ship;
-
-      liveState.doneOrders += Math.random() > 0.95 ? 1 : 0;
+      applyOrderStats();
+      liveState.readyOrders = clamp(liveState.readyOrders, 0, 999);
+      liveState.shippingOrders = clamp(liveState.shippingOrders, 0, 999);
+      liveState.doneOrders = clamp(liveState.doneOrders, 0, 9999);
       liveState.newMembers += Math.random() > 0.84 ? 1 : 0;
       liveState.totalMembers += Math.random() > 0.9 ? 1 : 0;
       liveState.pointIssued += Math.random() > 0.76 ? 1000 : 0;
@@ -1308,8 +1376,19 @@
       });
     });
 
+    applyOrderStats();
     updateLiveDashboard();
-    setInterval(updateLiveDashboard, 3000);
+    window.addEventListener('storage', (event) => {
+      if (event.key === ORDER_STORAGE_KEY || event.key === ORDER_UPDATED_KEY) applyOrderStats();
+    });
+    window.addEventListener('focus', applyOrderStats);
+    window.addEventListener('pageshow', applyOrderStats);
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) applyOrderStats();
+    });
+    setInterval(() => {
+      if (!document.hidden) updateLiveDashboard();
+    }, 3000);
   </script>
 </body>
 </html>

@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+  <meta name="naver-site-verification" content="f0d8a36999fb828fa450253fabd13b9a46fb66a4" />
+  <meta name="google-site-verification" content="gDtEYejHbF6qjSawFMhzVKlWjfb9Jpnam0xdz5c_uko" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>회원가입 - 띵베이프</title>
+  <style>
+:root { --ink:#171717; --sub:#6b6b6b; --line:#e8e5df; --green:#5f7f3f; --red:#d84632; --max:1240px; }
+* { box-sizing:border-box; }
+body { margin:0; color:var(--ink); font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#fff; }
+a { color:inherit; text-decoration:none; }
+.wrap { width:min(var(--max),100%); margin:0 auto; padding:0 22px; }
+.bar { border-bottom:1px solid var(--line); font-size:13px; color:#555; }
+.bar .wrap { min-height:38px; display:flex; align-items:center; justify-content:flex-end; gap:18px; }
+.head .wrap { min-height:96px; display:grid; grid-template-columns:220px 1fr 170px; align-items:center; gap:30px; }
+.logo { display:inline-flex; align-items:center; gap:10px; font-size:30px; font-weight:900; }
+.logo-mark { width:36px; height:36px; border-radius:11px; background:linear-gradient(135deg,var(--green),#acc078); display:inline-grid; place-items:center; color:#fff; }
+.search { height:48px; border:1px solid var(--line); background:#fbfaf6; border-radius:999px; display:flex; align-items:center; overflow:hidden; }
+.search input { width:100%; height:100%; border:0; outline:0; background:transparent; padding:0 18px; font-size:15px; }
+.search button { width:56px; border:0; background:transparent; cursor:pointer; }
+.topArea_user { display:flex; justify-content:flex-end; align-items:center; gap:18px; font-size:14px; font-weight:900; white-space:nowrap; }
+.topArea_user a { display:inline-flex; align-items:center; gap:5px; min-height:38px; }
+.menu_user { position:relative; }
+.menu_user_list { position:absolute; right:0; top:100%; z-index:80; width:150px; margin:0; padding:8px 0; list-style:none; border:1px solid var(--line); border-radius:8px; background:#fff; box-shadow:0 12px 28px rgba(0,0,0,.12); opacity:0; transform:translateY(4px); pointer-events:none; transition:opacity .16s ease, transform .16s ease; }
+.menu_user:hover .menu_user_list { opacity:1; transform:translateY(0); pointer-events:auto; }
+.menu_user_list a { display:block; padding:9px 14px; font-size:13px; font-weight:700; }
+.menu_user_list a:hover { background:#f8f8f8; }
+.count { min-width:19px; height:19px; padding:0 6px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; background:#191919; color:#fff; font-size:12px; }
+.gnb { position:sticky; top:0; z-index:20; background:#fff; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.gnb .wrap { min-height:58px; display:flex; justify-content:center; align-items:center; gap:42px; font-weight:900; overflow-x:auto; }
+.gnb a { white-space:nowrap; }
+main { width:min(520px,100%); margin:0 auto; padding:64px 22px 90px; }
+.auth-box { border:1px solid var(--line); border-radius:10px; padding:34px; background:#fff; }
+h1 { margin:0 0 8px; font-size:30px; }
+.lead { margin:0 0 28px; color:var(--sub); line-height:1.6; }
+.field { display:grid; gap:8px; margin-top:16px; }
+.field label { font-size:14px; font-weight:900; }
+.field input { width:100%; height:48px; border:1px solid var(--line); border-radius:6px; padding:0 13px; font-size:15px; outline:0; }
+.field input:focus { border-color:#a5b86d; box-shadow:0 0 0 3px rgba(95,127,63,.12); }
+.verify-row { display:grid; grid-template-columns:1fr 118px; gap:8px; }
+.verify-row .verify-btn { height:48px; border:1px solid var(--ink); border-radius:6px; background:#fff; color:var(--ink); font-size:13px; font-weight:900; cursor:pointer; white-space:nowrap; }
+.verify-status { margin-top:7px; color:var(--sub); font-size:12px; line-height:1.5; }
+.verify-status.ok { color:var(--green); font-weight:900; }
+.verify-status.error { color:var(--red); font-weight:900; }
+.address-row { display:grid; grid-template-columns:1fr 118px; gap:8px; }
+.address-row .address-btn { height:48px; border:1px solid var(--ink); border-radius:6px; background:#fff; color:var(--ink); font-size:13px; font-weight:900; cursor:pointer; white-space:nowrap; }
+.options { margin-top:14px; display:flex; justify-content:space-between; align-items:center; gap:12px; color:var(--sub); font-size:13px; }
+.options label { display:inline-flex; align-items:center; gap:6px; }
+.btn { width:100%; min-height:52px; margin-top:22px; border:1px solid var(--ink); border-radius:6px; background:var(--ink); color:#fff; font-size:15px; font-weight:900; cursor:pointer; }
+.auth-link { margin-top:18px; text-align:center; color:var(--sub); font-size:14px; }
+.auth-link a { color:var(--ink); font-weight:900; }
+.note { margin-top:14px; color:var(--sub); font-size:12px; line-height:1.6; }
+footer { background:#202020; color:rgba(255,255,255,.72); }
+footer .wrap { padding-top:44px; padding-bottom:52px; display:grid; grid-template-columns:1.4fr .8fr .8fr; gap:34px; font-size:13px; line-height:1.8; }
+footer h3 { margin:0 0 12px; color:#fff; }
+.foot-links { display:flex; flex-wrap:wrap; gap:12px; margin-top:16px; color:#fff; font-weight:800; }
+@media (max-width:980px) { .head .wrap { grid-template-columns:1fr auto; } .search { grid-column:1 / -1; order:3; margin-bottom:16px; } .gnb .wrap { justify-content:flex-start; gap:28px; } footer .wrap { grid-template-columns:1fr; } }
+@media (max-width:680px) { .wrap, main { padding-left:14px; padding-right:14px; } .bar .wrap { justify-content:center; gap:12px; } .head .wrap { min-height:78px; } .logo { font-size:25px; } .logo-mark { width:32px; height:32px; } .topArea_user { gap:10px; font-size:13px; } .auth-box { padding:24px 18px; } .verify-row { grid-template-columns:1fr; } .address-row { grid-template-columns:1fr; } }
+
+
+    .logo { gap: 12px !important; font-size: 0 !important; line-height: 1 !important; letter-spacing: 0 !important; }
+    .logo-mark { position: relative !important; flex: 0 0 auto !important; width: 42px !important; height: 42px !important; border-radius: 14px !important; display: inline-grid !important; place-items: center !important; overflow: hidden !important; color: transparent !important; background: linear-gradient(145deg, #171717 0%, #2f3d25 58%, #7fa254 100%) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 10px 22px rgba(0,0,0,.14) !important; }
+    .logo-mark::before { content: ""; width: 17px; height: 24px; border: 3px solid #fff; border-top: 0; border-radius: 0 0 10px 10px; transform: translateY(4px); }
+    .logo-mark::after { content: ""; position: absolute; top: 7px; left: 50%; width: 11px; height: 9px; border-radius: 5px 5px 3px 3px; background: #fff; transform: translateX(-50%); }
+    .logo-text { display: grid; gap: 4px; min-width: 0; }
+    .logo-text strong { display: block; color: var(--ink, #171717); font-size: 27px; font-weight: 950; line-height: .95; white-space: nowrap; }
+    .logo-text em { display: block; color: #6f7f53; font-size: 10px; font-style: normal; font-weight: 900; line-height: 1; letter-spacing: .18em; white-space: nowrap; }
+    @media (max-width: 680px) { .logo-mark { width: 36px !important; height: 36px !important; border-radius: 12px !important; } .logo-mark::before { width: 14px; height: 20px; border-width: 2px; transform: translateY(4px); } .logo-mark::after { top: 7px; width: 9px; height: 7px; } .logo-text strong { font-size: 23px; } .logo-text em { font-size: 9px; letter-spacing: .12em; } }
+
+
+.join-page { width:min(var(--max),100%); padding:54px 22px 90px; }
+.mobile-back { display:none; margin-bottom:18px; font-weight:900; }
+.section.path { display:flex; justify-content:flex-end; align-items:center; gap:10px; color:var(--sub); font-size:13px; }
+.section.path span { font-weight:900; }
+.section.path ol { display:flex; gap:8px; margin:0; padding:0; list-style:none; }
+.section.path li + li::before { content:"/"; margin-right:8px; color:#aaa; }
+.titleArea h2 { margin:22px 0 18px; font-size:32px; }
+.ec-base-step { margin-bottom:34px; }
+.step { display:grid; grid-template-columns:repeat(3,1fr); margin:0; padding:0; border:1px solid var(--line); list-style:none; }
+.step li { min-height:48px; display:grid; place-items:center; border-right:1px solid var(--line); background:#fafafa; color:var(--sub); font-weight:900; }
+.step li:last-child { border-right:0; }
+.step .selected { background:#171717; color:#fff; }
+.join-step-panel[hidden] { display:none; }
+.step-actions { margin-top:24px; display:flex; justify-content:center; gap:8px; }
+.step-actions button { min-width:132px; min-height:48px; border-radius:4px; border:1px solid var(--ink); background:var(--ink); color:#fff; font-weight:900; cursor:pointer; }
+.step-actions .btn-prev { background:#fff; color:var(--ink); border-color:var(--line); }
+.join-section + .join-section { margin-top:38px; }
+.titleArea--middle { margin-bottom:12px; display:flex; justify-content:space-between; align-items:end; gap:12px; }
+.titleArea--middle h3 { margin:0; font-size:21px; }
+.titleArea--middle .desc { color:var(--sub); font-size:14px; }
+.required-guide { margin:0; color:var(--sub); font-size:13px; }
+.required { width:34px; height:18px; margin-right:7px; border-radius:999px; display:inline-grid; place-items:center; background:#ff4d2d; color:#fff; font-size:10px; font-weight:900; vertical-align:middle; }
+.ec-base-table { border-top:2px solid #171717; }
+.ec-base-table table { width:100%; border-collapse:collapse; table-layout:fixed; }
+.ec-base-table caption { width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); position:absolute; }
+.join-th { width:190px; }
+.ec-base-table th, .ec-base-table td { border-bottom:1px solid var(--line); padding:14px 16px; text-align:left; vertical-align:middle; }
+.ec-base-table th { background:#fbfaf6; font-size:14px; }
+.ec-base-table td { color:#333; }
+.ec-base-table input, .ec-base-table select { height:42px; border:1px solid var(--line); border-radius:4px; padding:0 12px; font-size:14px; }
+.ec-base-table input[type="radio"] { width:auto; height:auto; margin:0 5px 0 0; }
+.ec-base-table input:focus, .ec-base-table select:focus { outline:0; border-color:#a5b86d; box-shadow:0 0 0 3px rgba(95,127,63,.12); }
+.radio-line { display:flex; flex-wrap:wrap; gap:16px; }
+.radio-single { display:inline-flex; align-items:center; gap:4px; font-weight:900; }
+.verify-action { margin-top:10px; display:flex; align-items:center; gap:12px; color:var(--sub); font-size:13px; }
+.btnNormal, .btnBasic, .verify-btn { height:42px; border:1px solid var(--ink); border-radius:4px; background:#fff; color:var(--ink); padding:0 14px; font-weight:900; cursor:pointer; white-space:nowrap; }
+.join-verify-row { margin-top:10px; max-width:360px; }
+.ec-address { margin:0; padding:0; list-style:none; display:grid; gap:8px; }
+.ec-address input { width:100%; }
+.zipcode-row { display:grid; grid-template-columns:160px 112px; gap:8px; }
+.txtInfo { margin:6px 0 0; color:var(--sub); font-size:12px; line-height:1.5; }
+.txtInfo.error { color:var(--red); font-weight:900; }
+.date-row input { width:82px; margin:0 4px; }
+.date-row input:first-child { margin-left:0; }
+.refund-row { display:grid; grid-template-columns:1fr 1fr 1.4fr; gap:8px; }
+.refund-row input, .refund-row select { width:100%; }
+.join-buttons { margin-top:34px; display:flex; justify-content:center; gap:8px; }
+.btnNormalFix, .btnSubmitFix { min-width:132px; min-height:48px; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; font-weight:900; cursor:pointer; }
+.btnNormalFix { border:1px solid var(--line); background:#fff; color:var(--ink); }
+.btnSubmitFix { border:1px solid var(--ink); background:var(--ink); color:#fff; }
+.verify-status { margin-top:7px; color:var(--sub); font-size:12px; line-height:1.5; }
+.verify-status.ok { color:var(--green); font-weight:900; }
+.verify-status.error { color:var(--red); font-weight:900; }
+@media (max-width:680px) { .join-page { padding-top:28px; } .mobile-back { display:block; } .section.path { justify-content:flex-start; } .step { grid-template-columns:1fr; } .step li { border-right:0; border-bottom:1px solid var(--line); } .step li:last-child { border-bottom:0; } .titleArea--middle { display:block; } .ec-base-table table, .ec-base-table tbody, .ec-base-table tr, .ec-base-table th, .ec-base-table td { display:block; width:100%; } .ec-base-table th { border-bottom:0; padding-bottom:6px; } .ec-base-table td { padding-top:8px; } .zipcode-row, .verify-row, .refund-row { grid-template-columns:1fr; } .date-row input { width:70px; } .join-buttons { display:grid; grid-template-columns:1fr 1fr; } .btnNormalFix, .btnSubmitFix { width:100%; min-width:0; } }
+
+
+.naver-signup { width:100%; min-height:52px; margin:0 0 28px; border:1px solid #03c75a; border-radius:6px; background:#03c75a; color:#fff; display:flex; align-items:center; justify-content:center; gap:10px; font-size:15px; font-weight:900; cursor:pointer; }
+.naver-signup span:first-child { width:24px; height:24px; border-radius:4px; background:#fff; color:#03c75a; display:inline-grid; place-items:center; font-size:17px; font-weight:950; }
+.terms-box { border:1px solid var(--line); border-top:2px solid #171717; background:#fff; }
+.terms-all { padding:16px; border-bottom:1px solid var(--line); font-weight:900; }
+.terms-list { display:grid; gap:0; }
+.term-item { padding:16px; border-bottom:1px solid var(--line); }
+.term-item:last-child { border-bottom:0; }
+.term-head { display:flex; justify-content:space-between; align-items:center; gap:12px; font-weight:900; }
+.term-head label { display:inline-flex; align-items:center; gap:7px; }
+.term-required { color:var(--red); font-size:12px; font-weight:900; }
+.term-content { height:92px; margin-top:10px; padding:12px; border:1px solid var(--line); border-radius:4px; overflow:auto; color:var(--sub); font-size:12px; line-height:1.6; background:#fbfaf6; }
+@media (max-width:680px) { .term-head { display:block; } .term-required { display:block; margin-top:6px; } }
+
+</style>
+  <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+</head>
+<body id="top">
+  <div class="bar"><div class="wrap"><a href="login.html">로그인</a><a href="signup.html">회원가입</a><a href="orders.html">주문조회</a></div></div>
+  <header class="head"><div class="wrap"><a class="logo" href="index.html"><span class="logo-mark" aria-hidden="true"></span><span class="logo-text"><strong>띵베이프</strong><em>TTHING VAPE</em></span></a><form class="search"><input type="search" placeholder="상품명을 검색해보세요"><button type="submit" aria-label="검색">⌕</button></form><div class="topArea_user"><div class="menu_user pc_view"><a href="mypage.html">마이페이지</a><ul class="menu_user_list"><li><a href="orders.html">주문조회</a></li><li><a href="recent-products.html">최근 본 상품</a></li><li><a href="wishlist.html">관심상품</a></li><li><a href="mileage.html">적립금</a></li><li><a href="coupons.html">쿠폰</a></li><li><a href="my-posts.html">나의 게시글</a></li></ul></div><div class="menu_basket"><a href="basket.html">장바구니 <span class="count"><span>0</span></span></a></div></div></div></header>
+  <nav class="gnb"><div class="wrap"><a href="best.html">BEST</a><a href="new.html">NEW</a><a href="liquid.html">액상</a><a href="disposable.html">일회용전자담배</a><a href="device.html">기기</a><a href="supply.html">소모품</a><a href="timesale.html">TIME SALE</a><a href="board.html">게시판</a></div></nav>
+
+  <main class="join-page">
+    <div class="mobile-back"><a href="#none" onclick="history.go(-1);return false;">‹ 뒤로가기</a></div>
+    <div class="section path"><span>현재 위치</span><ol><li><a href="index.html">홈</a></li><li><strong>회원 가입</strong></li></ol></div>
+    <div class="section titleArea"><h2>회원 가입</h2></div>
+    <div class="section ec-base-step"><ol class="step" id="joinSteps"><li class="selected">1. 약관동의</li><li>2. 정보입력</li><li>3. 가입완료</li></ol></div>
+
+    <form id="joinForm" name="joinForm" action="mypage.html" method="post" onsubmit="return validateSignupForm()">
+      <input id="useSimpleSignin" name="useSimpleSignin" value="F" type="hidden">
+      <input id="member_name_cert_flag" name="member_name_cert_flag" value="T" type="hidden">
+      <input id="is_mobile_auth_use" name="is_mobile_auth_use" value="T" type="hidden">
+      <input id="is_display_register_addr" name="is_display_register_addr" value="T" type="hidden">
+      <input id="isMobileVerify" name="isMobileVerify" value="F" type="hidden">
+      <input id="returnUrl" name="returnUrl" value="/member/join_result.html" type="hidden">
+      <input id="identityVerified" name="identityVerified" type="hidden" value="N">
+
+      <div class="join-step-panel" id="termsStep">
+        <button class="naver-signup" type="button" onclick="startNaverSignup()"><span>N</span><span>네이버로 회원가입</span></button>
+
+      <div class="join-section terms-section">
+        <div class="titleArea titleArea--middle"><h3>약관동의</h3><p class="required-guide"><span class="required">필수</span> 필수동의사항</p></div>
+        <div class="terms-box">
+          <div class="terms-all"><label><input id="agreeAll" type="checkbox" onchange="toggleAllTerms(this.checked)"> 전체 동의합니다.</label></div>
+          <div class="terms-list">
+            <div class="term-item">
+              <div class="term-head"><label><input class="required-term" id="agreeTerms" name="agreeTerms" type="checkbox" required> 이용약관 동의</label><span class="term-required">필수</span></div>
+              <div class="term-content">제1조 목적: 본 약관은 띵베이프 쇼핑몰 이용과 관련하여 회사와 회원의 권리, 의무 및 책임사항을 정합니다. 회원은 상품 주문, 결제, 배송, 교환 및 반품 등 쇼핑몰 서비스 이용 조건을 확인하고 이에 동의합니다.</div>
+            </div>
+            <div class="term-item">
+              <div class="term-head"><label><input class="required-term" id="agreePrivacy" name="agreePrivacy" type="checkbox" required> 개인정보 수집 및 이용 동의</label><span class="term-required">필수</span></div>
+              <div class="term-content">수집 항목: 아이디, 비밀번호, 이름, 휴대전화, 이메일, 주소. 이용 목적: 회원 식별, 주문 처리, 배송, 고객 상담, 본인확인. 보유 기간: 회원 탈퇴 시 또는 관련 법령에 따른 보관 기간까지 보유합니다.</div>
+            </div>
+            <div class="term-item">
+              <div class="term-head"><label><input id="agreeMarketing" name="agreeMarketing" type="checkbox"> 쇼핑정보 수신 동의</label><span>선택</span></div>
+              <div class="term-content">신상품, 이벤트, 쿠폰 등 쇼핑 혜택 정보를 문자 또는 이메일로 받을 수 있습니다. 선택 동의는 거부해도 회원가입에 제한이 없습니다.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+        <div class="step-actions"><button type="button" onclick="goJoinStep(2)">다음</button></div>
+      </div>
+
+      <div class="join-step-panel" id="infoStep" hidden>
+      <div class="join-section">
+        <div class="titleArea titleArea--middle"><h3>회원인증</h3></div>
+        <div class="ec-base-table typeWrite">
+          <table>
+            <caption>회원가입 인증</caption>
+            <colgroup><col class="join-th"><col></colgroup>
+            <tbody>
+              <tr>
+                <th scope="row"><span class="required">필수</span>회원구분</th>
+                <td class="radio-line"><label><input id="member_type0" name="member_type" value="p" type="radio" checked> 개인회원</label><label><input id="member_type2" name="member_type" value="f" type="radio"> 외국인회원(foreigner)</label></td>
+              </tr>
+              <tr>
+                <th scope="row"><span class="required">필수</span>회원인증</th>
+                <td>
+                  <label class="radio-single"><input id="personal_type0" name="personal_type" value="m" type="radio" checked> 휴대폰인증</label>
+                  <div class="verify-action"><button class="btnNormal" id="verifyBtn" type="button" onclick="handleIdentityVerification()">휴대폰인증</button><span>본인 명의의 휴대폰으로 본인인증을 진행합니다.</span></div>
+                  <div class="verify-row join-verify-row"><input id="identityCode" name="identityCode" type="text" inputmode="numeric" placeholder="인증번호 입력" required><button class="verify-btn" type="button" onclick="handleIdentityVerification()">인증확인</button></div>
+                  <p class="verify-status" id="verifyStatus">휴대폰 번호 입력 후 휴대폰인증을 눌러주세요.</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="join-section">
+        <div class="titleArea titleArea--middle"><h3>기본정보</h3><p class="required-guide"><span class="required">필수</span> 필수입력사항</p></div>
+        <div class="ec-base-table typeWrite">
+          <table>
+            <caption>회원 기본정보</caption>
+            <colgroup><col class="join-th"><col></colgroup>
+            <tbody>
+              <tr><th scope="row"><span class="required">필수</span>아이디</th><td><input id="userId" name="userId" type="text" autocomplete="username" required><p class="txtInfo">(영문소문자/숫자, 4~16자)</p></td></tr>
+              <tr><th scope="row"><span class="required">필수</span>비밀번호</th><td><input id="password" name="password" type="password" autocomplete="new-password" required><p class="txtInfo">(영문 대소문자/숫자/특수문자 중 3가지 이상 조합, 8자~16자)</p></td></tr>
+              <tr><th scope="row"><span class="required">필수</span>비밀번호 확인</th><td><input id="passwordConfirm" name="passwordConfirm" type="password" autocomplete="new-password" required><p class="txtInfo error" id="pwConfirmMsg" hidden>비밀번호가 일치하지 않습니다.</p></td></tr>
+              <tr><th scope="row"><span class="required">필수</span>이름</th><td><input id="name" name="name" type="text" autocomplete="name" required></td></tr>
+              <tr><th scope="row"><span class="required">필수</span>주소</th><td class="formMultiple"><ul class="ec-address"><li class="zipcode-row"><input id="postcode" name="postcode" type="text" placeholder="우편번호" readonly required><button class="btnBasic" type="button" onclick="openAddressSearch()">주소검색</button></li><li><input id="address" name="address" type="text" placeholder="기본주소" autocomplete="street-address" readonly required></li><li><input id="addressDetail" name="addressDetail" type="text" placeholder="나머지 주소" required></li></ul></td></tr>
+              <tr><th scope="row"><span class="required">필수</span>휴대전화</th><td><input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="010-0000-0000" required></td></tr>
+              <tr><th scope="row"><span class="required">필수</span>이메일</th><td><input id="email" name="email" type="email" autocomplete="email" required></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="join-section">
+        <div class="titleArea titleArea--middle"><h3>추가정보 <span class="desc">(선택)</span></h3></div>
+        <div class="ec-base-table typeWrite">
+          <table>
+            <caption>회원 추가정보</caption>
+            <colgroup><col class="join-th"><col></colgroup>
+            <tbody>
+              <tr><th scope="row">생년월일</th><td class="date-row"><input id="birthYear" name="birthYear" type="text" maxlength="4" placeholder="YYYY"> 년 <input id="birthMonth" name="birthMonth" type="text" maxlength="2" placeholder="MM"> 월 <input id="birthDay" name="birthDay" type="text" maxlength="2" placeholder="DD"> 일</td></tr>
+              <tr><th scope="row">지역</th><td><select id="region" name="region"><option value="">선택</option><option>서울</option><option>경기</option><option>인천</option><option>강원</option><option>충남</option><option>충북</option><option>대전</option><option>경북</option><option>경남</option><option>대구</option><option>부산</option><option>울산</option><option>전북</option><option>전남</option><option>광주</option><option>세종</option><option>제주</option><option>해외</option></select></td></tr>
+              <tr><th scope="row">추천인 아이디</th><td><input id="recoId" name="recoId" type="text"></td></tr>
+              <tr><th scope="row">환불계좌 정보</th><td class="refund-row"><input id="bankOwner" name="bankOwner" type="text" placeholder="예금주"><select id="refundBank" name="refundBank"><option value="">- 은행선택 -</option><option>국민은행</option><option>신한은행</option><option>우리은행</option><option>하나은행</option><option>농협</option><option>기업은행</option><option>카카오뱅크</option><option>토스뱅크</option></select><input id="bankAccount" name="bankAccount" type="text" placeholder="계좌번호"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="step-actions"><button class="btn-prev" type="button" onclick="goJoinStep(1)">이전</button></div>
+      <div class="join-buttons"><a href="#none" class="btnNormalFix" onclick="history.go(-1); return false;">취소</a><button class="btnSubmitFix" type="submit">가입하기</button></div>
+      </div>
+    </form>
+  </main>
+  <footer><div class="wrap"><div><h3>Company Info</h3><div>상호 띵베이프 · 대표자 한명현 · 사업자등록번호 282-20-01652</div><div>통신판매업신고 2022-서울양천-0783 · 주소 서울특별시 양천구 화곡로8길 20-3 302호</div><div class="foot-links"><a href="#">회사소개</a><a href="#">이용약관</a><a href="#">개인정보처리방침</a><a href="#">이용안내</a></div></div><div><h3>Customer Service</h3><div>010-5320-5322</div><div>이메일 eowlqk1@naver.com · 운영시간 평일 09:00 ~ 18:00 (점심시간 12:00 ~ 13:00)</div></div><div><h3>Bank Account</h3><div>카카오뱅크 3333-24-7965978</div><div>예금주 한명현</div></div></div></footer>
+
+<script>
+
+  function startNaverSignup() {
+    const clientId = "Ogx85DDeg6y_Wf_n1k23";
+    const redirectUri = `${location.origin}/naver-callback.html`;
+    const state = Math.random().toString(36).slice(2) + Date.now().toString(36);
+
+    if (clientId === "YOUR_NAVER_CLIENT_ID") {
+      alert("네이버 개발자센터 Client ID를 signup.html의 startNaverSignup()에 입력해 주세요.");
+      return;
+    }
+
+    sessionStorage.setItem("naver_oauth_state", state);
+    sessionStorage.setItem("naver_oauth_flow", "signup");
+    const params = new URLSearchParams({
+      response_type: "code",
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      state
+    });
+    location.href = `https://nid.naver.com/oauth2.0/authorize?${params.toString()}`;
+  }
+
+  let identityCodeValue = "";
+  let identityExpireAt = 0;
+  let identityTimer = null;
+
+  function setVerifyStatus(message, type = "") {
+    const status = document.getElementById("verifyStatus");
+    status.textContent = message;
+    status.className = `verify-status${type ? ` ${type}` : ""}`;
+  }
+
+  function formatVerifyRemaining(ms) {
+    const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
+    const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+    const seconds = String(totalSeconds % 60).padStart(2, "0");
+    return `${minutes}:${seconds}`;
+  }
+
+  function startVerifyTimer() {
+    clearInterval(identityTimer);
+    identityTimer = setInterval(() => {
+      const remaining = identityExpireAt - Date.now();
+      if (remaining <= 0) {
+        clearInterval(identityTimer);
+        identityCodeValue = "";
+        document.getElementById("identityVerified").value = "N";
+        document.getElementById("verifyBtn").textContent = "인증요청";
+        setVerifyStatus("인증 시간이 만료되었습니다. 다시 요청해 주세요.", "error");
+        return;
+      }
+      setVerifyStatus(`인증번호를 입력해 주세요. 남은시간 ${formatVerifyRemaining(remaining)}`);
+    }, 1000);
+  }
+
+  function handleIdentityVerification() {
+    const phone = document.getElementById("phone");
+    const identityCode = document.getElementById("identityCode");
+    const verified = document.getElementById("identityVerified");
+    const verifyBtn = document.getElementById("verifyBtn");
+    const phoneValue = phone.value.replace(/[^0-9]/g, "");
+
+    if (verified.value === "Y") return;
+
+    if (!identityCodeValue || Date.now() > identityExpireAt) {
+      if (phoneValue.length < 10) {
+        phone.focus();
+        setVerifyStatus("휴대폰 번호를 정확히 입력해 주세요.", "error");
+        return;
+      }
+      identityCodeValue = String(Math.floor(100000 + Math.random() * 900000));
+      identityExpireAt = Date.now() + 180000;
+      identityCode.value = "";
+      verifyBtn.textContent = "인증확인";
+      startVerifyTimer();
+      alert(`테스트 인증번호는 ${identityCodeValue} 입니다.`);
+      identityCode.focus();
+      return;
+    }
+
+    if (identityCode.value.trim() === identityCodeValue) {
+      clearInterval(identityTimer);
+      verified.value = "Y";
+      identityCode.readOnly = true;
+      verifyBtn.textContent = "인증완료";
+      verifyBtn.disabled = true;
+      setVerifyStatus("본인인증이 완료되었습니다.", "ok");
+      return;
+    }
+
+    identityCode.focus();
+    setVerifyStatus("인증번호가 일치하지 않습니다.", "error");
+  }
+
+  function toggleAllTerms(checked) {
+    document.querySelectorAll(".terms-box input[type='checkbox']").forEach((checkbox) => {
+      checkbox.checked = checked;
+    });
+  }
+
+  function requiredTermsAccepted() {
+    return [...document.querySelectorAll(".required-term")].every((checkbox) => checkbox.checked);
+  }
+
+  function goJoinStep(step) {
+    if (step === 2 && !requiredTermsAccepted()) {
+      alert("필수 약관에 동의해 주세요.");
+      const missingTerm = [...document.querySelectorAll(".required-term")].find((checkbox) => !checkbox.checked);
+      if (missingTerm) missingTerm.focus();
+      return;
+    }
+
+    document.getElementById("termsStep").hidden = step !== 1;
+    document.getElementById("infoStep").hidden = step !== 2;
+    document.querySelectorAll("#joinSteps li").forEach((item, index) => {
+      item.classList.toggle("selected", index === step - 1);
+    });
+    document.querySelector(".join-page").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function validateSignupForm() {
+    const requiredTerms = [...document.querySelectorAll(".required-term")];
+    const missingTerm = requiredTerms.find((checkbox) => !checkbox.checked);
+    if (missingTerm) {
+      alert("필수 약관에 동의해 주세요.");
+      missingTerm.focus();
+      return false;
+    }
+
+    const password = document.getElementById("password");
+    const passwordConfirm = document.getElementById("passwordConfirm");
+    const pwConfirmMsg = document.getElementById("pwConfirmMsg");
+
+    if (password.value !== passwordConfirm.value) {
+      pwConfirmMsg.hidden = false;
+      passwordConfirm.focus();
+      return false;
+    }
+    pwConfirmMsg.hidden = true;
+
+    if (document.getElementById("identityVerified").value !== "Y") {
+      setVerifyStatus("회원가입 전 본인인증을 완료해 주세요.", "error");
+      document.getElementById("identityCode").focus();
+      return false;
+    }
+    return true;
+  }
+
+  function openAddressSearch() {
+    if (!window.daum || !window.daum.Postcode) {
+      alert("주소검색 서비스를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.");
+      return;
+    }
+
+    new daum.Postcode({
+      oncomplete: function(data) {
+        const postcode = document.getElementById("postcode");
+        const address = document.getElementById("address");
+        const addressDetail = document.getElementById("addressDetail");
+        const roadAddress = data.roadAddress || data.jibunAddress;
+        let extraAddress = "";
+
+        if (data.userSelectedType === "R") {
+          if (data.bname && /[동|로|가]$/g.test(data.bname)) extraAddress += data.bname;
+          if (data.buildingName && data.apartment === "Y") {
+            extraAddress += extraAddress ? `, ${data.buildingName}` : data.buildingName;
+          }
+          if (extraAddress) extraAddress = ` (${extraAddress})`;
+        }
+
+        postcode.value = data.zonecode;
+        address.value = `${roadAddress}${extraAddress}`;
+        addressDetail.focus();
+      }
+    }).open();
+  }
+</script>
+
+
+<script id="tthingAuthRuntime">
+(function(){
+  const SESSION_KEY = "tthingCustomerSession";
+  function readSession(){
+    try { return JSON.parse(localStorage.getItem(SESSION_KEY) || "null"); }
+    catch (error) { return null; }
+  }
+  function currentPage(){
+    const file = location.pathname.split("/").pop() || "index.html";
+    return file + location.search + location.hash;
+  }
+  function loginUrl(){
+    return "login.html?next=" + encodeURIComponent(currentPage());
+  }
+  function logout(event){
+    event.preventDefault();
+    localStorage.removeItem(SESSION_KEY);
+    applyAuthState();
+  }
+  function setAuthLink(link, loggedIn){
+    if (!link) return;
+    link.textContent = loggedIn ? "로그아웃" : "로그인";
+    link.setAttribute("href", loggedIn ? "#" : loginUrl());
+    link.onclick = loggedIn ? logout : null;
+  }
+  function applyAuthState(){
+    const loggedIn = !!(readSession() && readSession().authenticated);
+    const topLogin = document.querySelector('.bar .wrap a[href^=\"login.html\"], .bar .wrap a[data-auth-link]');
+    if (topLogin) topLogin.setAttribute("data-auth-link", "top");
+    setAuthLink(topLogin, loggedIn);
+    document.querySelectorAll(".nav__log a").forEach(link => setAuthLink(link, loggedIn));
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", applyAuthState);
+  else applyAuthState();
+  window.addEventListener("storage", event => { if (event.key === SESSION_KEY) applyAuthState(); });
+})();
+</script>
+</body></html>

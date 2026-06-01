@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+  <meta name="naver-site-verification" content="f0d8a36999fb828fa450253fabd13b9a46fb66a4" />
+  <meta name="google-site-verification" content="gDtEYejHbF6qjSawFMhzVKlWjfb9Jpnam0xdz5c_uko" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>네이버 회원가입 처리 - 띵베이프</title>
+  <style>
+    body { margin:0; font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:#171717; background:#fff; }
+    main { width:min(520px,100%); margin:0 auto; padding:80px 22px; }
+    .box { border:1px solid #e8e5df; border-radius:10px; padding:30px; }
+    h1 { margin:0 0 12px; font-size:26px; }
+    p { margin:0 0 18px; color:#6b6b6b; line-height:1.6; }
+    a { min-height:46px; padding:0 18px; border-radius:6px; display:inline-flex; align-items:center; background:#171717; color:#fff; text-decoration:none; font-weight:900; }
+    .error { color:#d84632; font-weight:900; }
+  
+
+    @media (min-width: 981px) {
+      .head .wrap { grid-template-columns: 270px minmax(260px, 1fr) 210px !important; gap: 24px !important; }
+      .search input { padding-right: 18px !important; }
+    }
+
+</style>
+</head>
+<body>
+  <main><section class="box"><h1>네이버 회원가입</h1><p id="message">처리 중입니다.</p><a href="signup.html">회원가입으로 돌아가기</a></section></main>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const code = params.get("code");
+    const state = params.get("state");
+    const error = params.get("error");
+    const savedState = sessionStorage.getItem("naver_oauth_state");
+    const flow = sessionStorage.getItem("naver_oauth_flow") || "signup";
+    const nextUrl = sessionStorage.getItem("naver_oauth_next") || "mypage.html";
+    const message = document.getElementById("message");
+
+    function finishNaverAuth(text, redirect) {
+      sessionStorage.removeItem("naver_oauth_state");
+      sessionStorage.removeItem("naver_oauth_flow");
+      sessionStorage.removeItem("naver_oauth_next");
+      sessionStorage.setItem("naver_signup_code", code || "");
+      localStorage.setItem("tthingCustomerSession", JSON.stringify({ user: "naver", authenticated: true, provider: "naver", loggedAt: Date.now() }));
+      message.textContent = text;
+      if (redirect) {
+        setTimeout(() => { location.replace(redirect); }, 400);
+      }
+    }
+
+    if (error) {
+      message.innerHTML = `<span class="error">네이버 인증이 취소되었거나 실패했습니다.</span>`;
+    } else if (!code || !state || state !== savedState) {
+      message.innerHTML = `<span class="error">인증 정보가 올바르지 않습니다.</span>`;
+    } else if (flow === "login") {
+      finishNaverAuth("네이버 로그인이 완료되었습니다. 이동 중입니다.", nextUrl);
+    } else {
+      finishNaverAuth("네이버 인증 코드가 확인되었습니다. 회원 상태가 적용되었습니다.", "");
+    }
+  </script>
+
+<script id="tthingAuthRuntime">
+(function(){
+  const SESSION_KEY = "tthingCustomerSession";
+  function readSession(){
+    try { return JSON.parse(localStorage.getItem(SESSION_KEY) || "null"); }
+    catch (error) { return null; }
+  }
+  function currentPage(){
+    const file = location.pathname.split("/").pop() || "index.html";
+    return file + location.search + location.hash;
+  }
+  function loginUrl(){
+    return "login.html?next=" + encodeURIComponent(currentPage());
+  }
+  function logout(event){
+    event.preventDefault();
+    localStorage.removeItem(SESSION_KEY);
+    applyAuthState();
+  }
+  function setAuthLink(link, loggedIn){
+    if (!link) return;
+    link.textContent = loggedIn ? "로그아웃" : "로그인";
+    link.setAttribute("href", loggedIn ? "#" : loginUrl());
+    link.onclick = loggedIn ? logout : null;
+  }
+  function applyAuthState(){
+    const loggedIn = !!(readSession() && readSession().authenticated);
+    const topLogin = document.querySelector('.bar .wrap a[href^=\"login.html\"], .bar .wrap a[data-auth-link]');
+    if (topLogin) topLogin.setAttribute("data-auth-link", "top");
+    setAuthLink(topLogin, loggedIn);
+    document.querySelectorAll(".nav__log a").forEach(link => setAuthLink(link, loggedIn));
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", applyAuthState);
+  else applyAuthState();
+  window.addEventListener("storage", event => { if (event.key === SESSION_KEY) applyAuthState(); });
+})();
+</script>
+</body>
+</html>

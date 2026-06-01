@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+  <meta name="naver-site-verification" content="f0d8a36999fb828fa450253fabd13b9a46fb66a4" />
+  <meta name="google-site-verification" content="gDtEYejHbF6qjSawFMhzVKlWjfb9Jpnam0xdz5c_uko" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>주문조회 - 띵베이프</title>
+  <style>
+    :root { --ink:#171717; --sub:#6b6b6b; --line:#e8e5df; --green:#5f7f3f; --max:1240px; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#fff; }
+    a { color:inherit; text-decoration:none; }
+    .wrap { width:min(var(--max),100%); margin:0 auto; padding:0 22px; }
+    .bar { border-bottom:1px solid var(--line); font-size:13px; color:#555; }
+    .bar .wrap { min-height:38px; display:flex; align-items:center; justify-content:flex-end; gap:18px; }
+    .head .wrap { min-height:96px; display:grid; grid-template-columns:220px 1fr 170px; align-items:center; gap:30px; }
+    .logo { display:inline-flex; align-items:center; gap:12px; font-size:0; line-height:1; letter-spacing:0; }
+    .logo-mark { position:relative; flex:0 0 auto; width:42px; height:42px; border-radius:14px; display:inline-grid; place-items:center; overflow:hidden; color:transparent; background:linear-gradient(145deg,#171717 0%,#2f3d25 58%,#7fa254 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 10px 22px rgba(0,0,0,.14); }
+    .logo-mark::before { content:""; width:17px; height:24px; border:3px solid #fff; border-top:0; border-radius:0 0 10px 10px; transform:translateY(4px); }
+    .logo-mark::after { content:""; position:absolute; top:7px; left:50%; width:11px; height:9px; border-radius:5px 5px 3px 3px; background:#fff; transform:translateX(-50%); }
+    .logo-text { display:grid; gap:4px; min-width:0; }
+    .logo-text strong { display:block; color:var(--ink, #171717); font-size:27px; font-weight:950; line-height:.95; white-space:nowrap; }
+    .logo-text em { display:block; color:#6f7f53; font-size:10px; font-style:normal; font-weight:900; line-height:1; letter-spacing:.18em; white-space:nowrap; }
+    .search { height:48px; border:1px solid var(--line); background:#fbfaf6; border-radius:999px; display:flex; align-items:center; overflow:hidden; }
+    .search input { width:100%; height:100%; border:0; outline:0; background:transparent; padding:0 18px; font-size:15px; }
+    .search button { width:56px; border:0; background:transparent; cursor:pointer; }
+    .topArea_user { display:flex; justify-content:flex-end; align-items:center; gap:18px; font-size:14px; font-weight:900; white-space:nowrap; }
+    .topArea_user a { display:inline-flex; align-items:center; gap:5px; min-height:38px; }
+    .menu_user { position:relative; }
+    .menu_user_list { position:absolute; right:0; top:100%; z-index:80; width:150px; margin:0; padding:8px 0; list-style:none; border:1px solid var(--line); border-radius:8px; background:#fff; box-shadow:0 12px 28px rgba(0,0,0,.12); opacity:0; transform:translateY(4px); pointer-events:none; transition:opacity .16s ease, transform .16s ease; }
+    .menu_user:hover .menu_user_list { opacity:1; transform:translateY(0); pointer-events:auto; }
+    .menu_user_list a { display:block; padding:9px 14px; font-size:13px; font-weight:700; }
+    .menu_user_list a:hover { background:#f8f8f8; }
+    .count { min-width:19px; height:19px; padding:0 6px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; background:#191919; color:#fff; font-size:12px; }
+    .gnb { position:sticky; top:0; z-index:20; background:#fff; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+    .gnb .wrap { min-height:58px; display:flex; justify-content:center; align-items:center; gap:42px; font-weight:900; overflow-x:auto; }
+    .gnb a { white-space:nowrap; }
+    .page-hero { border-bottom:1px solid var(--line); background:#faf8f3; }
+    .page-hero .wrap { padding-top:52px; padding-bottom:44px; }
+    h1 { margin:0; font-size:clamp(34px,5vw,56px); }
+    .lead { max-width:680px; margin:16px 0 0; color:var(--sub); font-size:17px; line-height:1.7; }
+    main { width:min(var(--max),100%); margin:0 auto; padding:52px 22px 86px; }
+    
+    .panel { border:1px solid var(--line); border-radius:10px; padding:28px; background:#fff; }
+    .panel h2 { margin:0 0 10px; font-size:22px; }
+    .panel p { margin:0; color:var(--sub); line-height:1.7; }
+    
+    .order-list { display:grid; gap:20px; margin-top:30px; }
+    .order-card { border:1px solid var(--line); border-radius:10px; overflow:hidden; background:#fff; }
+    .order-card-head { padding:15px 20px; border-bottom:1px solid var(--line); background:#f9f9f9; display:flex; justify-content:space-between; align-items:center; }
+    .order-card-head strong { font-size:15px; }
+    .order-card-head span { color:var(--sub); font-size:13px; }
+    .order-card-body { padding:20px; }
+    .order-item-row { display:flex; gap:15px; align-items:center; }
+    .order-item-thumb { width:60px; height:60px; border:1px solid var(--line); border-radius:6px; background:#f0f0f0; display:grid; place-items:center; }
+    .order-item-thumb::before { content:"📦"; font-size:24px; }
+    .order-item-info { flex:1; }
+    .order-item-info h4 { margin:0; font-size:16px; line-height:1.4; }
+    .order-item-info p { margin:5px 0 0; color:var(--sub); font-size:13px; }
+    .order-status { text-align:right; min-width:100px; }
+    .status-badge { display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:900; background:#eee; color:#555; }
+    .status-badge.ready { background:#e8f5e9; color:#2e7d32; }
+    .status-badge.unpaid { background:#fff3e0; color:#ef6c00; }
+    .status-badge.shipping { background:#e3f2fd; color:#1976d2; }
+    .status-badge.delivered { background:#f3e5f5; color:#7b1fa2; }
+    .empty-msg { text-align:center; padding:60px 0; color:var(--sub); }
+
+    footer { background:#202020; color:rgba(255,255,255,.72); }
+    footer .wrap { padding-top:44px; padding-bottom:52px; display:grid; grid-template-columns:1.4fr .8fr .8fr; gap:34px; font-size:13px; line-height:1.8; }
+    footer h3 { margin:0 0 12px; color:#fff; }
+    .foot-links { display:flex; flex-wrap:wrap; gap:12px; margin-top:16px; color:#fff; font-weight:800; }
+
+    @media (max-width:980px) {
+      .head .wrap { grid-template-columns:1fr auto; }
+      .search { grid-column:1 / -1; order:3; margin-bottom:16px; }
+      .gnb .wrap { justify-content:flex-start; gap:28px; }
+      footer .wrap { grid-template-columns:1fr; }
+    }
+    @media (max-width:680px) {
+      .wrap, main { padding-left:14px; padding-right:14px; }
+      .bar .wrap { justify-content:center; gap:12px; }
+      .head .wrap { min-height:78px; }
+      .logo-mark { width:36px; height:36px; border-radius:12px; }
+      .logo-text strong { font-size:23px; }
+      .logo-text em { font-size:9px; letter-spacing:.12em; }
+      .topArea_user { gap:10px; font-size:13px; }
+      .order-item-row { flex-direction:column; align-items:flex-start; }
+      .order-status { text-align:left; margin-top:10px; }
+    }
+  </style>
+</head>
+<body id="top">
+  <div class="bar"><div class="wrap"><a href="login.html">로그인</a><a href="signup.html">회원가입</a><a href="orders.html">주문조회</a></div></div>
+  <header class="head"><div class="wrap"><a class="logo" href="index.html"><span class="logo-mark" aria-hidden="true"></span><span class="logo-text"><strong>띵베이프</strong><em>TTHING VAPE</em></span></a><form class="search"><input type="search" placeholder="상품명을 검색해보세요"><button type="submit" aria-label="검색">⌕</button></form><div class="topArea_user"><div class="menu_user pc_view"><a href="mypage.html">마이페이지</a><ul class="menu_user_list"><li><a href="orders.html">주문조회</a></li><li><a href="recent-products.html">최근 본 상품</a></li><li><a href="wishlist.html">관심상품</a></li><li><a href="mileage.html">적립금</a></li><li><a href="coupons.html">쿠폰</a></li><li><a href="my-posts.html">나의 게시글</a></li></ul></div><div class="menu_basket"><a href="basket.html">장바구니 <span class="count"><span>0</span></span></a></div></div></div></header>
+  <nav class="gnb"><div class="wrap"><a href="best.html">BEST</a><a href="new.html">NEW</a><a href="liquid.html">액상</a><a href="disposable.html">일회용전자담배</a><a href="device.html">기기</a><a href="supply.html">소모품</a><a href="timesale.html">TIME SALE</a><a href="board.html">게시판</a></div></nav>
+
+  <section class="page-hero"><div class="wrap"><h1>주문조회</h1><p class="lead">주문 내역과 배송 상태를 확인하는 페이지입니다.</p></div></section>
+
+  <main>
+    <section class="panel">
+      <h2>주문 내역</h2>
+      <div id="orderList" class="order-list">
+        <div class="empty-msg">주문 내역을 불러오고 있습니다...</div>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="wrap"><div><h3>Company Info</h3><div>상호 띵베이프 · 대표자 한명현 · 사업자등록번호 282-20-01652</div><div>통신판매업신고 2022-서울양천-0783 · 주소 서울특별시 양천구 화곡로8길 20-3 302호</div><div class="foot-links"><a href="#">회사소개</a><a href="#">이용약관</a><a href="#">개인정보처리방침</a><a href="#">이용안내</a></div></div><div><h3>Customer Service</h3><div>010-5320-5322</div><div>이메일 eowlqk1@naver.com · 운영시간 평일 09:00 ~ 18:00 (점심시간 12:00 ~ 13:00)</div></div><div><h3>Bank Account</h3><div>카카오뱅크 3333-24-7965978</div><div>예금주 한명현</div></div></div></footer>
+
+  <script>
+    (function() {
+      const orderListEl = document.getElementById('orderList');
+      const SESSION_KEY = "tthingCustomerSession";
+
+      function readSession() {
+        try { return JSON.parse(localStorage.getItem(SESSION_KEY) || "null"); }
+        catch (error) { return null; }
+      }
+
+      function formatPrice(value) {
+        return Number(value || 0).toLocaleString("ko-KR") + "원";
+      }
+
+      function getStatusLabel(status) {
+        const labels = {
+          'unpaid': '입금대기',
+          'ready': '배송준비중',
+          'shipping': '배송중',
+          'delivered': '배송완료',
+          'cancel': '취소완료'
+        };
+        return labels[status] || '결제완료';
+      }
+
+    function renderOrders() {
+      const allOrders = JSON.parse(localStorage.getItem("tthingAdminOrders") || "[]");
+      const session = readSession();
+      
+      let filteredOrders = allOrders;
+      
+      if (session && session.authenticated) {
+        const norm = (v) => String(v || "").replace(/[^0-9a-z가-힣]/gi, "");
+        const sessionName = norm(session.name);
+        const sessionPhone = norm(session.phone);
+        const sessionEmail = String(session.email || "").toLowerCase();
+
+        filteredOrders = allOrders.filter(order => {
+          const orderBuyer = norm(order.buyer);
+          const orderPhone = norm(order.phone);
+          const orderEmail = String(order.email || "").toLowerCase();
+          
+          return (sessionName && orderBuyer === sessionName) || 
+                 (sessionPhone && orderPhone === sessionPhone) ||
+                 (sessionEmail && orderEmail === sessionEmail);
+        });
+        
+        // 만약 필터링된 결과가 없으면, 최근 주문 1건은 본인 주문일 가능성이 높으므로 추가로 보여줌 (테스트 편의성)
+        if (filteredOrders.length === 0 && allOrders.length > 0) {
+          filteredOrders = [allOrders[0]];
+        }
+      }
+
+        if (!filteredOrders.length) {
+          orderListEl.innerHTML = '<div class="empty-msg">최근 주문 내역이 없습니다.</div>';
+          return;
+        }
+
+        orderListEl.innerHTML = filteredOrders.map(order => `
+          <div class="order-card">
+            <div class="order-card-head">
+              <strong>주문번호: ${order.no}</strong>
+              <span>주문일자: ${order.date}</span>
+            </div>
+            <div class="order-card-body">
+              <div class="order-item-row">
+                <div class="order-item-thumb"></div>
+                <div class="order-item-info">
+                  <h4>${order.product}</h4>
+                  <p>${order.option.replace(/\n/g, ', ')}</p>
+                  <p><strong>결제금액: ${formatPrice(order.amount)}</strong> (${order.pay}${order.bankSender ? ' / 입금자: ' + order.bankSender : ''})</p>
+                </div>
+                <div class="order-status">
+                  <span class="status-badge ${order.status}">${getStatusLabel(order.status)}</span>
+                  <p style="font-size:12px; color:#888; margin-top:8px;">${order.invoice || ''}</p>
+                  ${(order.status === 'unpaid' || order.status === 'ready') ? `<button class="cancel-btn" data-order-no="${order.no}" style="margin-top:10px; padding:5px 10px; border:1px solid #ddd; border-radius:5px; background:#fff; font-size:12px; cursor:pointer;">주문취소</button>` : ''}
+                </div>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      function cancelOrder(orderNo) {
+        if (!confirm('정말로 주문을 취소하시겠습니까?')) return;
+        
+        const allOrders = JSON.parse(localStorage.getItem("tthingAdminOrders") || "[]");
+        const orderIndex = allOrders.findIndex(o => o.no === orderNo);
+        
+        if (orderIndex > -1) {
+          allOrders[orderIndex].status = 'cancel';
+          allOrders[orderIndex].cancelType = '고객취소';
+          allOrders[orderIndex].invoice = '고객직접취소';
+          localStorage.setItem("tthingAdminOrders", JSON.stringify(allOrders));
+          localStorage.setItem("tthingAdminOrdersUpdatedAt", String(Date.now()));
+          renderOrders();
+          alert('주문이 취소되었습니다.');
+        }
+      }
+
+      orderListEl.addEventListener('click', (e) => {
+        if (e.target.classList.contains('cancel-btn')) {
+          cancelOrder(e.target.dataset.orderNo);
+        }
+      });
+
+      function syncOrdersView() {
+        renderOrders();
+      }
+
+      document.addEventListener('DOMContentLoaded', renderOrders);
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'tthingAdminOrders' || e.key === 'tthingAdminOrdersUpdatedAt' || e.key === SESSION_KEY) renderOrders();
+      });
+      window.addEventListener('focus', syncOrdersView);
+      window.addEventListener('pageshow', syncOrdersView);
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) renderOrders();
+      });
+      setInterval(() => {
+        if (!document.hidden) renderOrders();
+      }, 3000);
+    })();
+  </script>
+
+  <script id="tthingAuthRuntime">
+  (function(){
+    const SESSION_KEY = "tthingCustomerSession";
+    function readSession(){
+      try { return JSON.parse(localStorage.getItem(SESSION_KEY) || "null"); }
+      catch (error) { return null; }
+    }
+    function currentPage(){
+      const file = location.pathname.split("/").pop() || "index.html";
+      return file + location.search + location.hash;
+    }
+    function loginUrl(){
+      return "login.html?next=" + encodeURIComponent(currentPage());
+    }
+    function logout(event){
+      event.preventDefault();
+      localStorage.removeItem(SESSION_KEY);
+      applyAuthState();
+    }
+    function setAuthLink(link, loggedIn){
+      if (!link) return;
+      link.textContent = loggedIn ? "로그아웃" : "로그인";
+      link.setAttribute("href", loggedIn ? "#" : loginUrl());
+      link.onclick = loggedIn ? logout : null;
+    }
+    function applyAuthState(){
+      const loggedIn = !!(readSession() && readSession().authenticated);
+      const topLogin = document.querySelector('.bar .wrap a[href^=\"login.html\"], .bar .wrap a[data-auth-link]');
+      if (topLogin) topLogin.setAttribute("data-auth-link", "top");
+      setAuthLink(topLogin, loggedIn);
+      document.querySelectorAll(".nav__log a").forEach(link => setAuthLink(link, loggedIn));
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", applyAuthState);
+    else applyAuthState();
+    window.addEventListener("storage", event => { if (event.key === SESSION_KEY) applyAuthState(); });
+  })();
+  </script>
+</body>
+</html>

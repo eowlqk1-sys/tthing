@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+  <meta name="naver-site-verification" content="f0d8a36999fb828fa450253fabd13b9a46fb66a4" />
+  <meta name="google-site-verification" content="gDtEYejHbF6qjSawFMhzVKlWjfb9Jpnam0xdz5c_uko" />
+
+  <meta http-equiv="refresh" content="0; url=index.html">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>띵베이프</title>
+  <script>window.location.replace("index.html");</script>
+</head>
+<body>
+  <p><a href="index.html">메인 페이지로 이동</a></p>
+<script src="tthing-store-import.js"></script>
+<script src="admin-products.js"></script>
+
+<script id="tthingAuthRuntime">
+(function(){
+  const SESSION_KEY = "tthingCustomerSession";
+  function readSession(){
+    try { return JSON.parse(localStorage.getItem(SESSION_KEY) || "null"); }
+    catch (error) { return null; }
+  }
+  function currentPage(){
+    const file = location.pathname.split("/").pop() || "index.html";
+    return file + location.search + location.hash;
+  }
+  function loginUrl(){
+    return "login.html?next=" + encodeURIComponent(currentPage());
+  }
+  function logout(event){
+    event.preventDefault();
+    localStorage.removeItem(SESSION_KEY);
+    applyAuthState();
+  }
+  function setAuthLink(link, loggedIn){
+    if (!link) return;
+    link.textContent = loggedIn ? "로그아웃" : "로그인";
+    link.setAttribute("href", loggedIn ? "#" : loginUrl());
+    link.onclick = loggedIn ? logout : null;
+  }
+  function applyAuthState(){
+    const loggedIn = !!(readSession() && readSession().authenticated);
+    const topLogin = document.querySelector('.bar .wrap a[href^=\"login.html\"], .bar .wrap a[data-auth-link]');
+    if (topLogin) topLogin.setAttribute("data-auth-link", "top");
+    setAuthLink(topLogin, loggedIn);
+    document.querySelectorAll(".nav__log a").forEach(link => setAuthLink(link, loggedIn));
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", applyAuthState);
+  else applyAuthState();
+  window.addEventListener("storage", event => { if (event.key === SESSION_KEY) applyAuthState(); });
+})();
+</script>
+</body>
+</html>
