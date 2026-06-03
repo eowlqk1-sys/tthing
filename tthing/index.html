@@ -171,68 +171,88 @@
     .gnb a { white-space: nowrap; }
 
     .hero {
-      background:
-        linear-gradient(90deg, rgba(28,31,23,.82), rgba(28,31,23,.22)),
-        linear-gradient(135deg, #334629 0%, #7c9a4b 45%, #eee5c9 100%);
+      position: relative;
+      background: linear-gradient(135deg, #334629 0%, #7c9a4b 45%, #eee5c9 100%);
       color: #fff;
+      overflow: hidden;
+      min-height: 250px;
+    }
+
+    .hero-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      width: 48px;
+      height: 48px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.15);
+      color: #fff;
+      font-size: 24px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .hero-btn:hover {
+      background: rgba(0,0,0,0.3);
+    }
+
+    .hero.has-admin-banner .hero-btn {
+      display: flex;
+    }
+
+    .hero-btn.prev { left: 20px; }
+    .hero-btn.next { right: 20px; }
+
+    @media (max-width: 680px) {
+      .hero-btn { width: 36px; height: 36px; font-size: 18px; }
+      .hero-btn.prev { left: 10px; }
+      .hero-btn.next { right: 10px; }
+    }
+
+    .hero.has-admin-banner {
+      background: #fff;
+      min-height: auto;
+    }
+
+    .hero-slider-track {
+      display: flex;
+      transition: transform 0.6s ease-in-out;
+    }
+
+    .hero-slider-item {
+      flex: 0 0 100%;
+      width: 100%;
+    }
+
+    .hero-banner-link {
+      display: block;
+      width: 100%;
+      line-height: 0;
+    }
+
+    .hero-banner-img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-width: var(--max);
+      margin: 0 auto;
     }
 
     .hero .wrap {
-      min-height: 520px;
-      display: grid;
-      grid-template-columns: 1fr 460px;
-      align-items: center;
-      gap: 54px;
-      padding-top: 66px;
-      padding-bottom: 66px;
-    }
-
-    .kicker {
-      margin: 0 0 13px;
-      color: rgba(255,255,255,.72);
-      font-size: 14px;
-      font-weight: 900;
-    }
-
-    .hero h1 {
-      margin: 0;
-      font-size: clamp(42px, 5vw, 70px);
-      line-height: 1.04;
-      letter-spacing: 0;
-    }
-
-    .hero p {
-      max-width: 560px;
-      margin: 20px 0 30px;
-      color: rgba(255,255,255,.83);
-      font-size: 18px;
-      line-height: 1.7;
-      word-break: keep-all;
-    }
-
-    .btns {
+      min-height: 450px;
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .btn {
-      min-height: 46px;
-      padding: 0 20px;
-      border-radius: 999px;
-      border: 1px solid #fff;
-      background: #fff;
-      color: #111;
-      display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-weight: 900;
+      padding: 0;
     }
 
-    .btn.dark {
-      background: transparent;
-      color: #fff;
-      border-color: rgba(255,255,255,.42);
+    .hero-content {
+      display: none;
     }
 
     .hero-art {
@@ -958,9 +978,9 @@
       }
 
       .hero .wrap {
-        min-height: auto;
-        padding-top: 52px;
-        padding-bottom: 58px;
+        min-height: 250px;
+        padding-top: 0;
+        padding-bottom: 0;
       }
 
       .hero p {
@@ -1027,11 +1047,11 @@
 
 .thumb.has-img { background:#fff; }
 .thumb.has-img::before { display:none; }
-.thumb.has-img img { width:100%; height:100%; object-fit:contain; display:block; padding:18px; }
+.thumb.has-img img { width:100%; height:100%; object-fit:contain; display:block; padding:4px; }
 .thumb.has-img.is-missing::before { display:block; }
 .thumb.has-img.is-missing img { display:none; }
 .sale-thumb { position:relative; overflow:hidden; display:grid; place-items:center; background:#fff; }
-.sale-thumb img { width:100%; height:100%; object-fit:contain; display:block; padding:16px; }
+.sale-thumb img { width:100%; height:100%; object-fit:contain; display:block; padding:4px; }
 
 
     .tthing-popup-layer { position: fixed; inset: 0; z-index: 120; pointer-events: none; }
@@ -1102,16 +1122,10 @@
   </nav>
 
   <div class="tthing-popup-layer" id="homePopupLayer" aria-live="polite"></div>
-  <section class="hero">
-    <div class="wrap">
-      <div>
-        <p class="kicker">VAPE LIQUID STORE</p>
-        <h1>액상 쇼핑을<br>빠르고 깔끔하게</h1>
-        <p>인기제품, 한정 혜택, 타임세일, 신상품, 리뷰까지 한 화면에서 이어지는 쇼핑몰 메인입니다.</p>
-        <div class="btns">
-          <a class="btn" href="best.html">인기제품 보기</a>
-          <a class="btn dark" href="new.html">NEW 신상</a>
-        </div>
+  <section class="hero" id="mainHero">
+    <div class="wrap" id="mainHeroWrap">
+      <div class="hero-content">
+        <!-- Default content -->
       </div>
       <div class="hero-art" aria-hidden="true">
         <div class="liquid"></div>
@@ -1211,6 +1225,152 @@
   </footer>
 
   <script>
+    (function applyAdminMainBanner() {
+      const MAIN_BANNER_KEY = 'tthingMainBanner';
+      const hero = document.getElementById('mainHero');
+      const heroWrap = document.getElementById('mainHeroWrap');
+      if (!hero || !heroWrap) return;
+      let banners = [];
+      let activeIndex = 0;
+      let timer = null;
+
+      function normalizeMainBanner(data) {
+        if (!data) return [];
+        if (Array.isArray(data.banners)) return data.banners.filter(item => item && item.image);
+        if (data.image) return [{ image: data.image, link: data.link || '' }];
+        return [];
+      }
+
+      function normalizeLink(link) {
+        const value = String(link || '').trim();
+        if (!value) return '';
+        if (new RegExp('^https?://', 'i').test(value) || value.startsWith('/') || value.startsWith('./') || value.startsWith('../') || value.startsWith('#')) return value;
+        return '';
+      }
+
+      function renderSlider() {
+        // Clear existing dynamic banners and buttons
+        const existingTrack = hero.querySelector('.hero-slider-track');
+        if (existingTrack) existingTrack.remove();
+        hero.querySelectorAll('.hero-btn').forEach(btn => btn.remove());
+        
+        if (!banners.length) {
+          hero.classList.remove('has-admin-banner');
+          heroWrap.style.display = 'flex';
+          return;
+        }
+
+        const track = document.createElement('div');
+        track.className = 'hero-slider-track';
+        
+        banners.forEach(banner => {
+          const item = document.createElement('div');
+          item.className = 'hero-slider-item';
+          
+          const link = document.createElement('a');
+          link.className = 'hero-banner-link';
+          const href = normalizeLink(banner.link);
+          if (href) {
+            link.href = href;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+          } else {
+            link.style.cursor = 'default';
+          }
+          
+          const img = document.createElement('img');
+          img.className = 'hero-banner-img';
+          img.src = banner.image;
+          img.alt = '메인 배너';
+          
+          link.appendChild(img);
+          item.appendChild(link);
+          track.appendChild(item);
+        });
+
+        hero.appendChild(track);
+
+        if (banners.length > 1) {
+          const prevBtn = document.createElement('button');
+          prevBtn.className = 'hero-btn prev';
+          prevBtn.type = 'button';
+          prevBtn.innerHTML = '‹';
+          prevBtn.onclick = () => {
+            updateSlide(activeIndex - 1 + banners.length);
+            startTimer(); // Reset timer
+          };
+
+          const nextBtn = document.createElement('button');
+          nextBtn.className = 'hero-btn next';
+          nextBtn.type = 'button';
+          nextBtn.innerHTML = '›';
+          nextBtn.onclick = () => {
+            updateSlide(activeIndex + 1);
+            startTimer(); // Reset timer
+          };
+
+          hero.appendChild(prevBtn);
+          hero.appendChild(nextBtn);
+        }
+
+        hero.classList.add('has-admin-banner');
+        heroWrap.style.display = 'none';
+        
+        updateSlide(0);
+      }
+
+      function updateSlide(index) {
+        const track = hero.querySelector('.hero-slider-track');
+        if (!track || !banners.length) return;
+        activeIndex = index % banners.length;
+        track.style.transform = `translateX(-${activeIndex * 100}%)`;
+      }
+
+      function applyBanners(data) {
+        banners = normalizeMainBanner(data);
+        renderSlider();
+        startTimer();
+      }
+
+      function startTimer() {
+        if (timer) clearInterval(timer);
+        if (banners.length > 1) {
+          timer = setInterval(() => {
+            updateSlide(activeIndex + 1);
+          }, 2500); // 2.5 seconds
+        }
+      }
+
+      function clearBanner() {
+        banners = [];
+        if (timer) clearInterval(timer);
+        const track = hero.querySelector('.hero-slider-track');
+        if (track) track.remove();
+        hero.classList.remove('has-admin-banner');
+        heroWrap.style.display = 'flex';
+        localStorage.removeItem(MAIN_BANNER_KEY);
+      }
+
+      try { 
+        const saved = JSON.parse(localStorage.getItem(MAIN_BANNER_KEY) || 'null');
+        if (saved) applyBanners(saved);
+      } catch (error) {}
+
+      fetch('/api/main-banner', { cache: 'no-store' })
+        .then((response) => response.ok ? response.json() : null)
+        .then((data) => {
+          if (!data || !normalizeMainBanner(data).length) {
+            clearBanner();
+            return;
+          }
+          localStorage.setItem(MAIN_BANNER_KEY, JSON.stringify(data));
+          applyBanners(data);
+        })
+        .catch(() => {});
+    })();
+  </script>
+
+  <script>
     const products = [];
 
     const normalizeAdminProduct=(item)=>({code:item.code,name:item.name,desc:item.summary||item.simple||item.desc||item.category||"",origin:item.origin||"",price:item.salePrice||item.discountPrice||item.price||"0원",tag:item.category||"admin",badge:item.discountEnabled?"SALE":"ITEM",image:(item.productImages&&item.productImages[0])||(item.images&&item.images[0])||"",searchText:[item.name,item.code,item.summary,item.simple,item.desc,item.searchKeywords,item.seo?.keywords,item.seo?.searchKeywords,(item.optionItems||[]).map(option=>option.name).join(" "),(item.options||[]).join(" ")].filter(Boolean).join(" ")});
@@ -1243,7 +1403,11 @@
       return [...merged.values()].reverse();
     };
     function renderPopular() {
-      popularEl.innerHTML = getSearchProducts().slice(0, 8).map(productCard).join("");
+      const pool = getSearchProducts();
+      const popularProducts = document.getElementById("popularProducts");
+      if (popularProducts) {
+        popularProducts.innerHTML = pool.slice(0, 8).map(productCard).join("");
+      }
     }
 
     function setupPopularSlider() {
@@ -1274,7 +1438,23 @@
 
     function renderNew() {
       const pool = getSearchProducts();
-      newEl.innerHTML = pool.slice(4).concat(pool.slice(0, 4)).slice(0, 20).map(productCard).join("");
+      const newProducts = document.getElementById("newProducts");
+      if (newProducts) {
+        newProducts.innerHTML = pool.slice(4).concat(pool.slice(0, 4)).slice(0, 20).map(productCard).join("");
+      }
+    }
+
+    function productCard(item) {
+      const origin = item.origin ? `<span class="origin">${item.origin}</span>` : "";
+      const image = item.image ? `<img src="${item.image}" alt="${item.name}" loading="lazy" onerror="this.closest('.thumb').classList.add('is-missing')">` : "";
+      return `
+        <a class="product" href="product-detail.html?product=${item.code}">
+          <div class="thumb has-img" data-badge="${item.badge}">${image}</div>
+          <h3>${item.name}</h3>
+          <div class="desc">${item.desc}</div>
+          <div class="price-line">${origin}<span class="price">${item.price}</span></div>
+        </a>
+      `;
     }
 
     function saleProductCard(item) {
@@ -1290,7 +1470,10 @@
 
     function renderTimesale() {
       const pool = getSearchProducts();
-      timesaleEl.innerHTML = pool.filter(item => item.badge === "SALE" || String(item.tag || "").includes("타임세일")).slice(0, 6).map(saleProductCard).join("");
+      const timesaleProducts = document.getElementById("timesaleProducts");
+      if (timesaleProducts) {
+        timesaleProducts.innerHTML = pool.filter(item => item.badge === "SALE" || String(item.tag || "").includes("타임세일")).slice(0, 6).map(saleProductCard).join("");
+      }
     }
 
 
@@ -1300,7 +1483,10 @@
       const pool=getSearchProducts();
       const lower=keyword.toLowerCase();
       const filtered = pool.filter((item) => [item.name,item.desc,item.code,item.searchText].filter(Boolean).join(" ").toLowerCase().includes(lower));
-      newEl.innerHTML = (keyword ? filtered : pool).map(productCard).join("");
+      const newProducts = document.getElementById("newProducts");
+      if (newProducts) {
+        newProducts.innerHTML = (keyword ? filtered : pool).map(productCard).join("");
+      }
       location.hash = "#new";
     });
 
@@ -1320,6 +1506,8 @@
         minutes: document.getElementById("minutes"),
         seconds: document.getElementById("seconds")
       };
+
+      if (!ids.days) return;
 
       function pad(value) {
         return String(value).padStart(2, "0");

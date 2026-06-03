@@ -178,14 +178,15 @@
       </a>
 
       <nav>
-        <div class="nav-section">
-          <div class="nav-title">쇼핑몰</div>
+        <div class="nav-section"><div class="nav-title">쇼핑몰</div>
           <a class="nav-link" href="index.html"><span class="nav-ico">⌂</span>홈</a>
           <a class="nav-link active" href="orders.html"><span class="nav-ico">≡</span>주문</a>
           <a class="nav-link" href="product.html"><span class="nav-ico">□</span>상품</a>
+          <a class="nav-link" href="main-banner.html"><span class="nav-ico">▤</span>메인배너</a>
           <a class="nav-link" href="customer.html"><span class="nav-ico">◎</span>고객</a>
           <a class="nav-link" href="#"><span class="nav-ico">✉</span>메시지</a>
-          <a class="nav-link" href="board.html"><span class="nav-ico">◫</span>게시판</a><a class="nav-link" href="popup.html"><span class="nav-ico">▣</span>팝업</a>
+          <a class="nav-link" href="board.html"><span class="nav-ico">◫</span>게시판</a>
+          <a class="nav-link" href="popup.html"><span class="nav-ico">▣</span>팝업</a>
         </div>
         <div class="nav-section">
           <div class="nav-title">운영</div>
@@ -208,7 +209,7 @@
           <input type="search" placeholder="상품명, 주문번호, 회원명 검색">
         </label>
         <div class="top-actions">
-          <a class="util-btn" href="/tthingading/index.html" target="_blank" rel="noopener">PC 쇼핑몰</a>
+          <a class="util-btn" href="/tthing/index.html" target="_blank" rel="noopener">PC 쇼핑몰</a>
           <button class="util-btn" type="button">모바일</button>
           <button class="util-btn" type="button">알림 3</button>
           <div class="profile">
@@ -320,7 +321,8 @@
     const keywordField = document.getElementById("keywordField");
     const payFilter = document.getElementById("payFilter");
     const checkAll = document.getElementById("checkAll");
-    const savedStatus = localStorage.getItem("tthingAdminOrderStatus");
+    const queryStatus = new URLSearchParams(location.search).get("status");
+    const savedStatus = queryStatus || localStorage.getItem("tthingAdminOrderStatus");
     const TELEGRAM_BOT_TOKEN = "8482875386:AAHWatfCwcdQWVrkK24aA8AjJIkW7DYB3lg";
     const TELEGRAM_CHAT_ID = "7588098252";
 
@@ -741,8 +743,6 @@
         `연락처: ${order.phone}`,
         `상품: ${order.product}`
       ].join("\n"));
-      currentStatus = "cancel";
-      saveCurrentStatus();
       renderRows();
       openDrawer(order);
     }
@@ -765,8 +765,6 @@
         `상품: ${order.product}`,
         `사유: ${label}`
       ].join("\n"));
-      currentStatus = "cancel";
-      saveCurrentStatus();
       renderRows();
       openDrawer(order);
     }

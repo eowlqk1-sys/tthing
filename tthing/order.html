@@ -136,6 +136,7 @@
     }
   </style>
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  <script src="https://payments.korpay.com/js/korpay-sdk.js"></script>
   <script>
     function execDaumPostcode() {
       new daum.Postcode({
@@ -392,7 +393,6 @@
       return { card: "카드", bank: "무통장", phone: "휴대폰" }[value] || "카드";
     }
 
-    function applyCustomerPoints() {
     const TELEGRAM_BOT_TOKEN = "8482875386:AAHWatfCwcdQWVrkK24aA8AjJIkW7DYB3lg";
     const TELEGRAM_CHAT_ID = "7588098252";
 
@@ -410,6 +410,7 @@
       } catch (error) {}
     }
 
+    function applyCustomerPoints() {
       if (!currentCustomer) return;
       const key = "tthingCustomerDetail:" + currentCustomer.id;
       const saved = getCustomerSaved(currentCustomer);
@@ -421,12 +422,49 @@
       localStorage.setItem(key, JSON.stringify({ ...saved, points: nextPoints, pointLog, total: nextTotal, grade: nextTotal >= 10000 ? "우수회원" : "일반회원" }));
     }
 
-    function saveAdminOrder() {
+    async function prepareKopayPayment(orderNo) {
+      const response = await fetch('/api/kopay/prepare', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderNo,
+          amount: currentTotals.finalAmount,
+          buyer: document.getElementById("buyerName").value.trim(),
+          phone: document.getElementById("buyerPhone").value.trim(),
+          email: document.getElementById("buyerEmail").value.trim(),
+          address: [document.getElementById("address").value.trim(), document.getElementById("addressDetail").value.trim()].filter(Boolean).join(" "),
+          postcode: document.getElementById("postcode").value.trim(),
+          productName: order.items.length === 1 ? order.items[0].name : order.items[0].name + ' 외 ' + (order.items.length - 1) + '건'
+        })
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(result.message || '카드결제 설정을 확인해 주세요.');
+      }
+      return result;
+    }
+
+    function startKopayWindow(baseUrl, paymentData) {
+      return new Promise((resolve, reject) => {
+        const sdk = window.KorpaySdk;
+        if (!sdk || typeof sdk.payment !== "function") {
+          reject(new Error("Kopay 결제 SDK를 불러오지 못했습니다."));
+          return;
+        }
+        sdk.payment(baseUrl, paymentData, {
+          onStart: resolve,
+          onError: (error) => reject(new Error(String(error || "카드결제창 실행에 실패했습니다."))),
+          onClose: () => {}
+        });
+      });
+    }
+
+    function buildAdminOrder(options = {}) {
       currentTotals = calculateTotals();
       const productTotal = currentTotals.productTotal;
       const delivery = currentTotals.delivery;
       const payValue = document.querySelector('[name="payMethod"]:checked')?.value || "card";
-      const pay = payLabel(payValue);
+      const pay = options.pay || payLabel(payValue);
       const now = new Date();
       const items = order.items.map((item) => ({
         name: item.name,
@@ -438,42 +476,58 @@
       const option = items.map((item) => `${item.option || "기본"} / 수량 ${item.qty}개`).join("\n");
       const buyer = document.getElementById("buyerName").value.trim() || "고객";
       const phone = document.getElementById("buyerPhone").value.trim() || "010-0000-0000";
+      const email = document.getElementById("buyerEmail").value.trim();
       const receiver = document.getElementById("receiverName").value.trim() || buyer;
       const receiverPhone = document.getElementById("receiverPhone").value.trim() || phone;
       const address = [document.getElementById("address").value.trim(), document.getElementById("addressDetail").value.trim()].filter(Boolean).join(" ") || "주소 미입력";
       const bankSender = document.getElementById("bankSender").value.trim();
       const adminOrder = {
         date: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`,
-        no: makeOrderNo(),
+        no: options.orderNo || makeOrderNo(),
         product,
         option,
         items,
         buyer,
         phone,
+        email,
         receiver,
         receiverPhone,
         amount: currentTotals.finalAmount,
         productAmount: productTotal,
+        deliveryFee: delivery,
         usedPoints: currentTotals.usedPoints,
         earnedPoints: currentTotals.earnPoints,
         pay,
         bankSender: pay === "무통장" ? bankSender : "",
-        status: pay === "무통장" ? "unpaid" : "ready",
+        status: options.status || (pay === "무통장" ? "unpaid" : "ready"),
         invoice: pay === "무통장" ? "로젠택배 · 입금 확인 후 배송준비" : "로젠택배 · 송장 입력대기",
         address,
-        memo: document.getElementById("memo").value
+        memo: document.getElementById("memo").value,
+        paymentTid: options.tid || ""
       };
+      return adminOrder;
+    }
+
+    function saveAdminOrder(options = {}) {
+      const adminOrder = options.pendingOrder || buildAdminOrder(options);
       const saved = JSON.parse(localStorage.getItem("tthingAdminOrders") || "[]");
       saved.unshift(adminOrder);
       localStorage.setItem("tthingAdminOrders", JSON.stringify(saved));
+      localStorage.setItem("tthingAdminOrdersUpdatedAt", String(Date.now()));
+      localStorage.removeItem("tthingOrderDraft");
       applyCustomerPoints();
       if (adminOrder.status === "unpaid") {
+        const telegramItems = adminOrder.items.map((item, index) => {
+          const optionText = item.option && item.option !== "기본" ? ` / 옵션: ${item.option}` : "";
+          return `${index + 1}. ${item.name}${optionText} / 수량: ${item.qty}개`;
+        }).join("\n");
         sendTelegramAlert([
           "[입금전 주문]",
           `주문번호: ${adminOrder.no}`,
-          `주문자: ${adminOrder.buyer}`,
+          `고객성함: ${adminOrder.buyer}`,
           `연락처: ${adminOrder.phone}`,
-          `상품: ${adminOrder.product}`,
+          "주문상품:",
+          telegramItems,
           `주소: ${adminOrder.address}`,
           `결제수단: ${adminOrder.pay}`
         ].join("\n"));
@@ -481,14 +535,57 @@
       return adminOrder;
     }
 
-    document.getElementById("orderForm").addEventListener("submit", (event) => {
+    document.getElementById("orderForm").addEventListener("submit", async (event) => {
       event.preventDefault();
+      const payValue = document.querySelector('[name="payMethod"]:checked')?.value || "card";
+      if (payValue === "card") {
+        currentTotals = calculateTotals();
+        const orderNo = makeOrderNo();
+        try {
+          const payment = await prepareKopayPayment(orderNo);
+          const pendingOrder = buildAdminOrder({
+            orderNo: payment.paymentData.orderNumber,
+            pay: "카드",
+            status: "ready"
+          });
+          localStorage.setItem("tthingPendingCardOrder:" + payment.paymentData.orderNumber, JSON.stringify(pendingOrder));
+          await startKopayWindow(payment.baseUrl, payment.paymentData);
+        } catch (error) {
+          alert(error.message);
+        }
+        return;
+      }
       const adminOrder = saveAdminOrder();
-      alert(`주문서가 접수되었습니다.\n주문번호: ${adminOrder.no}\n옵션: ${adminOrder.option.replace(/\n/g, ", ")}`);
-      location.href = "orders.html";
+      location.href = "orders.html?order=" + encodeURIComponent(adminOrder.no);
     });
 
-    renderOrder();
+    function completeReturnedKopayPayment() {
+      const params = new URLSearchParams(location.search);
+      const payment = params.get("payment");
+      if (payment === "failed") {
+        alert(params.get("message") || "카드결제가 완료되지 않았습니다.");
+        history.replaceState(null, "", location.pathname);
+        return false;
+      }
+      if (payment !== "success") return false;
+      const orderNo = params.get("order") || "";
+      const pendingKey = "tthingPendingCardOrder:" + orderNo;
+      let pendingOrder = null;
+      try {
+        pendingOrder = JSON.parse(localStorage.getItem(pendingKey) || "null");
+      } catch (error) {}
+      if (pendingOrder) {
+        pendingOrder.status = "ready";
+        pendingOrder.pay = "카드";
+        pendingOrder.paymentTid = params.get("tid") || pendingOrder.paymentTid || "";
+        saveAdminOrder({ pendingOrder });
+        localStorage.removeItem(pendingKey);
+      }
+      location.replace("orders.html?order=" + encodeURIComponent(orderNo));
+      return true;
+    }
+
+    if (!completeReturnedKopayPayment()) renderOrder();
   </script>
 
 <script id="tthingAuthRuntime">

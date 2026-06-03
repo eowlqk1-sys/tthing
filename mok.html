@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+
+<!--
+■ 본 샘플은 PC 웹브라우저에서 동작 여부를 테스트 용도이며, 드림시큐리티에서 제공하는 모든 기능이 포함되어 있지 않습니다.
+  상세 내용은 드림시큐리티에서 제공하는 웹관리도구 內 가이드 문서를 참고하여 주시기 바랍니다.
+
+■ 아래의 내용 및 이 후 연결되는 샘플 페이지 內 주석을 참고 및 이용기관에 맞게 변경 후 테스트 진행하여 주시기 바랍니다.
+
+■ 본 샘플을 이용하여 가맹점 시스템에 직접 적용하는 경우, 샘플 內 모든 주석을 삭제하여 주시기 바랍니다.
+-->
+
+<html lang="ko">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="format-detection" content="telephone=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+<!--  개발 URL :  -->
+<script src="https://cert.mobile-ok.com/resources/js/index.js"></script>
+
+<!-- [주의사항] 개발 및 테스트 시에는 개발 URL을 이용해 주시고 운영 환경으로 전환 시 반드시 운영 URL로 변경해주시기 바랍니다.-->
+
+<script>
+    // 모바일/PC 스크립트 인식 구분
+    document.addEventListener("DOMContentLoaded", function () {
+    document.querySelector("#mok_popup").addEventListener("click", function () {
+        MOBILEOK.process("https://tthing.kr/mok_std_request.jsp", "WB", "result");
+    })
+    // document.querySelector("#mok_move").addEventListener("click", function () {
+        // 모바일 전용서비스로 페이지 이동처리 또는 카카오 브라우져 등 새창으로 처리가 어려운 환경 또는 브라우져에서 처리
+        //MOBILEOK.process("https://tthing.kr/mok_std_request.jsp", "WB", "");
+    // })
+    })
+
+    function result(result) {
+    try {
+        result = JSON.parse(result);
+        document.querySelector("#result").value = JSON.stringify(result, null, 4);
+    } catch (error) {
+        document.querySelector("#result").value = result;
+    }
+    }
+</script>
+<style>
+    .container {
+    width: 500px;
+    border: 1px black solid;
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    }
+
+    .content {
+    border: 1px black solid;
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    }
+
+    .item {
+    border: 1px black solid;
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    }
+
+    label {
+    margin-bottom: 5px;
+    font-weight: 800;
+    }
+
+    input {
+    box-sizing: border-box;
+    }
+
+    button {
+    font-size: 20px;
+    font-weight: 800;
+    padding: 3px;
+    box-sizing: border-box;
+    }
+</style>
+<title>휴대폰본인확인_표준창</title>
+</head>
+<body>
+<div class="container">
+<div class="content">
+    <div class="item">
+    <textarea id="result" rows="20"></textarea>
+    </div>
+</div>
+<div class="content">
+    <button id="mok_popup">본인확인 시작(팝업)</button>
+</div>
+<!--    <div class="content">-->
+<!--        <button id="mok_move">본인확인 시작(이동)</button>-->
+<!--    </div>-->
+</div>
+</body>
+</html>

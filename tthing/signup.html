@@ -142,6 +142,14 @@ footer h3 { margin:0 0 12px; color:#fff; }
 
 </style>
   <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  <script>
+    (function loadMobileOkScript(){
+      var script = document.createElement("script");
+      var isProd = /(^|\.)tthing\.kr$/i.test(location.hostname);
+      script.src = isProd ? "https://cert.mobile-ok.com/resources/js/index.js" : "https://scert.mobile-ok.com/resources/js/index.js";
+      document.head.appendChild(script);
+    })();
+  </script>
 </head>
 <body id="top">
   <div class="bar"><div class="wrap"><a href="login.html">로그인</a><a href="signup.html">회원가입</a><a href="orders.html">주문조회</a></div></div>
@@ -155,13 +163,12 @@ footer h3 { margin:0 0 12px; color:#fff; }
     <div class="section ec-base-step"><ol class="step" id="joinSteps"><li class="selected">1. 약관동의</li><li>2. 정보입력</li><li>3. 가입완료</li></ol></div>
 
     <form id="joinForm" name="joinForm" action="mypage.html" method="post" onsubmit="return validateSignupForm()">
-      <input id="useSimpleSignin" name="useSimpleSignin" value="F" type="hidden">
-      <input id="member_name_cert_flag" name="member_name_cert_flag" value="T" type="hidden">
-      <input id="is_mobile_auth_use" name="is_mobile_auth_use" value="T" type="hidden">
-      <input id="is_display_register_addr" name="is_display_register_addr" value="T" type="hidden">
-      <input id="isMobileVerify" name="isMobileVerify" value="F" type="hidden">
-      <input id="returnUrl" name="returnUrl" value="/member/join_result.html" type="hidden">
       <input id="identityVerified" name="identityVerified" type="hidden" value="N">
+      <input id="identityProvider" name="identityProvider" type="hidden" value="dreamsecurity">
+      <input id="identityTxId" name="identityTxId" type="hidden" value="">
+      <input id="identityCi" name="identityCi" type="hidden" value="">
+      <input id="identityDi" name="identityDi" type="hidden" value="">
+      <input id="identityAdult" name="identityAdult" type="hidden" value="N">
 
       <div class="join-step-panel" id="termsStep">
         <button class="naver-signup" type="button" onclick="startNaverSignup()"><span>N</span><span>네이버로 회원가입</span></button>
@@ -201,15 +208,6 @@ footer h3 { margin:0 0 12px; color:#fff; }
                 <th scope="row"><span class="required">필수</span>회원구분</th>
                 <td class="radio-line"><label><input id="member_type0" name="member_type" value="p" type="radio" checked> 개인회원</label><label><input id="member_type2" name="member_type" value="f" type="radio"> 외국인회원(foreigner)</label></td>
               </tr>
-              <tr>
-                <th scope="row"><span class="required">필수</span>회원인증</th>
-                <td>
-                  <label class="radio-single"><input id="personal_type0" name="personal_type" value="m" type="radio" checked> 휴대폰인증</label>
-                  <div class="verify-action"><button class="btnNormal" id="verifyBtn" type="button" onclick="handleIdentityVerification()">휴대폰인증</button><span>본인 명의의 휴대폰으로 본인인증을 진행합니다.</span></div>
-                  <div class="verify-row join-verify-row"><input id="identityCode" name="identityCode" type="text" inputmode="numeric" placeholder="인증번호 입력" required><button class="verify-btn" type="button" onclick="handleIdentityVerification()">인증확인</button></div>
-                  <p class="verify-status" id="verifyStatus">휴대폰 번호 입력 후 휴대폰인증을 눌러주세요.</p>
-                </td>
-              </tr>
             </tbody>
           </table>
         </div>
@@ -229,6 +227,15 @@ footer h3 { margin:0 0 12px; color:#fff; }
               <tr><th scope="row"><span class="required">필수</span>주소</th><td class="formMultiple"><ul class="ec-address"><li class="zipcode-row"><input id="postcode" name="postcode" type="text" placeholder="우편번호" readonly required><button class="btnBasic" type="button" onclick="openAddressSearch()">주소검색</button></li><li><input id="address" name="address" type="text" placeholder="기본주소" autocomplete="street-address" readonly required></li><li><input id="addressDetail" name="addressDetail" type="text" placeholder="나머지 주소" required></li></ul></td></tr>
               <tr><th scope="row"><span class="required">필수</span>휴대전화</th><td><input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="010-0000-0000" required></td></tr>
               <tr><th scope="row"><span class="required">필수</span>이메일</th><td><input id="email" name="email" type="email" autocomplete="email" required></td></tr>
+              <tr>
+                <th scope="row"><span class="required">필수</span>회원인증</th>
+                <td>
+                  <label class="radio-single"><input id="personal_type0" name="personal_type" value="m" type="radio" checked> 휴대폰인증</label>
+                  <div class="verify-action"><button class="btnNormal" id="verifyBtn" type="button" onclick="handleIdentityVerification()">본인인증 시작</button><span>드림시큐리티 휴대폰 본인인증을 진행합니다.</span></div>
+                  <div class="verify-row join-verify-row"><input id="identityCode" name="identityCode" type="text" inputmode="numeric" placeholder="인증번호 입력" required><button class="verify-btn" type="button" onclick="handleIdentityVerification()">인증확인</button></div>
+                  <p class="verify-status" id="verifyStatus">이름과 휴대폰 번호 입력 후 본인인증을 진행해 주세요.</p>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -283,6 +290,7 @@ footer h3 { margin:0 0 12px; color:#fff; }
   let identityCodeValue = "";
   let identityExpireAt = 0;
   let identityTimer = null;
+  let identityTxId = "";
 
   function setVerifyStatus(message, type = "") {
     const status = document.getElementById("verifyStatus");
@@ -304,53 +312,184 @@ footer h3 { margin:0 0 12px; color:#fff; }
       if (remaining <= 0) {
         clearInterval(identityTimer);
         identityCodeValue = "";
+        identityTxId = "";
         document.getElementById("identityVerified").value = "N";
-        document.getElementById("verifyBtn").textContent = "인증요청";
-        setVerifyStatus("인증 시간이 만료되었습니다. 다시 요청해 주세요.", "error");
+        document.getElementById("identityTxId").value = "";
+        document.getElementById("verifyBtn").textContent = "본인인증 시작";
+        setVerifyStatus("인증 시간이 만료되었습니다. 다시 진행해 주세요.", "error");
         return;
       }
       setVerifyStatus(`인증번호를 입력해 주세요. 남은시간 ${formatVerifyRemaining(remaining)}`);
     }, 1000);
   }
 
-  function handleIdentityVerification() {
-    const phone = document.getElementById("phone");
-    const identityCode = document.getElementById("identityCode");
+  function verificationPayload() {
+    return {
+      name: document.getElementById("name").value.trim(),
+      phone: document.getElementById("phone").value.replace(/[^0-9]/g, ""),
+      birth: ["birthYear", "birthMonth", "birthDay"].map((id) => document.getElementById(id).value.trim().padStart(id === "birthYear" ? 4 : 2, "0")).join(""),
+      memberType: document.querySelector('[name="member_type"]:checked')?.value || "p",
+      returnUrl: location.origin + location.pathname
+    };
+  }
+
+  function applyVerifiedIdentity(result) {
     const verified = document.getElementById("identityVerified");
     const verifyBtn = document.getElementById("verifyBtn");
-    const phoneValue = phone.value.replace(/[^0-9]/g, "");
+    const identityCode = document.getElementById("identityCode");
+    const name = document.getElementById("name");
+    const phone = document.getElementById("phone");
+
+    clearInterval(identityTimer);
+    verified.value = "Y";
+    document.getElementById("identityTxId").value = result.txId || identityTxId || "";
+    document.getElementById("identityCi").value = result.ci || "";
+    document.getElementById("identityDi").value = result.di || "";
+    document.getElementById("identityAdult").value = result.adult === false ? "N" : "Y";
+    if (result.name) name.value = result.name;
+    if (result.phone) phone.value = result.phone;
+    identityCode.required = false;
+    identityCode.readOnly = true;
+    verifyBtn.textContent = "인증완료";
+    verifyBtn.disabled = true;
+    setVerifyStatus("드림시큐리티 본인인증이 완료되었습니다.", "ok");
+  }
+
+  async function requestDreamAuthStart(payload) {
+    const response = await fetch("/api/dream-auth/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) throw new Error("본인인증 요청에 실패했습니다.");
+    return response.json();
+  }
+
+  async function requestDreamAuthVerify(txId, code) {
+    const response = await fetch("/api/dream-auth/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ txId, code })
+    });
+    if (!response.ok) throw new Error("본인인증 확인에 실패했습니다.");
+    return response.json();
+  }
+
+  function startLocalMockVerification(payload) {
+    identityCodeValue = String(Math.floor(100000 + Math.random() * 900000));
+    identityTxId = "local-" + Date.now();
+    identityExpireAt = Date.now() + 180000;
+    document.getElementById("identityTxId").value = identityTxId;
+    document.getElementById("identityCode").value = "";
+    document.getElementById("verifyBtn").textContent = "인증확인";
+    startVerifyTimer();
+    alert(`테스트 인증번호는 ${identityCodeValue} 입니다.`);
+    document.getElementById("identityCode").focus();
+  }
+
+  async function handleIdentityVerification() {
+    const payload = verificationPayload();
+    const identityCode = document.getElementById("identityCode");
+    const verified = document.getElementById("identityVerified");
 
     if (verified.value === "Y") return;
 
-    if (!identityCodeValue || Date.now() > identityExpireAt) {
-      if (phoneValue.length < 10) {
-        phone.focus();
+    if (!identityTxId || Date.now() > identityExpireAt) {
+      if (!payload.name) {
+        document.getElementById("name").focus();
+        setVerifyStatus("이름을 입력해 주세요.", "error");
+        return;
+      }
+      if (payload.phone.length < 10) {
+        document.getElementById("phone").focus();
         setVerifyStatus("휴대폰 번호를 정확히 입력해 주세요.", "error");
         return;
       }
-      identityCodeValue = String(Math.floor(100000 + Math.random() * 900000));
-      identityExpireAt = Date.now() + 180000;
-      identityCode.value = "";
-      verifyBtn.textContent = "인증확인";
-      startVerifyTimer();
-      alert(`테스트 인증번호는 ${identityCodeValue} 입니다.`);
+
+      try {
+        if (window.MOBILEOK && !/^(localhost|127\.0\.0\.1|0\.0\.0\.0)$/i.test(location.hostname)) {
+          MOBILEOK.process("/mok_std_request.jsp", "WB", function(mokResult) {
+            if (typeof mokResult === "string") {
+              try { mokResult = JSON.parse(mokResult); } catch (error) {}
+            }
+            if (mokResult && mokResult.verified) applyVerifiedIdentity(mokResult);
+            else setVerifyStatus("본인인증 결과를 확인하지 못했습니다.", "error");
+          });
+          setVerifyStatus("열린 인증창에서 본인인증을 완료해 주세요.");
+          return;
+        }
+
+        const result = await requestDreamAuthStart(payload);
+        if (result.useStandardWindow && window.MOBILEOK) {
+          MOBILEOK.process(result.requestUrl, "WB", function(mokResult) {
+            if (typeof mokResult === "string") {
+              try { mokResult = JSON.parse(mokResult); } catch (error) {}
+            }
+            if (mokResult && mokResult.verified) applyVerifiedIdentity(mokResult);
+            else setVerifyStatus("본인인증 결과를 확인하지 못했습니다.", "error");
+          });
+          setVerifyStatus("열린 인증창에서 본인인증을 완료해 주세요.");
+          return;
+        }
+        if (result.redirectUrl) {
+          identityTxId = result.txId || "";
+          document.getElementById("identityTxId").value = identityTxId;
+          window.open(result.redirectUrl, "dreamAuth", "width=430,height=640,noopener");
+          setVerifyStatus("열린 인증창에서 본인인증을 완료해 주세요.");
+          return;
+        }
+        if (result.verified) {
+          applyVerifiedIdentity(result);
+          return;
+        }
+        if (result.mockCode) {
+          identityCodeValue = String(result.mockCode);
+          identityTxId = result.txId || "";
+          identityExpireAt = Date.now() + Number(result.expiresIn || 180) * 1000;
+          document.getElementById("identityTxId").value = identityTxId;
+          document.getElementById("verifyBtn").textContent = "인증확인";
+          startVerifyTimer();
+          alert(`테스트 인증번호는 ${identityCodeValue} 입니다.`);
+          identityCode.focus();
+          return;
+        }
+      } catch (error) {
+        var isLocal = /^(localhost|127\.0\.0\.1|0\.0\.0\.0)$/i.test(location.hostname);
+        if (isLocal) {
+          startLocalMockVerification(payload);
+          return;
+        }
+        setVerifyStatus("본인인증 서버 설정을 확인해 주세요.", "error");
+        return;
+      }
+    }
+
+    const code = identityCode.value.trim();
+    if (!code) {
       identityCode.focus();
+      setVerifyStatus("인증번호를 입력해 주세요.", "error");
       return;
     }
 
-    if (identityCode.value.trim() === identityCodeValue) {
-      clearInterval(identityTimer);
-      verified.value = "Y";
-      identityCode.readOnly = true;
-      verifyBtn.textContent = "인증완료";
-      verifyBtn.disabled = true;
-      setVerifyStatus("본인인증이 완료되었습니다.", "ok");
-      return;
-    }
+    try {
+      if (identityTxId.startsWith("local-") && code === identityCodeValue) {
+        applyVerifiedIdentity({ txId: identityTxId, name: payload.name, phone: payload.phone, adult: true });
+        return;
+      }
+      const result = await requestDreamAuthVerify(identityTxId, code);
+      if (result.verified) {
+        applyVerifiedIdentity(result);
+        return;
+      }
+    } catch (error) {}
 
     identityCode.focus();
     setVerifyStatus("인증번호가 일치하지 않습니다.", "error");
   }
+
+  window.completeDreamIdentityVerification = function(result) {
+    applyVerifiedIdentity(result || {});
+  };
 
   function toggleAllTerms(checked) {
     document.querySelectorAll(".terms-box input[type='checkbox']").forEach((checkbox) => {
@@ -403,7 +542,30 @@ footer h3 { margin:0 0 12px; color:#fff; }
       document.getElementById("identityCode").focus();
       return false;
     }
-    return true;
+
+    if (document.getElementById("identityAdult").value !== "Y") {
+      setVerifyStatus("성인 인증이 확인되어야 가입할 수 있습니다.", "error");
+      document.getElementById("verifyBtn").focus();
+      return false;
+    }
+
+    const session = {
+      authenticated: true,
+      provider: "signup",
+      user: document.getElementById("userId").value.trim(),
+      name: document.getElementById("name").value.trim(),
+      phone: document.getElementById("phone").value.trim(),
+      email: document.getElementById("email").value.trim(),
+      identityProvider: document.getElementById("identityProvider").value,
+      identityTxId: document.getElementById("identityTxId").value,
+      identityCi: document.getElementById("identityCi").value,
+      identityDi: document.getElementById("identityDi").value,
+      adultVerified: document.getElementById("identityAdult").value === "Y",
+      loggedAt: Date.now()
+    };
+    localStorage.setItem("tthingCustomerSession", JSON.stringify(session));
+    location.href = "index.html";
+    return false;
   }
 
   function openAddressSearch() {
