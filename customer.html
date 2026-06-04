@@ -46,6 +46,7 @@
     });
   })();
   </script>
+  <script src="data/imported-customers.js"></script>
 </head>
 <body>
   <div class="mobile-overlay" id="overlay"></div>
@@ -123,7 +124,7 @@
     function readCustomerOverrides(item){try{return JSON.parse(localStorage.getItem('tthingCustomerDetail:'+item.id)||'{}')}catch(error){return {}}}
     function autoGrade(item){return Number(item.total||0)>=10000?"우수회원":"일반회원"}
     function mergeCustomer(item){const saved=readCustomerOverrides(item);const merged={...item,...saved,points:saved.points ?? item.points,memo:saved.memo ?? item.memo,bank:saved.bank ?? item.bank,account:saved.account ?? item.account,holder:saved.holder ?? item.holder,password:saved.password ?? item.password};return {...merged,grade:autoGrade(merged)}}
-    function getImportedCustomers(){try{return JSON.parse(localStorage.getItem("tthingImportedCustomers")||"[]")}catch(error){return []}}
+    function getImportedCustomers(){let saved=[];try{saved=JSON.parse(localStorage.getItem("tthingImportedCustomers")||"[]")}catch(error){}const byId=new Map([...(window.TTHING_IMPORTED_CUSTOMERS||[]),...saved].map(item=>[item.id,item]));return [...byId.values()]}
         function getCustomers(){const byId=new Map();[...customers,...getImportedCustomers()].forEach(item=>{const merged=mergeCustomer(item);byId.set(merged.id,merged)});return [...byId.values()]}
     const statusClass={active:'good',dormant:'warn',blocked:'danger'};
     const comma=value=>Number(value).toLocaleString('ko-KR');

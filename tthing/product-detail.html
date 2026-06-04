@@ -172,6 +172,7 @@
     .logo-text em { display: block; color: #6f7f53; font-size: 10px; font-style: normal; font-weight: 900; line-height: 1; letter-spacing: .18em; white-space: nowrap; }
     @media (max-width: 680px) { .logo-mark { width: 36px !important; height: 36px !important; border-radius: 12px !important; } .logo-mark::before { width: 14px; height: 20px; border-width: 2px; transform: translateY(4px); } .logo-mark::after { top: 7px; width: 9px; height: 7px; } .logo-text strong { font-size: 23px; } .logo-text em { font-size: 9px; letter-spacing: .12em; } }
 
+  .product-media{display:none!important}
 </style>
 </head>
 <body id="top">
@@ -194,7 +195,7 @@
   <main>
     <p class="breadcrumb">HOME / 상품상세</p>
     <section class="detail">
-      <div><div class="photo" id="mainPhoto" aria-label="상품 이미지 영역"></div><div class="image-list" id="imageList"></div></div>
+      <div class="product-media" hidden><div class="photo" id="mainPhoto" aria-label="상품 이미지 영역"></div><div class="image-list" id="imageList"></div></div>
       <div class="info">
         <h1 id="productName">띵베이프 샘플 상품명 30ml</h1>
         <p class="summary" id="productSummary">상품별 이미지, 옵션, 가격, 배송정보를 보여주는 상세페이지 템플릿입니다.</p><p class="simple-desc" id="productSimpleDesc"></p>
@@ -317,7 +318,7 @@
     }
 
     function categoryHref(category) {
-      const map = { '액상':'liquid.html', '액상 > 무니코틴입호흡':'liquid.html', '액상 > 무니코틴폐호흡':'liquid.html', '액상 > 입호흡':'liquid.html', '액상 > 폐호흡':'liquid.html', '일회용전자담배':'disposable.html', '일회용전자담배 > 무니코틴일회용':'disposable.html', '일회용전자담배 > 일회용':'disposable.html', '기기':'device.html', '소모품':'supply.html', '소모품 > 코일':'supply.html', '소모품 > 팟':'supply.html', '무니코틴 액상':'liquid.html', '입호흡 액상':'liquid.html', '폐호흡 액상':'liquid.html', '신규 액상':'new.html', 'BEST':'best.html', '베스트':'best.html', '타임 세일':'timesale.html', '타임세일':'timesale.html', '일회용 전자담배':'disposable.html', '무니코틴 일회용':'disposable.html', '모드기기&기성기기':'device.html', '코일&팟':'supply.html' };
+      const map = { '액상':'liquid.html', '액상 > 무니코틴입호흡':'liquid.html', '액상 > 무니코틴폐호흡':'liquid.html', '액상 > 입호흡':'liquid.html', '액상 > 폐호흡':'liquid.html', '일회용전자담배':'disposable.html', '일회용전자담배 > 무니코틴일회용':'disposable.html', '일회용전자담배 > 일회용':'disposable.html', '기기':'device.html', '소모품':'supply.html', '소모품 > 코일':'supply.html', '소모품 > 팟':'supply.html', '무니코틴':'liquid.html', '입호흡':'liquid.html', '폐호흡':'liquid.html', '일회용':'disposable.html', '소모품':'supply.html', '무니코틴 액상':'liquid.html', '입호흡 액상':'liquid.html', '폐호흡 액상':'liquid.html', '신규 액상':'new.html', 'BEST':'best.html', '베스트':'best.html', '타임 세일':'timesale.html', '타임세일':'timesale.html', '일회용 전자담배':'disposable.html', '무니코틴 일회용':'disposable.html', '모드기기&기성기기':'device.html', '코일&팟':'supply.html' };
       return map[category] || 'index.html';
     }
 
@@ -341,9 +342,9 @@
       } catch (error) {}
       const storedProduct = code && !deletedCodes.has(code) ? adminProducts[code] : null;
       const importedProduct = code && !deletedCodes.has(code) && Array.isArray(window.TTHING_IMPORTED_PRODUCTS) ? window.TTHING_IMPORTED_PRODUCTS.find((item) => item && item.code === code) : null;
-      const product = storedProduct || importedProduct;
-      if (importedProduct && !storedProduct) {
-        adminProducts[importedProduct.code] = importedProduct;
+      const product = importedProduct || storedProduct;
+      if (importedProduct) {
+        adminProducts[importedProduct.code] = { ...(adminProducts[importedProduct.code] || {}), ...importedProduct };
         localStorage.setItem("tthingAdminProducts", JSON.stringify(adminProducts));
         localStorage.setItem("tthingAdminProductsUpdatedAt", String(Date.now()));
       }
@@ -396,10 +397,10 @@
       optionCatalog = product.optionItems && product.optionItems.length ? product.optionItems : (product.options && product.options.length ? product.options.map((name) => ({ name, addPrice: 0 })) : [{ name: "기본", addPrice: 0 }]);
       fillSelect(flavor, optionCatalog);
       fillSelect(sideFlavor, optionCatalog);
-      const productImages = product.productImages && product.productImages.length ? product.productImages : (product.images || []);
+      const productImages = [];
       const detailImages = product.detailImages || [];
       const detailBodyHtml = product.detailHtml || product.simple || "";
-      const fallbackDetailImages = detailImages.length && !detailBodyHtml.includes("<img") ? detailImages : (detailBodyHtml ? [] : productImages);
+      const fallbackDetailImages = detailImages.length && !detailBodyHtml.includes("<img") ? detailImages : [];
       const imageAlt = productImageAlt(product);
       productDetailHtml.innerHTML = detailBodyHtml + fallbackDetailImages.map((src) => `<img src="${src}" alt="${escapeAttr(imageAlt)} 상세 이미지" onerror="this.style.display='none'">`).join("");
       if (productImages.length) setMainImage(product, productImages[0]);

@@ -188,32 +188,10 @@
       : [];
 
     const merged = new Map();
-    
-    // 1. 관리자 상품 목록 (adminListProducts) 먼저 추가
-    adminListProducts.forEach((item) => merged.set(item.code, item));
-    
-    // 2. 저장된 상품 (savedProducts - 직접 등록/수정된 상품) 추가 (덮어쓰기)
-    savedProducts.forEach((item) => merged.set(item.code, item));
-    
-    // 3. 만약 관리자 목록이나 저장된 목록에 없는 '순수' 외부 상품은 제외하길 원하므로,
-    // importedProducts 중 이미 merged에 존재하는 것들만 정보를 병합합니다.
-    importedProducts.forEach((item) => {
-      const existing = merged.get(item.code);
-      if (existing) {
-        merged.set(item.code, {
-          ...existing,
-          category: existing.category || item.category,
-          categories: Array.from(new Set([...(existing.categories || []), ...(item.categories || [])])).filter(Boolean),
-          desc: existing.desc || item.desc,
-          origin: existing.origin || item.origin,
-          image: existing.image || item.image,
-          badge: existing.badge || item.badge,
-          updatedAt: existing.updatedAt || item.updatedAt,
-          raw: { ...(existing.raw || {}), ...(item.raw || {}) }
-        });
-      }
-      // else: 관리자 홈에 없는 상품이면 무시 (고객홈 노출 제외)
-    });
+
+    importedProducts.forEach((item) => merged.set(item.code, item));
+    adminListProducts.forEach((item) => merged.set(item.code, { ...(merged.get(item.code) || {}), ...item }));
+    savedProducts.forEach((item) => merged.set(item.code, { ...(merged.get(item.code) || {}), ...item }));
 
     const products = [...merged.values()].sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")));
     return products;

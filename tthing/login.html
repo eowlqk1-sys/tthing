@@ -95,10 +95,11 @@ footer h3 { margin:0 0 12px; color:#fff; }
   </main>
 
   <footer><div class="wrap"><div><h3>Company Info</h3><div>상호 띵베이프 · 대표자 한명현 · 사업자등록번호 282-20-01652</div><div>통신판매업신고 2022-서울양천-0783 · 주소 서울특별시 양천구 화곡로8길 20-3 302호</div><div class="foot-links"><a href="#">회사소개</a><a href="#">이용약관</a><a href="#">개인정보처리방침</a><a href="#">이용안내</a></div></div><div><h3>Customer Service</h3><div>010-5320-5322</div><div>이메일 eowlqk1@naver.com · 운영시간 평일 09:00 ~ 18:00 (점심시간 12:00 ~ 13:00)</div></div><div><h3>Bank Account</h3><div>카카오뱅크 3333-24-7965978</div><div>예금주 한명현</div></div></div></footer>
+<script src="../data/imported-customers.js"></script>
 <script>
   const CUSTOMER_ACCOUNT = { id: "eowlqk1", password: "gksaod88" };
   const NAVER_CLIENT_ID = "Ogx85DDeg6y_Wf_n1k23";
-  const NAVER_REDIRECT_URI = `${location.origin}/naver-callback.html`;
+  const NAVER_REDIRECT_URI = `${location.origin}${location.pathname.replace(/[^/]*$/, "naver-callback.html")}`;
   const SESSION_KEY = "tthingCustomerSession";
   const SAVED_ID_KEY = "tthingSavedCustomerId";
   const loginForm = document.getElementById("loginForm");
@@ -135,6 +136,18 @@ footer h3 { margin:0 0 12px; color:#fff; }
     loginError.style.display = "none";
   }
 
+  function getRegisteredCustomers() {
+    return (window.TTHING_IMPORTED_CUSTOMERS || []).filter((customer) => customer && customer.id);
+  }
+
+  function findRegisteredCustomer(userId, password) {
+    const normalized = userId.trim().toLowerCase();
+    return getRegisteredCustomers().find((customer) => {
+      const ids = [customer.id, customer.email, customer.phone].filter(Boolean).map((value) => String(value).trim().toLowerCase());
+      return ids.includes(normalized) && password === "a123456789";
+    });
+  }
+
   function startNaverLogin() {
     const state = Math.random().toString(36).slice(2) + Date.now().toString(36);
     sessionStorage.setItem("naver_oauth_state", state);
@@ -155,10 +168,11 @@ footer h3 { margin:0 0 12px; color:#fff; }
 
     const userId = userIdInput.value.trim();
     const password = passwordInput.value;
-    if (userId === CUSTOMER_ACCOUNT.id && password === CUSTOMER_ACCOUNT.password) {
+    const registeredCustomer = findRegisteredCustomer(userId, password);
+    if ((userId === CUSTOMER_ACCOUNT.id && password === CUSTOMER_ACCOUNT.password) || registeredCustomer) {
       if (rememberId.checked) localStorage.setItem(SAVED_ID_KEY, userId);
       else localStorage.removeItem(SAVED_ID_KEY);
-      localStorage.setItem(SESSION_KEY, JSON.stringify({ user: userId, authenticated: true, loggedAt: Date.now() }));
+      localStorage.setItem(SESSION_KEY, JSON.stringify({ user: registeredCustomer?.id || userId, name: registeredCustomer?.name || "", provider: registeredCustomer ? "customer-list" : "password", authenticated: true, loggedAt: Date.now() }));
       location.href = getReturnUrl();
       return;
     }
@@ -171,11 +185,11 @@ footer h3 { margin:0 0 12px; color:#fff; }
   });
 
   document.getElementById("findIdBtn").addEventListener("click", function() {
-    showFindResult("등록된 아이디는 eowlqk1 입니다.");
+    showFindResult("관리자 테스트 아이디는 eowlqk1이며, 등록 고객은 고객 아이디/이메일/휴대폰으로 로그인할 수 있습니다.");
   });
 
   document.getElementById("findPwBtn").addEventListener("click", function() {
-    showFindResult("등록된 비밀번호는 gksaod88 입니다.");
+    showFindResult("등록 고객 초기 비밀번호는 a123456789 입니다.");
   });
 </script>
 

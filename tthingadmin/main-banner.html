@@ -1190,11 +1190,19 @@
 
     async function loadMainBanner() {
       try {
-        const response = await fetch('/api/main-banner', { cache: 'no-store' });
+        let response = await fetch('/api/main-banner', { cache: 'no-store' });
+        if (!response.ok) response = await fetch('../data/main-banner.json', { cache: 'no-store' });
         if (!response.ok) return;
         writeMainBanner(await response.json());
         renderMainBanner();
-      } catch (error) {}
+      } catch (error) {
+        try {
+          const response = await fetch('../data/main-banner.json', { cache: 'no-store' });
+          if (!response.ok) return;
+          writeMainBanner(await response.json());
+          renderMainBanner();
+        } catch (fallbackError) {}
+      }
     }
 
     async function clearMainBanner() {

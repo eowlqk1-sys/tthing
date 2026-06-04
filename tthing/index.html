@@ -1356,8 +1356,11 @@
         if (saved) applyBanners(saved);
       } catch (error) {}
 
-      fetch('/api/main-banner', { cache: 'no-store' })
-        .then((response) => response.ok ? response.json() : null)
+      const loadBannerData = () => fetch('/api/main-banner', { cache: 'no-store' })
+        .then((response) => response.ok ? response.json() : fetch('../data/main-banner.json', { cache: 'no-store' }).then((fallback) => fallback.ok ? fallback.json() : null))
+        .catch(() => fetch('../data/main-banner.json', { cache: 'no-store' }).then((response) => response.ok ? response.json() : null));
+
+      loadBannerData()
         .then((data) => {
           if (!data || !normalizeMainBanner(data).length) {
             clearBanner();

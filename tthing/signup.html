@@ -268,7 +268,7 @@ footer h3 { margin:0 0 12px; color:#fff; }
 
   function startNaverSignup() {
     const clientId = "Ogx85DDeg6y_Wf_n1k23";
-    const redirectUri = `${location.origin}/naver-callback.html`;
+    const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, "naver-callback.html")}`;
     const state = Math.random().toString(36).slice(2) + Date.now().toString(36);
 
     if (clientId === "YOUR_NAVER_CLIENT_ID") {
