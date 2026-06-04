@@ -243,7 +243,7 @@
     return found ? document.getElementById(found[1]) : null;
   }
 
-  function appendBatch(container, products, limit = 100) {
+  function appendBatch(container, products, limit = Infinity) {
     if (!container) return;
     const existingCodes = new Set([...container.querySelectorAll('a[href*="product="]')].map(link => {
       try { return new URL(link.getAttribute("href"), location.href).searchParams.get("product"); }
@@ -262,10 +262,41 @@
     if (html) container.insertAdjacentHTML("afterbegin", html);
   }
 
+  function ensureCategoryAllBlock(page) {
+    const content = document.querySelector(".category-content") || document.querySelector("main");
+    if (!content) return null;
+    let section = document.getElementById("all-category-products");
+    if (!section) {
+      section = document.createElement("section");
+      section.id = "all-category-products";
+      section.className = "category-block";
+      section.innerHTML = '<div class="category-subhead"><h2>전체 상품</h2><span>엑셀 등록 상품을 대분류, 중분류, 소분류, 상세분류와 상관없이 모두 표시합니다.</span></div><div class="products"></div>';
+      content.insertBefore(section, content.firstChild);
+    }
+    const title = section.querySelector("h2");
+    if (title) title.textContent = page === "liquid" ? "액상 전체 상품" : page === "disposable" ? "일회용전자담배 전체 상품" : page === "device" ? "기기 전체 상품" : page === "supply" ? "소모품 전체 상품" : "전체 상품";
+    return section.querySelector(".products");
+  }
+
+  function ensureBlockProducts(block) {
+    if (!block) return null;
+    let container = block.querySelector(".products");
+    if (!container) {
+      const empty = block.querySelector(".desc");
+      if (empty) empty.remove();
+      container = document.createElement("div");
+      container.className = "products";
+      block.appendChild(container);
+    }
+    return container;
+  }
+
   function renderCategoryPage(page, products) {
     const pageProducts = products.filter((item) => matchesPage(item, page));
+    const allContainer = ensureCategoryAllBlock(page);
+    if (allContainer) appendBatch(allContainer, pageProducts, Infinity);
+
     const groups = {};
-    
     pageProducts.forEach((item) => {
       const block = blockForCategory(item);
       const id = block ? block.id : "default";
@@ -275,17 +306,9 @@
 
     Object.keys(groups).forEach(id => {
       let container = null;
-      if (id !== "default") {
-        const block = document.getElementById(id);
-        container = block ? block.querySelector(".products") : null;
-      }
-      
-      // 만약 특정 블록을 못 찾았거나 id가 default면 첫 번째 가능한 컨테이너에 넣습니다.
-      if (!container) {
-        container = document.querySelector(".category-block .products") || document.querySelector(".products");
-      }
-
-      if (container) appendBatch(container, groups[id], 150);
+      if (id !== "default") container = ensureBlockProducts(document.getElementById(id));
+      if (!container) container = allContainer || document.querySelector(".category-block .products") || document.querySelector(".products");
+      if (container && container !== allContainer) appendBatch(container, groups[id], Infinity);
     });
   }
 
