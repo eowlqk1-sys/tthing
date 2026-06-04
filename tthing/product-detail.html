@@ -172,7 +172,6 @@
     .logo-text em { display: block; color: #6f7f53; font-size: 10px; font-style: normal; font-weight: 900; line-height: 1; letter-spacing: .18em; white-space: nowrap; }
     @media (max-width: 680px) { .logo-mark { width: 36px !important; height: 36px !important; border-radius: 12px !important; } .logo-mark::before { width: 14px; height: 20px; border-width: 2px; transform: translateY(4px); } .logo-mark::after { top: 7px; width: 9px; height: 7px; } .logo-text strong { font-size: 23px; } .logo-text em { font-size: 9px; letter-spacing: .12em; } }
 
-  .product-media{display:none!important}
 </style>
 </head>
 <body id="top">
@@ -195,7 +194,7 @@
   <main>
     <p class="breadcrumb">HOME / 상품상세</p>
     <section class="detail">
-      <div class="product-media" hidden><div class="photo" id="mainPhoto" aria-label="상품 이미지 영역"></div><div class="image-list" id="imageList"></div></div>
+      <div class="product-media"><div class="photo" id="mainPhoto" aria-label="상품 이미지 영역"></div><div class="image-list" id="imageList"></div></div>
       <div class="info">
         <h1 id="productName">띵베이프 샘플 상품명 30ml</h1>
         <p class="summary" id="productSummary">상품별 이미지, 옵션, 가격, 배송정보를 보여주는 상세페이지 템플릿입니다.</p><p class="simple-desc" id="productSimpleDesc"></p>
@@ -397,7 +396,7 @@
       optionCatalog = product.optionItems && product.optionItems.length ? product.optionItems : (product.options && product.options.length ? product.options.map((name) => ({ name, addPrice: 0 })) : [{ name: "기본", addPrice: 0 }]);
       fillSelect(flavor, optionCatalog);
       fillSelect(sideFlavor, optionCatalog);
-      const productImages = [];
+      const productImages = product.productImages && product.productImages.length ? product.productImages : (product.images || []);
       const detailImages = product.detailImages || [];
       const detailBodyHtml = product.detailHtml || product.simple || "";
       const fallbackDetailImages = detailImages.length && !detailBodyHtml.includes("<img") ? detailImages : [];

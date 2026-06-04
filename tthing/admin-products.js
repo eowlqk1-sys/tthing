@@ -230,7 +230,7 @@
     const combined = (category + " " + name).toLowerCase();
     
     const map = [
-      [/무니코틴입호흡|zero.*mtl/i, "zero-mtl"], 
+      [/무니코틴입호흡|무니코틴|zero.*mtl/i, "zero-mtl"], 
       [/무니코틴폐호흡|zero.*dtl/i, "zero-dtl"], 
       [/입호흡|mtl/i, "mtl"], 
       [/폐호흡|dtl/i, "dtl"], 
