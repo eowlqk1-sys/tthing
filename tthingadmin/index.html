@@ -896,7 +896,6 @@
     });
   })();
   </script>
-  <script src="../tthing/tthing-store-import.js"></script>
 </head>
 <body>
   <div class="mobile-overlay" id="overlay"></div>
@@ -977,27 +976,6 @@
                 </div>
               </div>
             </section>
-
-
-            <section class="card" id="dashboardProductSummary">
-              <div class="card-head">
-                <div class="card-title">상품 등록 현황 <small>엑셀 등록 상품 기준</small></div>
-                <a class="util-btn" href="product.html">상품목록 보기</a>
-              </div>
-              <div class="card-body">
-                <div class="live-grid">
-                  <div class="live-card"><span>전체 상품</span><strong data-product-stat="total">0개</strong><em>등록 완료</em></div>
-                  <div class="live-card"><span>판매중</span><strong data-product-stat="selling">0개</strong><em>판매함</em></div>
-                  <div class="live-card"><span>진열상품</span><strong data-product-stat="display">0개</strong><em>진열함</em></div>
-                  <div class="live-card warn"><span>미진열/판매안함</span><strong data-product-stat="paused">0개</strong><em>확인 필요</em></div>
-                </div>
-                <table class="live-table">
-                  <thead><tr><th>최근 등록 상품</th><th>분류</th><th>판매가</th></tr></thead>
-                  <tbody id="dashboardProductRows"><tr><td colspan="3">등록된 상품이 없습니다.</td></tr></tbody>
-                </table>
-              </div>
-            </section>
-
             <section class="card">
               <div class="tabs" role="tablist">
                 <button class="tab active" type="button" data-panel="sales">일별 매출 현황</button>
@@ -1193,24 +1171,6 @@
     ];
 
 
-    function applyProductDashboard() {
-      const list = Array.isArray(window.TTHING_IMPORTED_PRODUCTS) ? window.TTHING_IMPORTED_PRODUCTS : [];
-      const visible = list.filter((item) => item && item.code);
-      const selling = visible.filter((item) => item.selling !== 'F');
-      const display = visible.filter((item) => item.display !== 'F');
-      const paused = visible.filter((item) => item.selling === 'F' || item.display === 'F');
-      const stats = { total: visible.length, selling: selling.length, display: display.length, paused: paused.length };
-      document.querySelectorAll('[data-product-stat]').forEach((node) => {
-        node.textContent = (stats[node.dataset.productStat] || 0).toLocaleString('ko-KR') + '개';
-      });
-      const rows = document.getElementById('dashboardProductRows');
-      if (!rows) return;
-      rows.innerHTML = visible.slice(0, 6).map((item) => {
-        const price = item.price || (Number(item.unit || 0).toLocaleString('ko-KR') + '원');
-        return '<tr><td><strong>' + escapeHtml(item.name || item.code) + '</strong><br><span class="chip">' + escapeHtml(item.code || '') + '</span></td><td>' + escapeHtml(item.category || '-') + '</td><td>' + escapeHtml(price) + '</td></tr>';
-      }).join('') || '<tr><td colspan="3">등록된 상품이 없습니다.</td></tr>';
-    }
-
     function readOrders() {
       try {
         const saved = JSON.parse(localStorage.getItem(ORDER_STORAGE_KEY) || '[]');
@@ -1220,10 +1180,6 @@
     }
     function formatOrderCount(value) {
       return value + '건';
-    }
-
-    function escapeHtml(value) {
-      return String(value || '').replace(/[&<>\"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', "'": '&#39;' }[char]));
     }
 
     function applyOrderStats() {
@@ -1398,7 +1354,6 @@
       liveState.pathKakao = clamp(liveState.pathKakao + randomStep(1), 7, 30);
       liveState.pathInsta = clamp(liveState.pathInsta + randomStep(1), 4, 26);
       applyOrderStats();
-      applyProductDashboard();
       liveState.readyOrders = clamp(liveState.readyOrders, 0, 999);
       liveState.shippingOrders = clamp(liveState.shippingOrders, 0, 999);
       liveState.doneOrders = clamp(liveState.doneOrders, 0, 9999);
