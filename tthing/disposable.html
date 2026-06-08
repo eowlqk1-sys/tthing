@@ -5,7 +5,17 @@
   <meta name="google-site-verification" content="gDtEYejHbF6qjSawFMhzVKlWjfb9Jpnam0xdz5c_uko" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>일회용전자담배 - 띵베이프</title>
+  <title>무니코틴 일회용전자담배 일반 일회용전자담배 - 띵베이프</title>
+  <meta name="description" content="무니코틴 일회용전자담배, 일반 일회용전자담배, 다양한 일회용 전자담배 상품을 띵베이프에서 확인하세요.">
+  <meta name="keywords" content="띵베이프, 무니코틴 일회용전자담배, 일반 일회용전자담배, 일회용전자담배, 일회용 전자담배, 무니코틴 일회용, 일반 일회용, 무니코틴 전자담배, 무니코틴 액상, 입호흡 액상, 폐호흡 액상, 전자담배 기기, 전자담배 코일, 전자담배 팟">
+  <meta name="robots" content="index,follow">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="띵베이프">
+  <meta property="og:title" content="무니코틴 일회용전자담배 일반 일회용전자담배 - 띵베이프">
+  <meta property="og:description" content="무니코틴 일회용전자담배, 일반 일회용전자담배, 다양한 일회용 전자담배 상품을 띵베이프에서 확인하세요.">
+  <meta property="og:url" content="https://tthing.kr/tthing/disposable.html">
+  <link rel="canonical" href="https://tthing.kr/tthing/disposable.html">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"무니코틴 일회용전자담배 일반 일회용전자담배 - 띵베이프","description":"무니코틴 일회용전자담배, 일반 일회용전자담배, 다양한 일회용 전자담배 상품을 띵베이프에서 확인하세요.","url":"https://tthing.kr/tthing/disposable.html","isPartOf":{"@type":"WebSite","name":"띵베이프","url":"https://tthing.kr/tthing/index.html"},"publisher":{"@type":"Organization","name":"띵베이프","url":"https://tthing.kr/tthing/index.html","telephone":"010-5320-5322","email":"eowlqk1@naver.com"}}</script>
   <style>
 :root {
   --ink: #171717;
@@ -148,15 +158,13 @@ footer h3 { margin: 0 0 12px; color: #fff; font-size: 17px; }
   <div class="category-layout">
     <aside class="category-menu" aria-label="상품 카테고리">
       <div class="category-tier">
-        <strong>대분류</strong>
         <a class="active" data-category="all" href="disposable.html">일회용전자담배</a>
       </div>
       <div class="category-tier">
-        <strong>중분류</strong>
-        <a href="#zero">무니코틴일회용</a><a href="#normal">일회용</a>
+        <a href="#zero">무니코틴</a><a href="#normal">일회용</a>
       </div>
     </aside>
-    <div class="category-content"><section class="category-block" id="zero"><div class="category-subhead"><h2>무니코틴일회용</h2><span>니코틴 없이 간편하게 쓰는 일회용 제품입니다.</span></div><div class="products"></div></section><section class="category-block" id="normal"><div class="category-subhead"><h2>일회용</h2><span>바로 사용할 수 있는 일반 일회용 전자담배입니다.</span></div><div class="products"></div></section></div>
+    <div class="category-content"></div>
   </div>
 </main>
   <footer><div class="wrap"><div><h3>Company Info</h3><div>상호 띵베이프 · 대표자 한명현 · 사업자등록번호 282-20-01652</div><div>통신판매업신고 2022-서울양천-0783 · 주소 서울특별시 양천구 화곡로8길 20-3 302호</div><div class="foot-links"><a href="#">회사소개</a><a href="#">이용약관</a><a href="#">개인정보처리방침</a><a href="#">이용안내</a></div></div><div><h3>Customer Service</h3><div>010-5320-5322</div><div>이메일 eowlqk1@naver.com · 운영시간 평일 09:00 ~ 18:00 (점심시간 12:00 ~ 13:00)</div></div><div><h3>Bank Account</h3><div>카카오뱅크 3333-24-7965978</div><div>예금주 한명현</div></div></div></footer>
@@ -181,17 +189,12 @@ footer h3 { margin: 0 0 12px; color: #fff; font-size: 17px; }
 
 <script>
   const categoryMenu = document.querySelector(".category-menu");
-  const categoryBlocks = [...document.querySelectorAll(".category-block")];
 
-  function showCategory(targetId) {
+  function selectCategory(targetId) {
     const showAll = !targetId || targetId === "all";
-    categoryBlocks.forEach((block) => {
-      block.hidden = !showAll && block.id !== targetId;
-    });
     categoryMenu.querySelectorAll("a").forEach((link) => {
       const href = link.getAttribute("href") || "";
-      const isMajor = link.dataset.category === "all";
-      link.classList.toggle("active", showAll ? isMajor : href === `#${targetId}`);
+      link.classList.toggle("active", showAll ? link.dataset.category === "all" : href === "#" + targetId);
     });
   }
 
@@ -199,26 +202,21 @@ footer h3 { margin: 0 0 12px; color: #fff; font-size: 17px; }
     const link = event.target.closest("a");
     if (!link) return;
     const href = link.getAttribute("href") || "";
-    if (link.dataset.category === "all") {
+    if (link.dataset.category === "all" || href.startsWith("#")) {
       event.preventDefault();
-      history.replaceState(null, "", location.pathname);
-      showCategory("all");
-      return;
-    }
-    if (href.startsWith("#")) {
-      event.preventDefault();
-      const targetId = href.slice(1);
-      history.replaceState(null, "", `${location.pathname}#${targetId}`);
-      showCategory(targetId);
+      const targetId = link.dataset.category === "all" ? "all" : href.slice(1);
+      history.replaceState(null, "", targetId === "all" ? location.pathname : location.pathname + "#" + targetId);
+      selectCategory(targetId);
+      window.dispatchEvent(new Event("hashchange"));
       document.querySelector("main").scrollIntoView({ behavior: "smooth", block: "start" });
     }
   });
 
-  showCategory(location.hash ? location.hash.slice(1) : "all");
+  selectCategory(location.hash ? location.hash.slice(1) : "all");
 </script>
 
-<script src="tthing-store-import.js"></script>
-<script src="admin-products.js"></script>
+<script src="tthing-store-import.js?v=20260605-new24"></script>
+<script src="admin-products.js?v=20260608-bulk-exposure"></script>
 
 <script id="tthingAuthRuntime">
 (function(){

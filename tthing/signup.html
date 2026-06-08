@@ -327,7 +327,7 @@ footer h3 { margin:0 0 12px; color:#fff; }
     return {
       name: document.getElementById("name").value.trim(),
       phone: document.getElementById("phone").value.replace(/[^0-9]/g, ""),
-      birth: ["birthYear", "birthMonth", "birthDay"].map((id) => document.getElementById(id).value.trim().padStart(id === "birthYear" ? 4 : 2, "0")).join(""),
+      birth: ["birthYear", "birthMonth", "birthDay"].every((id) => document.getElementById(id).value.trim()) ? ["birthYear", "birthMonth", "birthDay"].map((id) => document.getElementById(id).value.trim().padStart(id === "birthYear" ? 4 : 2, "0")).join("") : "",
       memberType: document.querySelector('[name="member_type"]:checked')?.value || "p",
       returnUrl: location.origin + location.pathname
     };
@@ -556,6 +556,10 @@ footer h3 { margin:0 0 12px; color:#fff; }
       name: document.getElementById("name").value.trim(),
       phone: document.getElementById("phone").value.trim(),
       email: document.getElementById("email").value.trim(),
+      postcode: document.getElementById("postcode").value.trim(),
+      address: document.getElementById("address").value.trim(),
+      addressDetail: document.getElementById("addressDetail").value.trim(),
+      birth: ["birthYear", "birthMonth", "birthDay"].map((id) => document.getElementById(id).value.trim().padStart(id === "birthYear" ? 4 : 2, "0")).join(""),
       identityProvider: document.getElementById("identityProvider").value,
       identityTxId: document.getElementById("identityTxId").value,
       identityCi: document.getElementById("identityCi").value,

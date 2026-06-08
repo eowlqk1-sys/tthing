@@ -6,6 +6,16 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>상품 상세 - 띵베이프</title>
+  <meta name="description" content="띵베이프 상품 상세 페이지입니다. 상품명, 가격, 옵션, 상세설명과 구매 정보를 확인하세요.">
+  <meta name="keywords" content="띵베이프, 무니코틴 액상, 무니코틴 전자담배, 입호흡 액상, 폐호흡 액상, 일회용 전자담배, 전자담배 기기, 전자담배 코일, 전자담배 팟">
+  <meta name="robots" content="index,follow">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="띵베이프">
+  <meta property="og:title" content="상품 상세 - 띵베이프">
+  <meta property="og:description" content="띵베이프 상품 상세 페이지입니다. 상품명, 가격, 옵션, 상세설명과 구매 정보를 확인하세요.">
+  <meta property="og:url" content="https://tthing.kr/tthing/product-detail.html">
+  <link rel="canonical" href="https://tthing.kr/tthing/product-detail.html">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"상품 상세 - 띵베이프","description":"띵베이프 상품 상세 페이지입니다. 상품명, 가격, 옵션, 상세설명과 구매 정보를 확인하세요.","url":"https://tthing.kr/tthing/product-detail.html","isPartOf":{"@type":"WebSite","name":"띵베이프","url":"https://tthing.kr/tthing/index.html"},"publisher":{"@type":"Organization","name":"띵베이프","url":"https://tthing.kr/tthing/index.html","telephone":"010-5320-5322","email":"eowlqk1@naver.com"}}</script>
   <style>
     :root { --ink:#171717; --sub:#6b6b6b; --line:#e8e5df; --red:#d84632; --green:#5f7f3f; --max:1240px; }
     * { box-sizing:border-box; }
@@ -236,7 +246,7 @@
     <div class="selected-total"><span>총 상품금액</span><span id="sideTotalPrice">0원</span></div>
     <div class="actions-row"><button class="btn cart-btn" type="button">장바구니</button><button class="btn buy-now" type="button">바로구매하기</button></div>
   </aside>
-  <script src="tthing-store-import.js"></script>
+  <script src="tthing-store-import.js?v=20260605-new24"></script>
   <script>
     const sideBuybar = document.getElementById("sideBuybar");
     const flavor = document.getElementById("flavor");
@@ -266,6 +276,7 @@
     let selections = [];
     let optionRequired = true;
     let optionCatalog = [];
+    let currentProduct = null;
 
     const dm = document.querySelector(".dm");
     const dmMsg1 = dm.querySelector(".msg1");
@@ -276,12 +287,55 @@
 
 
     const escapeAttr = (value) => String(value || "").replace(/[&<>\"\x27\x60]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "\x27": "&#39;", "\x60": "&#96;" }[char]));
+    const RECENT_KEY = "tthingRecentProducts";
+    const readRecentProducts = () => { try { return JSON.parse(localStorage.getItem(RECENT_KEY) || "[]"); } catch (error) { return []; } };
+    const writeRecentProduct = (product) => {
+      if (!product || !product.code) return;
+      const image = (product.productImages && product.productImages[0]) || (product.images && product.images[0]) || "";
+      const price = product.salePrice || product.discountPrice || product.price || "";
+      const recent = readRecentProducts().filter((item) => item.code !== product.code);
+      recent.unshift({ code: product.code, name: product.name || product.code, image, price, viewedAt: new Date().toISOString() });
+      localStorage.setItem(RECENT_KEY, JSON.stringify(recent.slice(0, 12)));
+      renderRecentQuickMenu();
+    };
+    const renderRecentQuickMenu = () => {
+      const list = document.querySelector(".nav__recent_view ul");
+      if (!list) return;
+      const recent = readRecentProducts().slice(0, 3);
+      if (!recent.length) return;
+      list.innerHTML = recent.map((item) => '<li><a href="product-detail.html?product=' + encodeURIComponent(item.code) + '">' + (item.image ? '<img src="' + escapeAttr(item.image) + '" alt="' + escapeAttr(item.name) + '" onerror="this.style.display=\'none\'">' : '') + '<span>' + escapeAttr(item.name) + '</span></a></li>').join("");
+    };
     const productImageAlt = (product) => product.altText || product.imageAlt || product.seo?.imageAlt || product.name;
+    const SITE_ORIGIN = "https://tthing.kr";
+    const absoluteUrl = (value) => {
+      if (!value) return "";
+      try { return new URL(value, location.origin).href; } catch (error) { return String(value); }
+    };
+    const plainText = (value) => String(value || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
     const upsertMeta = (name, content) => {
       const meta = document.querySelector("meta[name=\"" + name + "\"]") || document.head.appendChild(document.createElement("meta"));
       meta.setAttribute("name", name);
       meta.setAttribute("content", content || "");
       return meta;
+    };
+    const upsertPropertyMeta = (property, content) => {
+      const meta = document.querySelector("meta[property=\"" + property + "\"]") || document.head.appendChild(document.createElement("meta"));
+      meta.setAttribute("property", property);
+      meta.setAttribute("content", content || "");
+      return meta;
+    };
+    const upsertCanonical = (href) => {
+      const link = document.querySelector('link[rel="canonical"]') || document.head.appendChild(document.createElement("link"));
+      link.setAttribute("rel", "canonical");
+      link.setAttribute("href", href);
+      return link;
+    };
+    const upsertJsonLd = (id, data) => {
+      const script = document.getElementById(id) || document.head.appendChild(document.createElement("script"));
+      script.id = id;
+      script.type = "application/ld+json";
+      script.textContent = JSON.stringify(data);
+      return script;
     };
 
     function setMainImage(product, src) {
@@ -321,6 +375,15 @@
       return map[category] || 'index.html';
     }
 
+    function isCustomerLoggedIn() {
+      try {
+        const session = JSON.parse(localStorage.getItem("tthingCustomerSession") || "null");
+        return !!(session && session.authenticated);
+      } catch (error) {
+        return false;
+      }
+    }
+
     function applyProduct() {
       const params = new URLSearchParams(location.search);
       const code = params.get("product") || localStorage.getItem("tthingLastAdminProductCode");
@@ -341,13 +404,14 @@
       } catch (error) {}
       const storedProduct = code && !deletedCodes.has(code) ? adminProducts[code] : null;
       const importedProduct = code && !deletedCodes.has(code) && Array.isArray(window.TTHING_IMPORTED_PRODUCTS) ? window.TTHING_IMPORTED_PRODUCTS.find((item) => item && item.code === code) : null;
-      const product = importedProduct || storedProduct;
+      const product = importedProduct ? { ...importedProduct, ...(storedProduct || {}) } : storedProduct;
       if (importedProduct) {
-        adminProducts[importedProduct.code] = { ...(adminProducts[importedProduct.code] || {}), ...importedProduct };
+        adminProducts[importedProduct.code] = { ...importedProduct, ...(adminProducts[importedProduct.code] || {}) };
         localStorage.setItem("tthingAdminProducts", JSON.stringify(adminProducts));
         localStorage.setItem("tthingAdminProductsUpdatedAt", String(Date.now()));
       }
-      if (!product) {
+      if (!product || product.display === "F" || (product.exposure === "member" && !isCustomerLoggedIn())) {
+        upsertMeta("robots", "noindex,nofollow");
         productName.textContent = "등록된 상품이 없습니다.";
         sideProductName.textContent = "등록된 상품이 없습니다.";
         productSummary.textContent = "현재 표시할 상품이 없습니다.";
@@ -366,11 +430,47 @@
       }
       const seo = product.seo || {};
       const seoOpen = seo.open !== false && seo.open !== "N" && seo.openSetting !== "N";
-      document.title = seo.title || `${product.name} - 띵베이프`;
+      const productTitle = seo.title || `${product.name} - 띵베이프`;
+      const productDescription = plainText(seo.description || product.summary || product.desc || product.simple || `${product.name} 상품 상세정보와 구매 정보를 확인하세요.`).slice(0, 155);
+      const productKeywords = [...new Set([seo.keywords, product.name, product.category, ...(product.categories || []), ...(product.options || []), "무니코틴 일회용전자담배", "일반 일회용전자담배", "일회용전자담배", "일회용 전자담배", "무니코틴 일회용", "일반 일회용", "입호흡액상", "무니코틴액상", "무니코틴 액상", "입호흡 액상", "전자담배 액상", "띵베이프", "전자담배", "무니코틴"].filter(Boolean).flatMap((value) => String(value).split(",").map((item) => item.trim()).filter(Boolean)))].join(", ");
+      const canonicalUrl = `${SITE_ORIGIN}${location.pathname}?product=${encodeURIComponent(product.code)}`;
+      const productImagesForSeo = product.productImages && product.productImages.length ? product.productImages : (product.images || []);
+      const seoImage = absoluteUrl(productImagesForSeo[0] || "");
+      const priceAmount = Number(String(product.saleUnit || product.discountUnit || product.unit || product.price || 0).replace(/[^0-9.-]/g, "")) || 0;
+      document.title = productTitle;
       upsertMeta("author", seo.author || "띵베이프");
-      upsertMeta("description", seo.description || product.summary || product.desc || product.name);
-      upsertMeta("keywords", seo.keywords || "");
+      upsertMeta("description", productDescription);
+      upsertMeta("keywords", productKeywords);
       upsertMeta("robots", seoOpen ? "index,follow" : "noindex,nofollow");
+      upsertCanonical(canonicalUrl);
+      upsertPropertyMeta("og:type", "product");
+      upsertPropertyMeta("og:site_name", "띵베이프");
+      upsertPropertyMeta("og:title", productTitle);
+      upsertPropertyMeta("og:description", productDescription);
+      upsertPropertyMeta("og:url", canonicalUrl);
+      if (seoImage) upsertPropertyMeta("og:image", seoImage);
+      if (priceAmount) {
+        upsertPropertyMeta("product:price:amount", String(priceAmount));
+        upsertPropertyMeta("product:price:currency", "KRW");
+      }
+      upsertJsonLd("productStructuredData", {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name: product.name,
+        description: productDescription,
+        sku: product.code,
+        category: (product.categories && product.categories[0]) || product.category || "",
+        image: productImagesForSeo.map(absoluteUrl).filter(Boolean),
+        brand: { "@type": "Brand", name: product.brand || "띵베이프" },
+        offers: {
+          "@type": "Offer",
+          url: canonicalUrl,
+          priceCurrency: "KRW",
+          price: priceAmount || 0,
+          availability: product.selling === "F" ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
+          itemCondition: "https://schema.org/NewCondition"
+        }
+      });
       productName.textContent = product.name;
       sideProductName.textContent = product.name;
       productSummary.textContent = product.summary || product.desc || product.name;
@@ -384,16 +484,22 @@
       salePrice.textContent = customerPrice;
       sideSalePrice.textContent = customerPrice;
       unitPrice = product.saleUnit || product.discountUnit || product.unit || 0;
-      optionRequired = product.optionUse !== false && product.optionUse !== "F";
+      const rawOptionCatalog = product.optionItems && product.optionItems.length
+        ? product.optionItems
+        : (product.options && product.options.length ? product.options.map((name) => ({ name, addPrice: 0 })) : []);
+      optionCatalog = rawOptionCatalog.filter((option) => {
+        const name = String(typeof option === "string" ? option : option.name || "").trim();
+        return name && name !== "기본" && name !== "기본상품";
+      });
+      optionRequired = product.optionUse !== false && product.optionUse !== "F" && optionCatalog.length > 1;
       document.querySelectorAll(".option").forEach((block) => { block.style.display = optionRequired ? "" : "none"; });
-      selections = optionRequired ? [] : [{ name: "기본상품", qty: 1 }];
+      selections = optionRequired ? [] : [{ name: "", qty: 1 }];
       if (product.origin) {
         originRow.style.display = "flex";
         originPrice.textContent = product.origin;
       } else {
         originRow.style.display = "none";
       }
-      optionCatalog = product.optionItems && product.optionItems.length ? product.optionItems : (product.options && product.options.length ? product.options.map((name) => ({ name, addPrice: 0 })) : [{ name: "기본", addPrice: 0 }]);
       fillSelect(flavor, optionCatalog);
       fillSelect(sideFlavor, optionCatalog);
       const productImages = product.productImages && product.productImages.length ? product.productImages : (product.images || []);
@@ -408,6 +514,12 @@
         button.addEventListener("click", () => setMainImage(product, button.dataset.src));
       });
       if (!productImages.length) mainPhoto.classList.add("is-missing");
+      writeRecentProduct(product);
+      const canSell = product.selling !== "F";
+      document.querySelectorAll(".buy-now,.cart-btn").forEach((button) => {
+        button.disabled = !canSell;
+        if (!canSell) button.textContent = "판매안함";
+      });
     }
 
     function dateKey(date) {
@@ -502,13 +614,13 @@
     function selectedMarkup() {
       return selections.map((item) => `
         <div class="selected-option">
-          <strong>${item.name}${item.addPrice ? ` (+${item.addPrice.toLocaleString("ko-KR")}원)` : ""}</strong>
+          ${optionRequired ? `<strong>${item.name}${item.addPrice ? ` (+${item.addPrice.toLocaleString("ko-KR")}원)` : ""}</strong>` : "<strong>수량</strong>"}
           <div class="qty-stepper" aria-label="수량 조절">
             <button type="button" data-step="minus" data-option="${item.name}" aria-label="수량 감소">−</button>
             <input type="number" min="1" value="${item.qty}" data-option="${item.name}">
             <button type="button" data-step="plus" data-option="${item.name}" aria-label="수량 증가">+</button>
           </div>
-          <button class="remove-option" type="button" data-remove="${item.name}" aria-label="옵션 삭제">×</button>
+          ${optionRequired ? `<button class="remove-option" type="button" data-remove="${item.name}" aria-label="옵션 삭제">×</button>` : ""}
         </div>
       `).join("");
     }
@@ -547,7 +659,7 @@
 
     function goOrder() {
       if (!selections.length && !optionRequired) {
-        selections = [{ name: "기본상품", qty: 1 }];
+        selections = [{ name: "", qty: 1 }];
         renderSelections();
       }
       if (!selections.length) {
@@ -557,12 +669,14 @@
       localStorage.setItem("tthingOrderDraft", JSON.stringify({
         items: selections.map((item) => ({
           name: productName.textContent,
-          option: item.name,
+          option: optionRequired ? item.name : "",
           qty: item.qty,
           unit: unitPrice + Number(item.addPrice || 0),
           baseUnit: unitPrice,
           optionAddPrice: Number(item.addPrice || 0)
-        }))
+        })),
+        useIndividualPaymentMethod: currentProduct?.useIndividualPaymentMethod === true,
+        paymentMethods: Array.isArray(currentProduct?.paymentMethods) && currentProduct.paymentMethods.length ? currentProduct.paymentMethods : ['card','bank','virtual','mileage','transfer']
       }));
       location.href = "order.html";
     }
@@ -575,6 +689,7 @@
       const limit = Math.max(240, document.documentElement.scrollHeight * 0.3);
       sideBuybar.classList.toggle("visible", window.scrollY > limit);
     }
+    renderRecentQuickMenu();
     applyProduct();
     renderSelections();
     updateShippingTimer();

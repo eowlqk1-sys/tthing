@@ -136,6 +136,7 @@
     }
   </style>
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  <script src="../data/imported-customers.js"></script>
   <script src="https://payments.korpay.com/js/korpay-sdk.js"></script>
   <script>
     function execDaumPostcode() {
@@ -193,8 +194,10 @@
           <div class="panel-head"><h2>결제수단</h2></div>
           <div class="panel-body">
             <div class="pay-methods">
-              <label class="pay-method"><input type="radio" name="payMethod" value="card" checked><span>신용카드</span></label>
-              <label class="pay-method"><input type="radio" name="payMethod" value="bank"><span>무통장입금</span></label>
+              <label class="pay-method" data-pay-method="card"><input type="radio" name="payMethod" value="card" checked><span>신용카드</span></label>
+              <label class="pay-method" data-pay-method="bank"><input type="radio" name="payMethod" value="bank"><span>무통장입금</span></label>
+              <label class="pay-method" data-pay-method="virtual"><input type="radio" name="payMethod" value="virtual"><span>가상계좌</span></label>
+              <label class="pay-method" data-pay-method="transfer"><input type="radio" name="payMethod" value="transfer"><span>계좌이체</span></label>
             </div>
             <div id="bankInfo" style="display:none; margin-top:18px; padding:18px; border:1px solid var(--line); border-radius:8px; background:var(--soft); font-size:14px; line-height:1.6;">
               <p style="margin:0 0 12px;"><strong>입금 계좌 안내</strong><br>카카오뱅크 3333-24-7965978<br>예금주: 한명현</p>
@@ -245,7 +248,7 @@
   <script>
     const fallbackOrder = {
       items: [
-        { name: "띵베이프 샘플 상품명 30ml", option: "기본", qty: 1, unit: 11000 }
+        { name: "띵베이프 샘플 상품명 30ml", option: "", qty: 1, unit: 11000 }
       ]
     };
 
@@ -262,6 +265,8 @@
     }
 
     const order = loadOrder();
+    const DEFAULT_PAYMENT_METHODS = ["card", "bank", "virtual", "transfer", "mileage"];
+    const allowedPaymentMethods = order.useIndividualPaymentMethod && Array.isArray(order.paymentMethods) && order.paymentMethods.length ? order.paymentMethods : DEFAULT_PAYMENT_METHODS;
     const orderItems = document.getElementById("orderItems");
     const productSum = document.getElementById("productSum");
     const deliveryFee = document.getElementById("deliveryFee");
@@ -277,12 +282,30 @@
     let currentCustomer = null;
     let currentTotals = { productTotal: 0, delivery: 0, usedPoints: 0, earnPoints: 0, finalAmount: 0, available: 0, canUsePoints: false };
 
-    function getImportedCustomers() {
-      try { return JSON.parse(localStorage.getItem("tthingImportedCustomers") || "[]"); } catch (error) { return []; }
+    function readJson(key, fallback) {
+      try { return JSON.parse(localStorage.getItem(key) || "null") || fallback; }
+      catch (error) { return fallback; }
     }
 
-    function getCustomerSaved(item) {
-      try { return JSON.parse(localStorage.getItem("tthingCustomerDetail:" + item.id) || "{}"); } catch (error) { return {}; }
+    function getImportedCustomers() {
+      const byId = new Map();
+      [...(window.TTHING_IMPORTED_CUSTOMERS || []), ...readJson("tthingImportedCustomers", [])].forEach((item) => {
+        if (item && item.id) byId.set(item.id, { ...(byId.get(item.id) || {}), ...item });
+      });
+      return [...byId.values()];
+    }
+
+    function getCustomerSaved(itemOrId) {
+      const id = typeof itemOrId === "string" ? itemOrId : itemOrId?.id;
+      return id ? readJson("tthingCustomerDetail:" + id, {}) : {};
+    }
+
+    function getSessionCustomer() {
+      const session = readJson("tthingCustomerSession", null);
+      if (!session || !session.authenticated) return null;
+      const imported = getImportedCustomers().find((item) => item.id === session.user) || {};
+      const saved = getCustomerSaved(session.user);
+      return { ...imported, ...session, ...saved, user: session.user || imported.id || "", authenticated: true };
     }
 
     function getAllCustomers() {
@@ -292,9 +315,11 @@
         { id:"park-min", name:"박민서", phone:"010-2914-6632", email:"minseo.park@example.com", points:138500 }
       ];
       const byId = new Map();
-      [...fallback, ...getImportedCustomers()].forEach((item) => {
-        const saved = getCustomerSaved(item);
-        byId.set(item.id, { ...item, ...saved, points: saved.points ?? item.points ?? 0 });
+      [...fallback, ...getImportedCustomers(), getSessionCustomer()].forEach((item) => {
+        if (!item || !(item.id || item.user)) return;
+        const id = item.id || item.user;
+        const saved = getCustomerSaved(id);
+        byId.set(id, { ...(byId.get(id) || {}), ...item, ...saved, id, points: saved.points ?? item.points ?? 0 });
       });
       return [...byId.values()];
     }
@@ -315,7 +340,7 @@
       const delivery = productTotal >= 40000 ? 0 : 3000;
       currentCustomer = findCustomer();
       const available = Number(currentCustomer?.points || 0);
-      const canUsePoints = productTotal >= 20000;
+      const canUsePoints = allowedPaymentMethods.includes("mileage") && productTotal >= 20000;
       let usedPoints = Number(pointUse?.value || 0);
       if (!canUsePoints || !currentCustomer) usedPoints = 0;
       usedPoints = Math.min(Math.max(0, usedPoints), available, productTotal);
@@ -334,7 +359,7 @@
           <div class="thumb" aria-hidden="true"></div>
           <div class="item-info">
             <strong>${item.name}</strong>
-            <span>옵션: ${item.option} / 수량 ${item.qty}개</span>
+            <span>${item.option && item.option !== "기본" && item.option !== "기본상품" ? `옵션: ${item.option} / ` : ""}수량 ${item.qty}개</span>
           </div>
           <div class="item-price">${formatPrice(item.unit * item.qty)}</div>
         </div>
@@ -348,25 +373,62 @@
       availablePoints.textContent = formatPrice(currentTotals.available || 0);
       expectedPoints.textContent = formatPrice(currentTotals.earnPoints);
       pointUse.disabled = !currentTotals.canUsePoints || !currentCustomer;
-      pointHelp.textContent = currentCustomer
-        ? (currentTotals.canUsePoints ? "적립금 사용액을 제외한 상품금액의 2%가 적립됩니다." : "상품금액 20,000원 이상부터 적립금을 사용할 수 있습니다.")
-        : "회원 정보가 확인되지 않아 적립금 사용과 적립 연동이 비활성화되었습니다.";
+      pointHelp.textContent = !allowedPaymentMethods.includes("mileage")
+        ? "이 상품은 개별 결제수단 설정으로 적립금 사용이 제한되어 있습니다."
+        : (currentCustomer
+          ? (currentTotals.canUsePoints ? "적립금 사용액을 제외한 상품금액의 2%가 적립됩니다." : "상품금액 20,000원 이상부터 적립금을 사용할 수 있습니다.")
+          : "회원 정보가 확인되지 않아 적립금 사용과 적립 연동이 비활성화되었습니다.");
     }
 
     function applySessionToForm() {
-      const session = JSON.parse(localStorage.getItem("tthingCustomerSession") || "null");
-      if (session && session.authenticated) {
-        if (session.name) document.getElementById("buyerName").value = session.name;
-        if (session.phone) document.getElementById("buyerPhone").value = session.phone;
-        if (session.email) document.getElementById("buyerEmail").value = session.email;
-      }
+      const customer = getSessionCustomer();
+      if (!customer) return;
+      if (customer.name) document.getElementById("buyerName").value = customer.name;
+      if (customer.phone) document.getElementById("buyerPhone").value = customer.phone;
+      if (customer.email) document.getElementById("buyerEmail").value = customer.email;
+      if (customer.postcode) document.getElementById("postcode").value = customer.postcode;
+      if (customer.address) document.getElementById("address").value = customer.address;
+      if (customer.addressDetail) document.getElementById("addressDetail").value = customer.addressDetail;
     }
+    function syncBuyerToReceiver() {
+      document.getElementById("receiverName").value = document.getElementById("buyerName").value;
+      document.getElementById("receiverPhone").value = document.getElementById("buyerPhone").value;
+    }
+
+    function syncPaymentMethods() {
+      const methodLabels = [...document.querySelectorAll(".pay-method")];
+      methodLabels.forEach((label) => {
+        const method = label.dataset.payMethod;
+        const allowed = allowedPaymentMethods.includes(method);
+        label.style.display = allowed ? "" : "none";
+        label.querySelector("input").disabled = !allowed;
+        if (!allowed) label.querySelector("input").checked = false;
+      });
+      const selected = document.querySelector('[name="payMethod"]:checked:not(:disabled)');
+      if (!selected) {
+        const first = document.querySelector('[name="payMethod"]:not(:disabled)');
+        if (first) first.checked = true;
+      }
+      if (!allowedPaymentMethods.includes("mileage")) {
+        pointUse.value = 0;
+        pointUse.disabled = true;
+        document.getElementById("useAllPoints").disabled = true;
+      }
+      const pay = document.querySelector('[name="payMethod"]:checked')?.value;
+      document.getElementById('bankInfo').style.display = pay === 'bank' ? 'block' : 'none';
+    }
+
+    syncPaymentMethods();
     applySessionToForm();
+    syncBuyerToReceiver();
 
     pointUse.addEventListener("input", renderOrder);
     document.getElementById("useAllPoints").addEventListener("click", () => { pointUse.value = currentTotals.available || 0; renderOrder(); });
     document.getElementById("clearPoints").addEventListener("click", () => { pointUse.value = 0; renderOrder(); });
-    ["buyerName", "buyerPhone", "buyerEmail"].forEach((id) => document.getElementById(id).addEventListener("input", renderOrder));
+    ["buyerName", "buyerPhone", "buyerEmail"].forEach((id) => document.getElementById(id).addEventListener("input", () => {
+      if (id !== "buyerEmail") syncBuyerToReceiver();
+      renderOrder();
+    }));
     
     document.querySelectorAll('[name="payMethod"]').forEach(radio => {
       radio.addEventListener('change', (e) => {
@@ -377,10 +439,7 @@
       });
     });
 
-    document.getElementById("sameBuyer").addEventListener("click", () => {
-      document.getElementById("receiverName").value = document.getElementById("buyerName").value;
-      document.getElementById("receiverPhone").value = document.getElementById("buyerPhone").value;
-    });
+    document.getElementById("sameBuyer").addEventListener("click", syncBuyerToReceiver);
 
     function makeOrderNo() {
       const now = new Date();
@@ -390,7 +449,7 @@
     }
 
     function payLabel(value) {
-      return { card: "카드", bank: "무통장", phone: "휴대폰" }[value] || "카드";
+      return { card: "카드", bank: "무통장", virtual: "가상계좌", transfer: "계좌이체", phone: "휴대폰" }[value] || "카드";
     }
 
     const TELEGRAM_BOT_TOKEN = "8482875386:AAHWatfCwcdQWVrkK24aA8AjJIkW7DYB3lg";
@@ -467,13 +526,13 @@
       const pay = options.pay || payLabel(payValue);
       const now = new Date();
       const items = order.items.map((item) => ({
-        name: item.name,
-        option: item.option || "기본",
+        name: String(item.name || "상품명 없음").trim(),
+        option: ["기본", "기본상품"].includes(String(item.option || "").trim()) ? "" : String(item.option || "").trim(),
         qty: Number(item.qty || 1),
         unit: Number(item.unit || 0)
       }));
-      const product = items.length === 1 ? items[0].name : `${items[0].name} 외 ${items.length - 1}건`;
-      const option = items.map((item) => `${item.option || "기본"} / 수량 ${item.qty}개`).join("\n");
+      const product = items.map((item) => item.name).join("\n");
+      const option = items.map((item) => `${item.option ? item.option + " / " : ""}수량 ${item.qty}개`).join("\n");
       const buyer = document.getElementById("buyerName").value.trim() || "고객";
       const phone = document.getElementById("buyerPhone").value.trim() || "010-0000-0000";
       const email = document.getElementById("buyerEmail").value.trim();
@@ -518,7 +577,7 @@
       applyCustomerPoints();
       if (adminOrder.status === "unpaid") {
         const telegramItems = adminOrder.items.map((item, index) => {
-          const optionText = item.option && item.option !== "기본" ? ` / 옵션: ${item.option}` : "";
+          const optionText = item.option ? ` / 옵션: ${item.option}` : "";
           return `${index + 1}. ${item.name}${optionText} / 수량: ${item.qty}개`;
         }).join("\n");
         sendTelegramAlert([

@@ -35,11 +35,31 @@ main { width:min(var(--max),100%); margin:0 auto; padding:52px 22px 86px; }
 .panel { border:1px solid var(--line); border-radius:10px; padding:28px; background:#fff; }
 .panel h2 { margin:0 0 10px; font-size:22px; }
 .panel p { margin:0; color:var(--sub); line-height:1.7; }
+.mypage-grid { display:grid; grid-template-columns:260px 1fr; gap:28px; align-items:start; }
+.summary { display:grid; gap:12px; }
+.summary-card { border:1px solid var(--line); border-radius:8px; padding:18px; background:#faf8f3; }
+.summary-card strong { display:block; font-size:13px; color:var(--sub); margin-bottom:7px; }
+.summary-card span { display:block; font-size:20px; font-weight:900; }
+.profile-form { display:grid; gap:18px; margin-top:22px; }
+.form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+.field { display:grid; gap:7px; }
+.field.full { grid-column:1 / -1; }
+.field label { font-size:13px; font-weight:900; }
+.field input { width:100%; height:46px; border:1px solid var(--line); border-radius:6px; padding:0 12px; outline:0; background:#fff; }
+.field input:focus { border-color:var(--green); box-shadow:0 0 0 3px rgba(95,127,63,.14); }
+.address-row { display:grid; grid-template-columns:1fr 112px; gap:8px; }
+.address-row button, .profile-actions button { height:46px; border-radius:6px; border:1px solid #171717; background:#171717; color:#fff; font-weight:900; cursor:pointer; }
+.profile-actions { display:flex; justify-content:flex-end; gap:8px; }
+.profile-actions .secondary { background:#fff; color:#171717; }
+.profile-status { min-height:20px; margin:0; font-size:13px; font-weight:800; color:var(--green); }
+.login-required { display:grid; gap:14px; align-items:start; }
+.login-required a { display:inline-flex; width:max-content; height:42px; align-items:center; justify-content:center; padding:0 18px; border-radius:6px; background:#171717; color:#fff; font-weight:900; }
 footer { background:#202020; color:rgba(255,255,255,.72); }
 footer .wrap { padding-top:44px; padding-bottom:52px; display:grid; grid-template-columns:1.4fr .8fr .8fr; gap:34px; font-size:13px; line-height:1.8; }
 footer h3 { margin:0 0 12px; color:#fff; }
 .foot-links { display:flex; flex-wrap:wrap; gap:12px; margin-top:16px; color:#fff; font-weight:800; }
 @media (max-width:980px) { .head .wrap { grid-template-columns:1fr auto; } .search { grid-column:1 / -1; order:3; margin-bottom:16px; } .gnb .wrap { justify-content:flex-start; gap:28px; } footer .wrap { grid-template-columns:1fr; } }
+@media (max-width:760px) { .mypage-grid, .form-grid, .address-row { grid-template-columns:1fr; } .profile-actions { justify-content:stretch; } .profile-actions button { width:100%; } }
 @media (max-width:680px) { .wrap, main { padding-left:14px; padding-right:14px; } .bar .wrap { justify-content:center; gap:12px; } .bar a:nth-child(n+4) { display:none; } .head .wrap { min-height:78px; } .logo { font-size:25px; } .logo-mark { width:32px; height:32px; } .topArea_user { gap:10px; font-size:13px; } }
 
 
@@ -57,8 +77,156 @@ footer h3 { margin:0 0 12px; color:#fff; }
   <header class="head"><div class="wrap"><a class="logo" href="index.html"><span class="logo-mark" aria-hidden="true"></span><span class="logo-text"><strong>띵베이프</strong><em>TTHING VAPE</em></span></a><form class="search"><input type="search" placeholder="상품명을 검색해보세요"><button type="submit" aria-label="검색">⌕</button></form><div class="topArea_user"><div class="menu_user pc_view"><a href="mypage.html">마이페이지</a><ul class="menu_user_list"><li><a href="orders.html">주문조회</a></li><li><a href="recent-products.html">최근 본 상품</a></li><li><a href="wishlist.html">관심상품</a></li><li><a href="mileage.html">적립금</a></li><li><a href="coupons.html">쿠폰</a></li><li><a href="my-posts.html">나의 게시글</a></li></ul></div><div class="menu_basket"><a href="basket.html">장바구니 <span class="count"><span>0</span></span></a></div></div></div></header>
   <nav class="gnb"><div class="wrap"><a href="best.html">BEST</a><a href="new.html">NEW</a><a href="liquid.html">액상</a><a href="disposable.html">일회용전자담배</a><a href="device.html">기기</a><a href="supply.html">소모품</a><a href="timesale.html">TIME SALE</a><a href="board.html">게시판</a></div></nav>
   <section class="page-hero"><div class="wrap"><h1>마이페이지</h1><p class="lead">회원 정보, 주문 현황, 관심상품, 적립금 등을 확인하는 페이지입니다.</p></div></section>
-  <main><section class="panel"><h2>마이페이지</h2><p>회원 정보, 주문 현황, 관심상품, 적립금 등을 확인하는 페이지입니다.</p></section></main>
+  <main>
+    <section class="mypage-grid" id="mypageContent">
+      <aside class="summary" aria-label="회원 요약">
+        <div class="summary-card"><strong>회원명</strong><span id="summaryName">-</span></div>
+        <div class="summary-card"><strong>회원등급</strong><span id="summaryGrade">일반회원</span></div>
+        <div class="summary-card"><strong>보유 적립금</strong><span id="summaryPoints">0원</span></div>
+      </aside>
+      <section class="panel">
+        <h2>기본정보</h2>
+        <p>주문과 배송에 사용할 기본 회원 정보를 수정할 수 있습니다.</p>
+        <form class="profile-form" id="profileForm">
+          <div class="form-grid">
+            <div class="field"><label for="profileUserId">아이디</label><input id="profileUserId" name="user" type="text" autocomplete="username" readonly></div>
+            <div class="field"><label for="profileName">이름</label><input id="profileName" name="name" type="text" autocomplete="name" required></div>
+            <div class="field"><label for="profilePhone">휴대전화</label><input id="profilePhone" name="phone" type="tel" autocomplete="tel" placeholder="010-0000-0000" required></div>
+            <div class="field"><label for="profileEmail">이메일</label><input id="profileEmail" name="email" type="email" autocomplete="email" required></div>
+            <div class="field"><label for="profileBirth">생년월일</label><input id="profileBirth" name="birth" type="text" inputmode="numeric" maxlength="8" placeholder="YYYYMMDD"></div>
+            <div class="field"><label for="profilePostcode">우편번호</label><div class="address-row"><input id="profilePostcode" name="postcode" type="text" readonly><button type="button" id="addressSearchBtn">주소검색</button></div></div>
+            <div class="field full"><label for="profileAddress">기본주소</label><input id="profileAddress" name="address" type="text" autocomplete="street-address" placeholder="기본주소"></div>
+            <div class="field full"><label for="profileAddressDetail">상세주소</label><input id="profileAddressDetail" name="addressDetail" type="text" placeholder="상세주소"></div>
+          </div>
+          <p class="profile-status" id="profileStatus" role="status" aria-live="polite"></p>
+          <div class="profile-actions"><button class="secondary" type="button" id="resetProfileBtn">되돌리기</button><button type="submit">저장</button></div>
+        </form>
+      </section>
+    </section>
+  </main>
   <footer><div class="wrap"><div><h3>Company Info</h3><div>상호 띵베이프 · 대표자 한명현 · 사업자등록번호 282-20-01652</div><div>통신판매업신고 2022-서울양천-0783 · 주소 서울특별시 양천구 화곡로8길 20-3 302호</div><div class="foot-links"><a href="#">회사소개</a><a href="#">이용약관</a><a href="#">개인정보처리방침</a><a href="#">이용안내</a></div></div><div><h3>Customer Service</h3><div>010-5320-5322</div><div>이메일 eowlqk1@naver.com · 운영시간 평일 09:00 ~ 18:00 (점심시간 12:00 ~ 13:00)</div></div><div><h3>Bank Account</h3><div>카카오뱅크 3333-24-7965978</div><div>예금주 한명현</div></div></div></footer>
+
+<script src="../data/imported-customers.js"></script>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+(function(){
+  const SESSION_KEY = "tthingCustomerSession";
+  const form = document.getElementById("profileForm");
+  const status = document.getElementById("profileStatus");
+  const fields = {
+    user: document.getElementById("profileUserId"),
+    name: document.getElementById("profileName"),
+    phone: document.getElementById("profilePhone"),
+    email: document.getElementById("profileEmail"),
+    birth: document.getElementById("profileBirth"),
+    postcode: document.getElementById("profilePostcode"),
+    address: document.getElementById("profileAddress"),
+    addressDetail: document.getElementById("profileAddressDetail")
+  };
+  let loadedProfile = null;
+
+  function readJson(key, fallback) {
+    try { return JSON.parse(localStorage.getItem(key) || "null") || fallback; }
+    catch (error) { return fallback; }
+  }
+  function readSession() { return readJson(SESSION_KEY, null); }
+  function detailKey(userId) { return "tthingCustomerDetail:" + userId; }
+  function savedCustomerDetail(userId) { return userId ? readJson(detailKey(userId), {}) : {}; }
+  function importedCustomer(userId) {
+    const list = window.TTHING_IMPORTED_CUSTOMERS || [];
+    return list.find((item) => item && item.id === userId) || null;
+  }
+  function formatPrice(value) { return Number(value || 0).toLocaleString("ko-KR") + "원"; }
+  function normalizeBirth(value) { return String(value || "").replace(/[^0-9]/g, "").slice(0, 8); }
+  function profileFromSession() {
+    const session = readSession();
+    if (!session || !session.authenticated) return null;
+    const imported = importedCustomer(session.user) || {};
+    const saved = savedCustomerDetail(session.user);
+    return { ...imported, ...session, ...saved, user: session.user || imported.id || "", authenticated: true };
+  }
+  function fillForm(profile) {
+    loadedProfile = { ...profile };
+    fields.user.value = profile.user || profile.id || "";
+    fields.name.value = profile.name || "";
+    fields.phone.value = profile.phone || "";
+    fields.email.value = profile.email || "";
+    fields.birth.value = normalizeBirth(profile.birth || "");
+    fields.postcode.value = profile.postcode || "";
+    fields.address.value = profile.address || "";
+    fields.addressDetail.value = profile.addressDetail || "";
+    document.getElementById("summaryName").textContent = profile.name || "-";
+    document.getElementById("summaryGrade").textContent = profile.grade || "일반회원";
+    document.getElementById("summaryPoints").textContent = formatPrice(profile.points || 0);
+  }
+  function showLoginRequired() {
+    document.getElementById("mypageContent").innerHTML = '<section class="panel login-required"><h2>로그인이 필요합니다</h2><p>기본정보를 수정하려면 먼저 로그인해 주세요.</p><a href="login.html?next=mypage.html">로그인</a></section>';
+  }
+  function payloadFromForm() {
+    return {
+      user: fields.user.value.trim(),
+      name: fields.name.value.trim(),
+      phone: fields.phone.value.trim(),
+      email: fields.email.value.trim(),
+      birth: normalizeBirth(fields.birth.value),
+      postcode: fields.postcode.value.trim(),
+      address: fields.address.value.trim(),
+      addressDetail: fields.addressDetail.value.trim(),
+      updatedAt: Date.now()
+    };
+  }
+  function saveProfile(event) {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    const session = readSession();
+    if (!session || !session.authenticated) {
+      showLoginRequired();
+      return;
+    }
+    const payload = payloadFromForm();
+    const nextSession = { ...session, ...payload, authenticated: true };
+    localStorage.setItem(SESSION_KEY, JSON.stringify(nextSession));
+    if (payload.user) {
+      const saved = savedCustomerDetail(payload.user);
+      localStorage.setItem(detailKey(payload.user), JSON.stringify({ ...saved, ...payload }));
+    }
+    fillForm({ ...loadedProfile, ...nextSession });
+    status.textContent = "기본정보가 저장되었습니다.";
+  }
+  function openAddressSearch() {
+    if (!window.daum || !window.daum.Postcode) {
+      status.textContent = "주소검색 서비스를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.";
+      return;
+    }
+    new daum.Postcode({
+      oncomplete: function(data) {
+        const roadAddress = data.roadAddress || data.jibunAddress || "";
+        let extraAddress = "";
+        if (data.userSelectedType === "R") {
+          if (data.bname && /[동|로|가]$/g.test(data.bname)) extraAddress += data.bname;
+          if (data.buildingName && data.apartment === "Y") extraAddress += extraAddress ? ", " + data.buildingName : data.buildingName;
+          if (extraAddress) extraAddress = " (" + extraAddress + ")";
+        }
+        fields.postcode.value = data.zonecode || "";
+        fields.address.value = roadAddress + extraAddress;
+        fields.addressDetail.focus();
+      }
+    }).open();
+  }
+
+  const profile = profileFromSession();
+  if (!profile) showLoginRequired();
+  else fillForm(profile);
+  form?.addEventListener("submit", saveProfile);
+  document.getElementById("resetProfileBtn")?.addEventListener("click", function() {
+    if (loadedProfile) {
+      fillForm(loadedProfile);
+      status.textContent = "";
+    }
+  });
+  document.getElementById("addressSearchBtn")?.addEventListener("click", openAddressSearch);
+})();
+</script>
 
 <script id="tthingAuthRuntime">
 (function(){

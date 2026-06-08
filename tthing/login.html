@@ -172,7 +172,18 @@ footer h3 { margin:0 0 12px; color:#fff; }
     if ((userId === CUSTOMER_ACCOUNT.id && password === CUSTOMER_ACCOUNT.password) || registeredCustomer) {
       if (rememberId.checked) localStorage.setItem(SAVED_ID_KEY, userId);
       else localStorage.removeItem(SAVED_ID_KEY);
-      localStorage.setItem(SESSION_KEY, JSON.stringify({ user: registeredCustomer?.id || userId, name: registeredCustomer?.name || "", provider: registeredCustomer ? "customer-list" : "password", authenticated: true, loggedAt: Date.now() }));
+      localStorage.setItem(SESSION_KEY, JSON.stringify({
+        user: registeredCustomer?.id || userId,
+        name: registeredCustomer?.name || "",
+        phone: registeredCustomer?.phone || "",
+        email: registeredCustomer?.email || "",
+        address: registeredCustomer?.address || "",
+        grade: registeredCustomer?.grade || "일반회원",
+        points: registeredCustomer?.points || 0,
+        provider: registeredCustomer ? "customer-list" : "password",
+        authenticated: true,
+        loggedAt: Date.now()
+      }));
       location.href = getReturnUrl();
       return;
     }

@@ -557,9 +557,22 @@
       `;
     }
 
+    function productMarkup(order) {
+      const names = order.items && order.items.length
+        ? order.items.map((item) => String(item.name || "").trim()).filter(Boolean)
+        : String(order.product || "").split("\n").map((name) => name.trim()).filter(Boolean);
+      return names.map(escapeHtml).join("<br>");
+    }
+
     function optionMarkup(order) {
-      const option = order.option || (order.items && order.items.length ? order.items.map((item) => `${item.option || "기본"} / 수량 ${item.qty || 1}개`).join("\n") : "기본 / 수량 1개");
-      return String(option).split(/\n|<br\s*\/?\s*>/i).map((line) => line.trim()).filter(Boolean).join("<br>");
+      const lines = order.items && order.items.length
+        ? order.items.map((item) => {
+            const rawOption = String(item.option || "").trim();
+            const option = rawOption === "기본" || rawOption === "기본상품" ? "" : rawOption;
+            return (option ? option + " / " : "") + "수량 " + Number(item.qty || 1) + "개";
+          })
+        : String(order.option || "수량 1개").split(/\n|<br\s*\/?\s*>/i).map((line) => line.replace(/^(기본|기본상품)\s*\/\s*/, "").trim()).filter(Boolean);
+      return lines.map(escapeHtml).join("<br>");
     }
 
     function defaultRowMarkup(order) {
@@ -568,7 +581,7 @@
           <td><input class="row-check" type="checkbox" aria-label="${order.no} 선택"></td>
           <td>${order.date}</td>
           <td>${currentStatus === "cancel" ? '<button type="button" class="order-no order-no-btn" data-cancel-process="' + order.no + '" data-cancel-type="' + (order.cancelReasonType || (order.cancelType === "교환" ? "exchange" : order.cancelType === "반품" ? "return" : order.cancelType === "입금취소" ? "deposit" : "cancel")) + '">' + order.no + '</button>' : '<span class="order-no">' + order.no + '</span>'}</td>
-          <td class="product"><strong>${order.product}</strong><span>${optionMarkup(order)}</span></td>
+          <td class="product"><strong>${productMarkup(order)}</strong><span>${optionMarkup(order)}</span></td>
           <td>${order.buyer}<br><span class="count-text">${order.phone}</span><br><span class="count-text">${order.address}</span></td>
           <td><strong>${formatPrice(order.amount)}</strong></td>
           <td>${order.pay}</td>
@@ -589,7 +602,7 @@
           <td><span class="count-text">-</span></td>
           <td><input class="row-check" type="checkbox" aria-label="${order.no} 선택"></td>
           <td>${deliveryCell(order)}<br><button class="ghost" type="button" data-save-invoice="${order.no}">송장번호저장</button></td>
-          <td class="product"><strong>${order.product}</strong><span>옵션 : ${optionMarkup(order)}</span></td>
+          <td class="product"><strong>${productMarkup(order)}</strong><span>${optionMarkup(order)}</span></td>
           <td>1</td>
           <td>${formatPrice(unitPrice)}</td>
           <td>${formatPrice(unitPrice)}</td>
@@ -805,7 +818,7 @@
         </div>
         <div class="detail-box">
           <h3>상품 정보</h3>
-          <div class="detail-row"><span>상품명</span><strong>${order.product}</strong></div>
+          <div class="detail-row"><span>상품명</span><strong>${productMarkup(order)}</strong></div>
           <div class="detail-row"><span>옵션</span><strong>${optionMarkup(order)}</strong></div>
         </div>
         <div class="detail-box">

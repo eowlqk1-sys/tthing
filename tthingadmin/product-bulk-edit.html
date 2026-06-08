@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>상품 정보 일괄변경 | 띵 관리자</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#f4f6f8;color:#26323f;font-family:Pretendard,"Noto Sans KR",Arial,sans-serif}a{color:inherit;text-decoration:none}button,input,select{font:inherit}.layout{min-height:100vh;display:grid;grid-template-columns:232px 244px minmax(0,1fr)}.main-nav{background:#17212c;color:#d8e0e8;padding:22px 16px}.brand{display:block;margin:0 10px 28px;font-size:26px;font-weight:900;color:#fff}.nav-title{margin:22px 10px 8px;color:#8190a0;font-size:12px;font-weight:800}.nav-link{display:block;padding:12px 14px;border-radius:8px;font-size:14px}.nav-link:hover,.nav-link.active{background:#273544;color:#fff}.sub-nav{background:#fff;border-right:1px solid #dde3e8;padding:24px 18px}.sub-heading{margin:0 0 22px;font-size:21px}.sub-group{margin:20px 0 8px;color:#83909c;font-size:12px;font-weight:800}.sub-link{display:block;padding:10px 12px;border-radius:7px;font-size:14px}.sub-link:hover,.sub-link.active{background:#eef4ff;color:#1967d2;font-weight:800}.content{min-width:0}.topbar{height:64px;background:#fff;border-bottom:1px solid #dde3e8;display:flex;align-items:center;justify-content:space-between;padding:0 28px}.topbar strong{font-size:16px}.top-actions{display:flex;gap:10px}.top-actions a,.logout{border:1px solid #d8dee5;background:#fff;border-radius:7px;padding:8px 12px;cursor:pointer}.page{padding:28px;max-width:1500px}.page h1{margin:0 0 7px;font-size:27px}.desc{margin:0 0 22px;color:#71808f;font-size:14px}.card{background:#fff;border:1px solid #dfe5ea;border-radius:11px;box-shadow:0 2px 8px rgba(31,45,61,.04);margin-bottom:20px}.card-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid #e8edf1}.card-head h2{margin:0;font-size:17px}.bulk-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:20px}.field{border:1px solid #e1e6eb;border-radius:9px;padding:14px}.field-title{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-weight:800}.field-control{display:flex;gap:8px}.field-control input,.field-control select,.search input{width:100%;border:1px solid #ccd5dd;border-radius:7px;padding:10px 11px;background:#fff}.field-control :disabled{background:#f2f4f6;color:#a1a9b1}.bulk-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 20px;border-top:1px solid #e8edf1;background:#fafbfc;border-radius:0 0 11px 11px}.scope{display:flex;gap:16px;flex-wrap:wrap}.primary{border:0;border-radius:7px;background:#1967d2;color:#fff;font-weight:800;padding:11px 18px;cursor:pointer}.primary:hover{background:#1558b5}.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.search{display:flex;gap:8px;min-width:min(520px,100%);flex:1}.search button,.secondary{border:1px solid #ccd5dd;background:#fff;border-radius:7px;padding:9px 14px;cursor:pointer}.count{color:#687786;font-size:14px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:1380px}th,td{padding:12px 10px;border-bottom:1px solid #e8edf1;text-align:left;font-size:13px}th{background:#f8fafb;color:#667584;font-weight:800}td.name{font-weight:700}.status{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:800}.on{background:#e7f6ed;color:#168447}.off{background:#f0f2f4;color:#7a8792}.warn{background:#fff7dd;color:#9a6200}.empty{text-align:center;padding:50px;color:#84919d}.pager{display:flex;justify-content:center;align-items:center;gap:9px;padding:17px}.pager button{border:1px solid #d3dae1;background:#fff;border-radius:6px;padding:7px 11px;cursor:pointer}.pager button:disabled{opacity:.4;cursor:default}.notice{display:none;margin:0 20px 18px;padding:12px 14px;border-radius:7px;background:#e9f4ff;color:#155ea8;font-size:14px}.notice.error{background:#fff0f0;color:#b42318}.search-board{overflow:auto}.search-board table{min-width:980px}.search-board th{width:145px;background:#f8fafb;color:#4f5e6c}.search-board td{background:#fff}.search-row,.category-search,.date-search,.radio-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.search-row select{width:190px}.search-row input{width:min(500px,100%);flex:1;min-width:220px}.search-board select,.search-board input[type="text"],.search-board input[type="date"]{height:36px;border:1px solid #ccd5dd;border-radius:6px;background:#fff;padding:0 9px}.category-search select{min-width:160px}.radio-line label,.check-line label{display:inline-flex;align-items:center;gap:5px;min-height:30px}.check-line{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.icon-btn{width:32px;height:32px;border:1px solid #ccd5dd;border-radius:6px;background:#fff;font-weight:900}.period-btn{height:32px;border:1px solid #ccd5dd;border-radius:6px;background:#fff;padding:0 10px}.period-btn.active{border-color:#1967d2;background:#eef4ff;color:#1967d2;font-weight:800}.search-actions{display:flex;justify-content:center;gap:8px;padding:16px;border-top:1px solid #e8edf1;background:#fafbfc}@media(max-width:1100px){.layout{grid-template-columns:190px minmax(0,1fr)}.sub-nav{display:none}}@media(max-width:760px){.layout{display:block}.main-nav{display:none}.page{padding:18px}.bulk-grid{grid-template-columns:1fr}.bulk-foot{align-items:stretch;flex-direction:column}.primary{width:100%}.topbar{padding:0 16px}}
+  </style>
+  <script src="../tthing/tthing-store-import.js?v=20260605-admin-products"></script>
+</head>
+<body>
+<div class="layout">
+  <aside class="main-nav">
+    <a class="brand" href="index.html">띵 관리자</a>
+    <div class="nav-title">쇼핑몰 관리</div>
+    <a class="nav-link" href="index.html">대시보드</a>
+    <a class="nav-link active" href="product.html">상품</a>
+    <a class="nav-link" href="orders.html">주문</a>
+    <a class="nav-link" href="customer.html">회원</a>
+    <a class="nav-link" href="board.html">게시판</a>
+    <a class="nav-link" href="main-banner.html">디자인</a>
+    <a class="nav-link" href="settings.html">설정</a>
+  </aside>
+  <aside class="sub-nav">
+    <h2 class="sub-heading">상품</h2>
+    <div class="sub-group">상품목록</div>
+    <a class="sub-link" href="product.html">전체 상품</a>
+    <div class="sub-group">상품등록</div>
+    <a class="sub-link" href="product-register.html">상품 등록</a>
+    <a class="sub-link" href="product-excel-register.html">엑셀 상품 등록</a>
+    <div class="sub-group">상품관리</div>
+    <a class="sub-link active" href="product-bulk-edit.html">상품 정보 일괄변경</a>
+  </aside>
+  <main class="content">
+    <header class="topbar"><strong>상품 정보 일괄변경</strong><div class="top-actions"><a href="product.html">상품목록으로</a><a href="../tthing/index.html" target="_blank">고객홈 보기</a></div></header>
+    <div class="page">
+      <h1>상품 정보 일괄변경</h1>
+      <p class="desc">변경할 상품을 선택하거나 검색 결과 전체를 대상으로 상품 정보를 한 번에 수정합니다.</p>
+      <section class="card" id="detailSearchCard">
+        <div class="card-head"><h2>상품 검색</h2><span class="count">조건을 설정해 변경할 상품을 찾습니다.</span></div>
+        <div class="search-board"><table><tbody>
+          <tr><th scope="row">검색분류</th><td colspan="3"><ul id="searchCriteria" style="margin:0;padding:0;list-style:none"><li class="search-row"><select class="search-field"><option value="name">상품명</option><option value="engName">영문상품명</option><option value="adminName">상품명(관리용)</option><option value="supplierName">공급사 상품명</option><option value="naverName">네이버쇼핑 상품명</option><option value="code">상품코드</option><option value="manufacturer">제조사</option><option value="supplier">공급사</option><option value="brand">브랜드</option><option value="model">모델명</option><option value="origin">원산지</option><option value="tag">상품 검색태그</option><option value="memo">메모</option><option value="registrant">등록아이디</option></select><input class="search-value" type="text"><button class="icon-btn remove-condition" type="button" title="검색조건 삭제">−</button><button class="icon-btn add-condition" type="button" title="검색조건 추가">+</button></li></ul></td></tr>
+          <tr><th scope="row">상품구분</th><td colspan="3"><div class="radio-line"><label><input type="radio" name="searchProductType" value="all" checked> 전체</label><label><input type="radio" name="searchProductType" value="basic"> 기본상품</label><label><input type="radio" name="searchProductType" value="set"> 세트상품</label><label><input type="radio" name="searchProductType" value="reservation"> 예약상품</label></div></td></tr>
+          <tr><th scope="row">상품분류</th><td colspan="3"><div class="category-search"><select id="searchCategory1"><option value="">- 대분류 선택 -</option></select><select id="searchCategory2"><option value="">- 중분류 선택 -</option></select><select id="searchCategory3"><option value="">- 소분류 선택 -</option></select><select id="searchCategory4"><option value="">- 상세분류 선택 -</option></select><label><input id="includeSubCategory" type="checkbox" checked> 하위분류 포함검색</label><label><input id="uncategorizedOnly" type="checkbox"> 분류 미등록상품 검색</label></div></td></tr>
+          <tr><th scope="row">상품등록일</th><td colspan="3"><div class="date-search"><select id="dateType"><option value="createdAt">상품등록일</option><option value="updatedAt">상품최종수정일</option></select><button class="period-btn" type="button" data-days="0">오늘</button><button class="period-btn" type="button" data-days="3">3일</button><button class="period-btn" type="button" data-days="7">7일</button><button class="period-btn" type="button" data-days="30">1개월</button><button class="period-btn" type="button" data-days="90">3개월</button><button class="period-btn" type="button" data-days="365">1년</button><button class="period-btn active" type="button" data-days="all">전체</button><input id="startDate" type="date"><span>~</span><input id="endDate" type="date"></div></td></tr>
+          <tr><th scope="row">진열상태</th><td><div class="radio-line"><label><input type="radio" name="searchDisplay" value="A" checked> 전체</label><label><input type="radio" name="searchDisplay" value="T"> 진열함</label><label><input type="radio" name="searchDisplay" value="F"> 진열안함</label></div></td><th scope="row">판매상태</th><td><div class="radio-line"><label><input type="radio" name="searchSelling" value="A" checked> 전체</label><label><input type="radio" name="searchSelling" value="T"> 판매함</label><label><input type="radio" name="searchSelling" value="F"> 판매안함</label></div></td></tr>
+          <tr><th scope="row">마켓연동</th><td colspan="3"><div class="radio-line"><label><input type="radio" name="searchMarket" value="A" checked> 전체</label><label><input type="radio" name="searchMarket" value="T"> 마켓연동함</label><label><input type="radio" name="searchMarket" value="F"> 마켓연동안함</label></div></td></tr>
+        </tbody></table></div>
+        <div class="search-actions"><button class="primary" id="detailSearchButton" type="button">검색</button><button class="secondary" id="detailSearchReset" type="button">초기화</button></div>
+      </section>
+      <section class="card">
+        <div class="card-head"><h2>변경할 정보</h2><span class="count">체크한 항목만 변경됩니다.</span></div>
+        <div class="bulk-grid">
+          <div class="field"><label class="field-title"><input class="use-field" type="checkbox" data-controls="categoryMajorValue,categoryMiddleValue">상품분류</label><div class="field-control"><select id="categoryMajorValue" disabled><option value="액상">액상</option><option value="일회용전자담배">일회용전자담배</option><option value="기기">기기</option><option value="소모품">소모품</option></select><select id="categoryMiddleValue" disabled></select></div></div>
+          <div class="field"><label class="field-title"><input class="use-field" type="checkbox" data-control="displayValue">진열 상태</label><div class="field-control"><select id="displayValue" disabled><option value="T">진열함</option><option value="F">진열안함</option></select></div></div>
+          <div class="field"><label class="field-title"><input class="use-field" type="checkbox" data-control="sellingValue">판매 상태</label><div class="field-control"><select id="sellingValue" disabled><option value="T">판매함</option><option value="F">판매안함</option></select></div></div>
+          <div class="field"><label class="field-title"><input class="use-field" type="checkbox" data-control="exposureValue">공개범위</label><div class="field-control"><select id="exposureValue" disabled><option value="all">모두에게 공개</option><option value="member">회원에게만</option></select></div></div>
+          <div class="field"><label class="field-title"><input class="use-field" type="checkbox" data-controls="paymentModeValue,payCard,payBank,payVirtual,payMileage,payTransfer">개별 결제수단 설정</label><div class="field-control" style="display:block"><select id="paymentModeValue" disabled><option value="F" selected>기본설정 사용</option><option value="T">개별설정 사용</option></select><div class="check-line" style="margin-top:8px"><label><input id="payCard" type="checkbox" value="card" checked disabled> 신용카드</label><label><input id="payBank" type="checkbox" value="bank" checked disabled> 무통장입금</label><label><input id="payVirtual" type="checkbox" value="virtual" checked disabled> 가상계좌</label><label><input id="payMileage" type="checkbox" value="mileage" checked disabled> 적립금</label><label><input id="payTransfer" type="checkbox" value="transfer" checked disabled> 계좌이체</label></div></div></div>
+          <div class="field"><label class="field-title"><input class="use-field" type="checkbox" data-control="priceValue">판매가</label><div class="field-control"><input id="priceValue" type="number" min="0" step="100" placeholder="금액 입력" disabled></div></div>
+          <div class="field"><label class="field-title"><input class="use-field" type="checkbox" data-control="salePriceValue">할인가</label><div class="field-control"><input id="salePriceValue" type="number" min="0" step="100" placeholder="0 입력 시 할인 해제" disabled></div></div>
+        </div>
+        <div class="notice" id="notice"></div>
+        <div class="bulk-foot"><div class="scope"><label><input type="radio" name="scope" value="selected" checked> 선택 상품</label><label><input type="radio" name="scope" value="filtered"> 현재 검색 결과 전체</label></div><button class="primary" id="apply" type="button">일괄변경 적용</button></div>
+      </section>
+      <section class="card">
+        <div class="card-head"><div class="toolbar"><div class="search"><input id="search" type="search" placeholder="결과 내 빠른 검색"><button id="searchButton" type="button">검색</button></div><button class="secondary" id="clearSearch" type="button">초기화</button></div><span class="count" id="resultCount"></span></div>
+        <div class="table-wrap"><table><thead><tr><th><input id="checkAll" type="checkbox" aria-label="현재 페이지 전체 선택"></th><th>상품코드</th><th>상품명</th><th>대분류</th><th>중분류</th><th>고객홈 진열</th><th>진열상태</th><th>판매상태</th><th>공개범위</th><th>개별 결제수단 설정</th><th>판매가</th><th>할인가</th></tr></thead><tbody id="rows"></tbody></table></div>
+        <div class="pager"><button id="prev" type="button">이전</button><span id="pageInfo"></span><button id="next" type="button">다음</button></div>
+      </section>
+    </div>
+  </main>
+</div>
+<script>
+const STORAGE_KEY='tthingAdminProducts';
+const UPDATE_KEY='tthingAdminProductsUpdatedAt';
+const PAGE_SIZE=100;
+const imported=Array.isArray(window.TTHING_IMPORTED_PRODUCTS)?window.TTHING_IMPORTED_PRODUCTS:[];
+const importedMap=new Map(imported.map((item,index)=>[String(item.code||'import-'+index),item]));
+function readSaved(){try{const value=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');return value&&typeof value==='object'&&!Array.isArray(value)?value:{}}catch{return {}}}
+let saved=readSaved();
+const categoryMap={"액상":["무니코틴입호흡","무니코틴폐호흡","입호흡","폐호흡"],"일회용전자담배":["무니코틴일회용","일회용"],"기기":[""],"소모품":["코일","팟"]};
+function readDeletedCodes(){try{return new Set(JSON.parse(localStorage.getItem('tthingDeletedProductCodes')||'[]'))}catch{return new Set()}}
+function splitCategory(value){const parts=String(value||'').split('>').map(part=>part.trim()).filter(Boolean);const compact=String(value||'').replace(/\s+/g,'');if(parts.length>1)return {major:parts[0],middle:parts.slice(1).join(' > ')};if(['입호흡','폐호흡','무니코틴입호흡','무니코틴폐호흡'].includes(compact))return {major:'액상',middle:compact};if(['일회용','무니코틴일회용'].includes(compact))return {major:'일회용전자담배',middle:compact};if(['코일','팟'].includes(compact))return {major:'소모품',middle:compact};if(compact.includes('입호흡'))return {major:'액상',middle:compact.includes('무니코틴')?'무니코틴입호흡':'입호흡'};if(compact.includes('폐호흡'))return {major:'액상',middle:compact.includes('무니코틴')?'무니코틴폐호흡':'폐호흡'};if(compact.includes('일회용'))return {major:'일회용전자담배',middle:compact.includes('무니코틴')?'무니코틴일회용':'일회용'};if(compact.includes('코일'))return {major:'소모품',middle:'코일'};if(compact.includes('팟'))return {major:'소모품',middle:'팟'};if(compact.includes('기기'))return {major:'기기',middle:''};return {major:parts[0]||'미분류',middle:''}}
+function makeCategory(major,middle){return middle?major+' > '+middle:major}
+function customerHomeStatus(item){if(item.display==='F')return {label:'숨김',cls:'off',reason:'진열안함'};if(item.selling==='F')return {label:'숨김',cls:'off',reason:'판매안함'};if(item.exposure==='member')return {label:'회원전용 노출',cls:'warn',reason:'로그인 고객만'};return {label:'노출됨',cls:'on',reason:'전체 고객'}}
+function paymentMethodLabel(method){return {card:'신용카드',bank:'무통장입금',virtual:'가상계좌',mileage:'적립금',transfer:'계좌이체'}[method]||method}
+function paymentSettingLabel(item){if(!item.useIndividualPaymentMethod)return {mode:'기본설정',methods:'전체 결제수단'};const methods=(item.paymentMethods&&item.paymentMethods.length?item.paymentMethods:['bank','mileage']).map(paymentMethodLabel).join(', ');return {mode:'개별설정',methods}}
+function numberValue(value){const n=Number(String(value??'').replace(/[^0-9.-]/g,''));return Number.isFinite(n)?n:0}
+function won(value){return numberValue(value).toLocaleString('ko-KR')+'원'}
+function normalize(raw,code){
+  const category=raw.category||(Array.isArray(raw.categories)?raw.categories[0]:'')||'미분류';
+  const split=splitCategory(category);
+  const unit=numberValue(raw.unit||raw.price);
+  const saleUnit=numberValue(raw.saleUnit||raw.discountUnit||raw.salePrice||raw.discountPrice);
+  return {...raw,code:String(raw.code||code),name:raw.name||'상품명 없음',category,categoryMajor:split.major,categoryMiddle:split.middle,display:raw.display||'T',selling:raw.selling||'T',exposure:raw.exposure||'all',useIndividualPaymentMethod:!!raw.useIndividualPaymentMethod,paymentMethods:Array.isArray(raw.paymentMethods)?raw.paymentMethods:[],productType:raw.productType||'basic',market:raw.market||raw.marketName||'',createdAt:raw.createdAt||raw.registeredAt||raw.updatedAt||'',updatedAt:raw.updatedAt||raw.createdAt||'',unit,saleUnit};
+}
+function loadProducts(){
+  const merged=new Map();
+  const deleted=readDeletedCodes();
+  imported.forEach((raw,index)=>{const code=String(raw.code||'import-'+index);if(!deleted.has(code))merged.set(code,normalize({...raw,...(saved[code]||{})},code))});
+  Object.entries(saved).forEach(([code,raw])=>{if(!deleted.has(code)&&!merged.has(code))merged.set(code,normalize(raw,code))});
+  return [...merged.values()].filter(item=>!item.deleted);
+}
+let products=loadProducts();let filtered=[...products];let page=1;const selected=new Set();
+const rows=document.getElementById('rows');const search=document.getElementById('search');
+function showNotice(message,error=false){const el=document.getElementById('notice');el.textContent=message;el.className='notice'+(error?' error':'');el.style.display='block'}
+function searchFieldValue(item,field){const map={name:item.name,engName:item.engName,adminName:item.adminName||item.itemName,supplierName:item.supplierProductName,naverName:item.naverProductName,code:item.code,manufacturer:item.manufacturer,supplier:item.supplier,brand:item.brand,model:item.modelName,origin:item.origin,tag:item.searchKeywords||item.seo?.keywords,memo:item.memo,registrant:item.registrant||item.insUser};return String(map[field]||'').toLowerCase()}
+function selectedCategoryPath(){const major=document.getElementById('searchCategory1').value;const middle=document.getElementById('searchCategory2').value;const aliases={'무니코틴 액상':middle==='폐호흡'?'액상 > 무니코틴폐호흡':'액상 > 무니코틴입호흡','무니코틴 일회용':'일회용전자담배 > 무니코틴일회용','모드기기&기성기기':'기기','코일&팟':middle?('소모품 > '+middle):'소모품','일회용 전자담배':'일회용전자담배 > 일회용','입호흡 액상':'액상 > 입호흡','폐호흡 액상':'액상 > 폐호흡','신규 액상':'신규 액상','BEST':'베스트','타임 세일':'타임세일','SALE_EVENT':'SALE_EVENT'};return aliases[major]||major}
+function applySearch(){const quick=search.value.trim().toLowerCase();const criteria=[...document.querySelectorAll('#searchCriteria .search-row')].map(row=>({field:row.querySelector('.search-field').value,value:row.querySelector('.search-value').value.trim().toLowerCase()})).filter(row=>row.value);const productType=document.querySelector('[name="searchProductType"]:checked').value;const display=document.querySelector('[name="searchDisplay"]:checked').value;const selling=document.querySelector('[name="searchSelling"]:checked').value;const market=document.querySelector('[name="searchMarket"]:checked').value;const category=selectedCategoryPath();const uncategorized=document.getElementById('uncategorizedOnly').checked;const start=document.getElementById('startDate').value;const end=document.getElementById('endDate').value;const dateType=document.getElementById('dateType').value;filtered=products.filter(item=>{const quickOk=!quick||[item.name,item.code,item.category,item.categoryMajor,item.categoryMiddle].some(value=>String(value||'').toLowerCase().includes(quick));const criteriaOk=criteria.every(row=>searchFieldValue(item,row.field).includes(row.value));const typeOk=productType==='all'||item.productType===productType;const categoryOk=uncategorized?!item.category:(!category||String(item.category||'').includes(category)||document.getElementById('includeSubCategory').checked&&String(item.category||'').startsWith(category));const displayOk=display==='A'||item.display===display;const sellingOk=selling==='A'||item.selling===selling;const marketOk=market==='A'||(market==='T'?!!item.market:!item.market);const rawDate=String(item[dateType]||'').slice(0,10);const dateOk=(!start||rawDate>=start)&&(!end||rawDate<=end);return quickOk&&criteriaOk&&typeOk&&categoryOk&&displayOk&&sellingOk&&marketOk&&dateOk});page=1;render()}
+function render(){
+  const totalPages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));if(page>totalPages)page=totalPages;
+  const pageItems=filtered.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);
+  rows.innerHTML=pageItems.length?pageItems.map(item=>{const home=customerHomeStatus(item);const pay=paymentSettingLabel(item);return '<tr><td><input class="row-check" type="checkbox" value="'+escapeHtml(item.code)+'" '+(selected.has(item.code)?'checked':'')+'></td><td>'+escapeHtml(item.code)+'</td><td class="name">'+escapeHtml(item.name)+'</td><td>'+escapeHtml(item.categoryMajor)+'</td><td>'+escapeHtml(item.categoryMiddle||'-')+'</td><td><span class="status '+home.cls+'">'+home.label+'</span><br><small>'+home.reason+'</small></td><td><span class="status '+(item.display==='F'?'off':'on')+'">'+(item.display==='F'?'진열안함':'진열함')+'</span></td><td><span class="status '+(item.selling==='F'?'off':'on')+'">'+(item.selling==='F'?'판매안함':'판매함')+'</span></td><td><span class="status '+(item.exposure==='member'?'off':'on')+'">'+(item.exposure==='member'?'회원에게만':'모두에게 공개')+'</span></td><td><span class="status '+(item.useIndividualPaymentMethod?'warn':'on')+'">'+pay.mode+'</span><br><small>'+escapeHtml(pay.methods)+'</small></td><td>'+won(item.unit)+'</td><td>'+(item.saleUnit?won(item.saleUnit):'-')+'</td></tr>'}).join(''):'<tr><td class="empty" colspan="12">검색된 상품이 없습니다.</td></tr>';
+  document.querySelectorAll('.row-check').forEach(box=>box.addEventListener('change',()=>{box.checked?selected.add(box.value):selected.delete(box.value);syncCheckAll()}));
+  document.getElementById('resultCount').textContent='총 '+filtered.length.toLocaleString('ko-KR')+'개 · 선택 '+selected.size.toLocaleString('ko-KR')+'개';
+  document.getElementById('pageInfo').textContent=page+' / '+totalPages;
+  document.getElementById('prev').disabled=page<=1;document.getElementById('next').disabled=page>=totalPages;syncCheckAll();
+}
+function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
+function syncCheckAll(){const boxes=[...document.querySelectorAll('.row-check')];const all=boxes.length>0&&boxes.every(box=>box.checked);const some=boxes.some(box=>box.checked);const master=document.getElementById('checkAll');master.checked=all;master.indeterminate=!all&&some;document.getElementById('resultCount').textContent='총 '+filtered.length.toLocaleString('ko-KR')+'개 · 선택 '+selected.size.toLocaleString('ko-KR')+'개'}
+const searchTaxonomy={'무니코틴 액상':['입호흡','폐호흡'],'무니코틴 일회용':['일회용'],'모드기기&기성기기':['기기'],'코일&팟':['코일','팟'],'일회용 전자담배':['일회용'],'입호흡 액상':['입호흡'],'폐호흡 액상':['폐호흡'],'신규 액상':['입호흡','폐호흡'],'BEST':[''],'타임 세일':[''],'SALE_EVENT':['']};
+function fillSearchCategory(select,values,placeholder){select.innerHTML='<option value="">'+placeholder+'</option>'+values.map(value=>'<option value="'+escapeHtml(value)+'">'+escapeHtml(value)+'</option>').join('')}
+fillSearchCategory(document.getElementById('searchCategory1'),Object.keys(searchTaxonomy),'- 대분류 선택 -');
+document.getElementById('searchCategory1').addEventListener('change',event=>{fillSearchCategory(document.getElementById('searchCategory2'),searchTaxonomy[event.target.value]||[],'- 중분류 선택 -');fillSearchCategory(document.getElementById('searchCategory3'),[],'- 소분류 선택 -');fillSearchCategory(document.getElementById('searchCategory4'),[],'- 상세분류 선택 -')});
+document.getElementById('searchCriteria').addEventListener('click',event=>{const row=event.target.closest('.search-row');if(!row)return;if(event.target.closest('.add-condition')){const clone=row.cloneNode(true);clone.querySelector('.search-value').value='';document.getElementById('searchCriteria').appendChild(clone)}if(event.target.closest('.remove-condition')){const rows=document.querySelectorAll('#searchCriteria .search-row');if(rows.length>1)row.remove();else row.querySelector('.search-value').value=''}});
+function setDatePeriod(days){document.querySelectorAll('.period-btn').forEach(button=>button.classList.toggle('active',button.dataset.days===String(days)));if(days==='all'){document.getElementById('startDate').value='';document.getElementById('endDate').value='';return}const end=new Date();const start=new Date();start.setDate(end.getDate()-Number(days));document.getElementById('startDate').value=start.toISOString().slice(0,10);document.getElementById('endDate').value=end.toISOString().slice(0,10)}
+document.querySelectorAll('.period-btn').forEach(button=>button.addEventListener('click',()=>setDatePeriod(button.dataset.days)));
+document.getElementById('detailSearchButton').addEventListener('click',applySearch);
+document.getElementById('detailSearchReset').addEventListener('click',()=>{document.querySelectorAll('#searchCriteria .search-row').forEach((row,index)=>{if(index)row.remove();else row.querySelector('.search-value').value=''});document.querySelector('[name="searchProductType"][value="all"]').checked=true;document.querySelector('[name="searchDisplay"][value="A"]').checked=true;document.querySelector('[name="searchSelling"][value="A"]').checked=true;document.querySelector('[name="searchMarket"][value="A"]').checked=true;document.getElementById('searchCategory1').value='';document.getElementById('searchCategory1').dispatchEvent(new Event('change'));document.getElementById('uncategorizedOnly').checked=false;document.getElementById('includeSubCategory').checked=true;search.value='';setDatePeriod('all');applySearch()});
+function renderMiddleOptions(){const major=document.getElementById('categoryMajorValue').value;const options=categoryMap[major]||[''];document.getElementById('categoryMiddleValue').innerHTML=options.map(value=>'<option value="'+escapeHtml(value)+'">'+(value?escapeHtml(value):'중분류 없음')+'</option>').join('')}
+document.getElementById('categoryMajorValue').addEventListener('change',renderMiddleOptions);renderMiddleOptions();
+document.querySelectorAll('.use-field').forEach(box=>box.addEventListener('change',()=>{const ids=(box.dataset.controls||box.dataset.control||'').split(',').filter(Boolean);ids.forEach(id=>{document.getElementById(id).disabled=!box.checked})}));
+document.getElementById('checkAll').addEventListener('change',event=>{document.querySelectorAll('.row-check').forEach(box=>{box.checked=event.target.checked;event.target.checked?selected.add(box.value):selected.delete(box.value)});syncCheckAll()});
+document.getElementById('searchButton').addEventListener('click',applySearch);search.addEventListener('keydown',event=>{if(event.key==='Enter')applySearch()});
+document.getElementById('clearSearch').addEventListener('click',()=>{search.value='';applySearch()});
+document.getElementById('prev').addEventListener('click',()=>{if(page>1){page--;render()}});document.getElementById('next').addEventListener('click',()=>{if(page*PAGE_SIZE<filtered.length){page++;render()}});
+document.getElementById('apply').addEventListener('click',()=>{
+  const fields=[...document.querySelectorAll('.use-field:checked')].flatMap(box=>(box.dataset.controls||box.dataset.control||'').split(',').filter(Boolean));
+  if(!fields.length){showNotice('변경할 정보 항목을 하나 이상 체크해 주세요.',true);return}
+  const scope=document.querySelector('input[name="scope"]:checked').value;
+  const targets=scope==='filtered'?filtered:products.filter(item=>selected.has(item.code));
+  if(!targets.length){showNotice(scope==='filtered'?'현재 검색 결과에 상품이 없습니다.':'변경할 상품을 선택해 주세요.',true);return}
+  if(fields.includes('priceValue')&&document.getElementById('priceValue').value===''){showNotice('판매가를 입력해 주세요.',true);return}
+  if(fields.includes('salePriceValue')&&document.getElementById('salePriceValue').value===''){showNotice('할인가를 입력해 주세요.',true);return}
+  targets.forEach(item=>{
+    const base={...(importedMap.get(item.code)||{}),...(saved[item.code]||{}),code:item.code,name:item.name};
+    if(fields.includes('categoryMajorValue')){const major=document.getElementById('categoryMajorValue').value;const middle=document.getElementById('categoryMiddleValue').value;const value=makeCategory(major,middle);base.category=value;base.categories=[value];item.category=value;item.categoryMajor=major;item.categoryMiddle=middle}
+    if(fields.includes('displayValue')){const value=document.getElementById('displayValue').value;base.display=value;item.display=value}
+    if(fields.includes('sellingValue')){const value=document.getElementById('sellingValue').value;base.selling=value;item.selling=value}
+    if(fields.includes('exposureValue')){const value=document.getElementById('exposureValue').value;base.exposure=value;item.exposure=value}
+    if(fields.includes('paymentModeValue')){const useIndividual=document.getElementById('paymentModeValue').value==='T';let methods=['payCard','payBank','payVirtual','payMileage','payTransfer'].map(id=>document.getElementById(id)).filter(input=>input.checked).map(input=>input.value);if(useIndividual&&!methods.length)methods=['card','bank','virtual','mileage','transfer'];base.useIndividualPaymentMethod=useIndividual;base.paymentMethods=methods;item.useIndividualPaymentMethod=useIndividual;item.paymentMethods=methods}
+    if(fields.includes('priceValue')){const value=numberValue(document.getElementById('priceValue').value);base.unit=value;base.price=won(value);item.unit=value}
+    if(fields.includes('salePriceValue')){const value=numberValue(document.getElementById('salePriceValue').value);base.saleUnit=value;base.discountUnit=value;base.salePrice=value?won(value):'';base.discountPrice=value?won(value):'';base.discountEnabled=value>0;item.saleUnit=value}
+    base.updatedAt=new Date().toISOString();saved[item.code]=base;
+  });
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(saved));localStorage.setItem(UPDATE_KEY,String(Date.now()));
+  showNotice(targets.length.toLocaleString('ko-KR')+'개 상품 정보를 변경했습니다. 고객홈에도 반영됩니다.');render();
+});
+render();
+</script>
+</body>
+</html>
