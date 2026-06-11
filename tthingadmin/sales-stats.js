@@ -4,7 +4,7 @@
   root.TthingSalesStats = api;
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   const DAY_MS = 24 * 60 * 60 * 1000;
-  const RANGE_DAYS = { week: 7, month: 30, quarter: 90, half: 180, year: 365 };
+  const RANGE_DAYS = { day: 1, week: 7, month: 30, quarter: 90, half: 180, year: 365 };
 
   function toNumber(value) {
     return Number(String(value ?? 0).replace(/[^0-9.-]/g, "")) || 0;

@@ -1001,7 +1001,8 @@
                 <div class="dashboard-panel active" data-panel-content="sales">
                 <div class="sales-toolbar">
                   <div class="range-buttons" role="group" aria-label="매출 조회 기간">
-                    <button class="range-button active" type="button" data-sales-range="week">일주일</button>
+                    <button class="range-button active" type="button" data-sales-range="day">하루</button>
+                    <button class="range-button" type="button" data-sales-range="week">일주일</button>
                     <button class="range-button" type="button" data-sales-range="month">한달</button>
                     <button class="range-button" type="button" data-sales-range="quarter">세달</button>
                     <button class="range-button" type="button" data-sales-range="half">육개월</button>
@@ -1117,7 +1118,7 @@
     const ORDER_STORAGE_KEY = 'tthingAdminOrders';
     const ORDER_UPDATED_KEY = 'tthingAdminOrdersUpdatedAt';
     const PRODUCT_STORAGE_KEY = 'tthingAdminProducts';
-    let currentSalesRange = 'week';
+    let currentSalesRange = 'day';
     const DEFAULT_ORDER_STATS = [
       { status: 'unpaid' },
       { status: 'ready' },

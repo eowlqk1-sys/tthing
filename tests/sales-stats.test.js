@@ -15,6 +15,14 @@ const orders = [
   { date: '2025-12-01 11:00', status: 'done', productAmount: 50000, purchaseAmount: 25000 }
 ];
 
+const day = stats.aggregateSales(orders, products, { rangeKey: 'day', now });
+assert.strictEqual(day.range.days, 1);
+assert.strictEqual(day.summary.orderCount, 1);
+assert.strictEqual(day.summary.sales, 20000);
+assert.strictEqual(day.summary.purchase, 12000);
+assert.strictEqual(day.summary.profit, 8000);
+assert.strictEqual(day.buckets.length, 1);
+
 const week = stats.aggregateSales(orders, products, { rangeKey: 'week', now });
 assert.strictEqual(week.range.days, 7);
 assert.strictEqual(week.summary.orderCount, 2);
