@@ -30,6 +30,10 @@ loadEnvFile();
 const port = Number(process.env.PORT || 8001);
 const mode = process.env.DREAM_AUTH_MODE || (process.env.NODE_ENV === 'production' ? 'prod' : 'mock');
 const pending = new Map();
+const adminId = process.env.ADMIN_ID || 'eowlqk1';
+const adminPassword = process.env.ADMIN_PASSWORD || '';
+const adminSessionSecret = process.env.ADMIN_SESSION_SECRET || '';
+const adminSessionTtl = 12 * 60 * 60 * 1000;
 
 const mobileOkEnv = process.env.DREAM_AUTH_ENV || (mode === 'prod' || mode === 'production' ? 'prod' : 'dev');
 const dreamServiceUrl = mobileOkEnv === 'prod'
@@ -59,6 +63,37 @@ try {
   else mobileOK = null;
 } catch (error) {
   mobileOK = null;
+}
+
+function parseCookies(req) {
+  return Object.fromEntries(String(req.headers.cookie || '').split(';').map(part => part.trim().split('=').map(decodeURIComponent)).filter(pair => pair[0]));
+}
+
+function adminToken(expiresAt) {
+  return expiresAt + '.' + crypto.createHmac('sha256', adminSessionSecret).update(adminId + ':' + expiresAt).digest('hex');
+}
+
+function hasAdminSession(req) {
+  if (!adminSessionSecret) return false;
+  const token = parseCookies(req).tthing_admin || '';
+  const [expiresAt, signature] = token.split('.');
+  if (!expiresAt || !signature || Number(expiresAt) <= Date.now()) return false;
+  const expected = adminToken(expiresAt);
+  return token.length === expected.length && crypto.timingSafeEqual(Buffer.from(token), Buffer.from(expected));
+}
+
+async function handleAdminLogin(req, res) {
+  const payload = await readBody(req);
+  if (!adminPassword || String(payload.id || '') !== adminId || String(payload.password || '') !== adminPassword) {
+    sendJson(res, 401, { ok: false, error: 'invalid_credentials' });
+    return;
+  }
+  const token = adminToken(Date.now() + adminSessionTtl);
+  res.writeHead(200, {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Set-Cookie': 'tthing_admin=' + encodeURIComponent(token) + '; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=43200'
+  });
+  res.end(JSON.stringify({ ok: true, user: adminId, expiresIn: adminSessionTtl }));
 }
 
 function sendJson(res, status, body) {
@@ -546,6 +581,7 @@ async function handleMainBanner(req, res) {
 async function handleApi(req, res) {
   try {
     const pathname = new URL(req.url, 'http://localhost').pathname;
+    if (req.method === 'POST' && pathname === '/api/admin/login') return await handleAdminLogin(req, res);
     if (pathname === '/api/main-banner') return await handleMainBanner(req, res);
     if (pathname === '/api/store-settings') return await handleStoreSettings(req, res);
     if (req.method === 'GET' && pathname === '/api/kopay/status') return await handleKopayStatus(req, res);
@@ -574,6 +610,11 @@ function isBlockedStaticPath(filePath) {
 
 function serveStatic(req, res) {
   const urlPath = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
+  if (urlPath.startsWith('/tthingadmin/') && !urlPath.endsWith('/login.html') && !hasAdminSession(req)) {
+    res.writeHead(302, { Location: '/tthingadmin/login.html?next=' + encodeURIComponent(urlPath.split('/').pop() || 'index.html') });
+    res.end();
+    return;
+  }
   const requested = path.normalize(path.join(root, urlPath === '/' ? '/tthing/index.html' : urlPath));
   if (!requested.startsWith(root) || isBlockedStaticPath(requested)) {
     res.writeHead(403);

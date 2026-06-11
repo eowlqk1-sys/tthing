@@ -24,13 +24,12 @@
   </main>
   <script>
     const ADMIN_ID='eowlqk1';
-    const ADMIN_PW='gksaod88';
     const SESSION_KEY='tthingAdminSession';
     const form=document.getElementById('loginForm');
     const errorText=document.getElementById('errorText');
     const next=new URLSearchParams(location.search).get('next')||'index.html';
     function isSafeNext(value){return value && !/^https?:\/\//i.test(value) && !value.startsWith('//')}
-    form.addEventListener('submit',event=>{event.preventDefault();const id=document.getElementById('adminId').value.trim();const pw=document.getElementById('adminPw').value;if(id===ADMIN_ID&&pw===ADMIN_PW){localStorage.setItem(SESSION_KEY,JSON.stringify({user:id,authenticated:true,loggedAt:Date.now(),expiresAt:Date.now()+1000*60*60*12}));location.href=isSafeNext(next)?next:'index.html';return}errorText.style.display='block';document.getElementById('adminPw').value='';document.getElementById('adminPw').focus()});
+    form.addEventListener('submit',async event=>{event.preventDefault();const id=document.getElementById('adminId').value.trim();const password=document.getElementById('adminPw').value;try{const response=await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,password})});if(!response.ok)throw new Error('invalid');const data=await response.json();localStorage.setItem(SESSION_KEY,JSON.stringify({user:data.user||ADMIN_ID,authenticated:true,loggedAt:Date.now(),expiresAt:Date.now()+Number(data.expiresIn||43200000)}));location.href=isSafeNext(next)?next:'index.html';return}catch(e){}errorText.style.display='block';document.getElementById('adminPw').value='';document.getElementById('adminPw').focus()});
   </script>
 </body>
 </html>
