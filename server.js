@@ -610,12 +610,17 @@ function isBlockedStaticPath(filePath) {
 
 function serveStatic(req, res) {
   const urlPath = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
+  if (urlPath === '/') {
+    res.writeHead(302, { Location: '/tthing/index.html' });
+    res.end();
+    return;
+  }
   if (urlPath.startsWith('/tthingadmin/') && !urlPath.endsWith('/login.html') && !hasAdminSession(req)) {
     res.writeHead(302, { Location: '/tthingadmin/login.html?next=' + encodeURIComponent(urlPath.split('/').pop() || 'index.html') });
     res.end();
     return;
   }
-  const requested = path.normalize(path.join(root, urlPath === '/' ? '/tthing/index.html' : urlPath));
+  const requested = path.normalize(path.join(root, urlPath));
   if (!requested.startsWith(root) || isBlockedStaticPath(requested)) {
     res.writeHead(403);
     res.end('Forbidden');
