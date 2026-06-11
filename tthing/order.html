@@ -531,10 +531,12 @@
       const pay = options.pay || payLabel(payValue);
       const now = new Date();
       const items = order.items.map((item) => ({
+        code: String(item.code || "").trim(),
         name: String(item.name || "상품명 없음").trim(),
         option: ["기본", "기본상품"].includes(String(item.option || "").trim()) ? "" : String(item.option || "").trim(),
         qty: Number(item.qty || 1),
-        unit: Number(item.unit || 0)
+        unit: Number(item.unit || 0),
+        supplyUnit: Number(item.supplyUnit || 0)
       }));
       const product = items.map((item) => item.name).join("\n");
       const option = items.map((item) => `${item.option ? item.option + " / " : ""}수량 ${item.qty}개`).join("\n");
@@ -558,6 +560,7 @@
         receiverPhone,
         amount: currentTotals.finalAmount,
         productAmount: productTotal,
+        purchaseAmount: items.reduce((sum, item) => sum + item.supplyUnit * item.qty, 0),
         deliveryFee: delivery,
         usedPoints: currentTotals.usedPoints,
         earnedPoints: currentTotals.earnPoints,

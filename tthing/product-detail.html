@@ -700,12 +700,14 @@
       }
       localStorage.setItem("tthingOrderDraft", JSON.stringify({
         items: selections.map((item) => ({
+          code: currentProduct?.code || "",
           name: productName.textContent,
           option: optionRequired ? item.name : "",
           qty: item.qty,
           unit: unitPrice + Number(item.addPrice || 0),
           baseUnit: unitPrice,
-          optionAddPrice: Number(item.addPrice || 0)
+          optionAddPrice: Number(item.addPrice || 0),
+          supplyUnit: Number(currentProduct?.supplyUnit || 0)
         })),
         useIndividualPaymentMethod: currentProduct?.useIndividualPaymentMethod === true,
         paymentMethods: Array.isArray(currentProduct?.paymentMethods) && currentProduct.paymentMethods.length ? currentProduct.paymentMethods : ['card','bank','virtual','mileage','transfer']

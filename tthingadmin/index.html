@@ -365,10 +365,21 @@
 
     .sales-layout {
       display: grid;
-      grid-template-columns: minmax(520px, 1.35fr) minmax(460px, .9fr);
+      grid-template-columns: minmax(520px, 1.2fr) minmax(500px, 1fr);
       gap: 20px;
       align-items: stretch;
     }
+
+    .sales-toolbar { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+    .range-buttons { display:flex; gap:6px; flex-wrap:wrap; }
+    .range-button { min-height:34px; border:1px solid var(--line); border-radius:7px; background:#fff; padding:0 12px; color:#475569; font-weight:900; }
+    .range-button.active { border-color:var(--blue); background:#eff6ff; color:var(--blue); }
+    .sales-summary { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:16px; }
+    .sales-summary-card { border:1px solid var(--line); border-radius:8px; background:#fbfdff; padding:14px; }
+    .sales-summary-card span { display:block; color:var(--muted); font-size:12px; font-weight:900; }
+    .sales-summary-card strong { display:block; margin-top:7px; font-size:20px; }
+    .sales-summary-card.profit strong { color:#16794b; }
+    .sales-empty { padding:30px 10px !important; text-align:center !important; color:var(--muted); }
 
     .chart-box {
       min-height: 380px;
@@ -742,6 +753,7 @@
     @media (max-width: 1240px) {
       .grid,
       .sales-layout { grid-template-columns: 1fr; }
+      .sales-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .live-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .todo-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     }
@@ -832,6 +844,7 @@
       .tab { min-height: 44px; padding: 0 10px; font-size: 13px; }
       .dashboard-panel { min-width: 0; overflow: hidden; }
       .sales-layout { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+      .sales-summary { grid-template-columns: 1fr 1fr; }
       .chart-box { min-height: 0; }
       .chart { min-height: 0; height: auto; aspect-ratio: 620 / 330; }
       .legend { flex-wrap: wrap; gap: 8px 14px; }
@@ -986,95 +999,37 @@
               </div>
               <div class="card-body">
                 <div class="dashboard-panel active" data-panel-content="sales">
+                <div class="sales-toolbar">
+                  <div class="range-buttons" role="group" aria-label="매출 조회 기간">
+                    <button class="range-button active" type="button" data-sales-range="week">일주일</button>
+                    <button class="range-button" type="button" data-sales-range="month">한달</button>
+                    <button class="range-button" type="button" data-sales-range="quarter">세달</button>
+                    <button class="range-button" type="button" data-sales-range="half">육개월</button>
+                    <button class="range-button" type="button" data-sales-range="year">일년</button>
+                  </div>
+                  <span class="chart-note" id="salesUpdatedAt"></span>
+                </div>
+                <div class="sales-summary">
+                  <div class="sales-summary-card"><span>매출가</span><strong id="salesTotal">0원</strong></div>
+                  <div class="sales-summary-card"><span>매입가</span><strong id="purchaseTotal">0원</strong></div>
+                  <div class="sales-summary-card profit"><span>순수익</span><strong id="profitTotal">0원</strong></div>
+                  <div class="sales-summary-card"><span>주문수</span><strong id="salesOrderCount">0건</strong></div>
+                </div>
                 <div class="sales-layout">
                   <div class="chart-box">
-                    <span class="chart-note" id="salesUpdatedAt">2026-05-27 15:00 기준 · 단위/만원</span>
-                    <svg class="chart" viewBox="0 0 620 330" role="img" aria-label="최근 7일 매출 차트">
-                      <defs>
-                        <linearGradient id="barGradient" x1="0" x2="0" y1="1" y2="0">
-                          <stop offset="0%" stop-color="#4dafff"></stop>
-                          <stop offset="100%" stop-color="#8ed0ff"></stop>
-                        </linearGradient>
-                      </defs>
-                      <g stroke="#e5e7eb" stroke-width="1">
-                        <line x1="58" y1="268" x2="580" y2="268"></line>
-                        <line x1="58" y1="213" x2="580" y2="213"></line>
-                        <line x1="58" y1="158" x2="580" y2="158"></line>
-                        <line x1="58" y1="103" x2="580" y2="103"></line>
-                        <line x1="58" y1="48" x2="580" y2="48"></line>
-                      </g>
-                      <g fill="url(#barGradient)">
-                        <rect x="82" y="210" width="36" height="58" rx="10"></rect>
-                        <rect x="160" y="245" width="36" height="23" rx="10"></rect>
-                        <rect x="238" y="216" width="36" height="52" rx="10"></rect>
-                        <rect x="316" y="170" width="36" height="98" rx="10"></rect>
-                        <rect x="394" y="236" width="36" height="32" rx="10"></rect>
-                        <rect x="472" y="62" width="36" height="206" rx="10"></rect>
-                        <rect x="550" y="144" width="36" height="124" rx="10"></rect>
-                      </g>
-                      <polyline points="100,198 178,245 256,217 334,169 412,236 490,60 568,136" fill="none" stroke="#e566ca" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>
-                      <polyline points="100,250 178,268 256,268 334,268 412,268 490,262 568,268" fill="none" stroke="#8b5cf6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>
-                      <g fill="#6b7280" font-size="13" font-weight="700" text-anchor="middle">
-                        <text x="100" y="298">05-21</text>
-                        <text x="178" y="298">05-22</text>
-                        <text x="256" y="298">05-23</text>
-                        <text x="334" y="298">05-24</text>
-                        <text x="412" y="298">05-25</text>
-                        <text x="490" y="298">05-26</text>
-                        <text x="568" y="298">05-27</text>
-                      </g>
-                      <g fill="#6b7280" font-size="12" text-anchor="end">
-                        <text x="48" y="272">0</text>
-                        <text x="48" y="217">15</text>
-                        <text x="48" y="162">30</text>
-                        <text x="48" y="107">45</text>
-                        <text x="48" y="52">56</text>
-                      </g>
-                    </svg>
+                    <svg class="chart" id="salesChart" viewBox="0 0 620 330" role="img" aria-label="기간별 매출 및 순수익 차트"></svg>
                     <div class="legend">
-                      <span><i class="dot" style="background:#4dafff"></i>주문</span>
-                      <span><i class="dot" style="background:#e566ca"></i>결제</span>
-                      <span><i class="dot" style="background:#8b5cf6"></i>환불</span>
+                      <span><i class="dot" style="background:#4dafff"></i>매출가</span>
+                      <span><i class="dot" style="background:#f59e0b"></i>매입가</span>
+                      <span><i class="dot" style="background:#16a36a"></i>순수익</span>
                     </div>
                   </div>
-
                   <div>
                     <table class="sales-table">
-                      <thead>
-                        <tr>
-                          <th>기간별 매출</th>
-                          <th>주문</th>
-                          <th>결제</th>
-                          <th>환불</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>05월 25일</td>
-                          <td><strong>55,500원</strong><br><span class="chip">3건</span></td>
-                          <td><strong>55,500원</strong><br><span class="chip">3건</span></td>
-                          <td>0원<br><span class="chip">0건</span></td>
-                        </tr>
-                        <tr>
-                          <td>05월 26일</td>
-                          <td><strong>458,500원</strong><br><span class="chip">9건</span></td>
-                          <td><strong>438,140원</strong><br><span class="chip">9건</span></td>
-                          <td>7,000원<br><span class="chip">1건</span></td>
-                        </tr>
-                        <tr>
-                          <td><strong>05월 27일</strong> <span class="chip">오늘</span></td>
-                          <td><strong>270,000원</strong><br><span class="chip">4건</span></td>
-                          <td><strong>256,000원</strong><br><span class="chip">4건</span></td>
-                          <td>0원<br><span class="chip">0건</span></td>
-                        </tr>
-                        <tr>
-                          <td><strong>최근 30일 합계</strong></td>
-                          <td><strong>9,581,900원</strong><br><span class="chip">177건</span></td>
-                          <td><strong>9,453,240원</strong><br><span class="chip">161건</span></td>
-                          <td><strong>128,500원</strong><br><span class="chip">5건</span></td>
-                        </tr>
-                      </tbody>
+                      <thead><tr><th>기간별 매출</th><th>매출가</th><th>매입가</th><th>순수익</th></tr></thead>
+                      <tbody id="salesTableRows"></tbody>
                     </table>
+                    <p class="chart-note" id="salesCostNotice"></p>
                   </div>
                 </div>
                 </div>
@@ -1155,11 +1110,14 @@
     </main>
   </div>
 
+  <script src="sales-stats.js"></script>
   <script>
     const menuToggle = document.getElementById('menuToggle');
     const overlay = document.getElementById('overlay');
     const ORDER_STORAGE_KEY = 'tthingAdminOrders';
     const ORDER_UPDATED_KEY = 'tthingAdminOrdersUpdatedAt';
+    const PRODUCT_STORAGE_KEY = 'tthingAdminProducts';
+    let currentSalesRange = 'week';
     const DEFAULT_ORDER_STATS = [
       { status: 'unpaid' },
       { status: 'ready' },
@@ -1180,6 +1138,65 @@
     }
     function formatOrderCount(value) {
       return value + '건';
+    }
+
+    function readProducts() {
+      try { return Object.values(JSON.parse(localStorage.getItem(PRODUCT_STORAGE_KEY) || '{}')); }
+      catch (error) { return []; }
+    }
+
+    function formatWon(value) { return Number(value || 0).toLocaleString('ko-KR') + '원'; }
+    function formatBucketLabel(bucket) {
+      const format = (date) => String(date.getMonth() + 1).padStart(2, '0') + '.' + String(date.getDate()).padStart(2, '0');
+      return bucket.start.toDateString() === bucket.end.toDateString() ? format(bucket.start) : format(bucket.start) + '~' + format(bucket.end);
+    }
+
+    function renderSalesChart(buckets) {
+      const chart = document.getElementById('salesChart');
+      if (!chart) return;
+      const baseY = 268;
+      const plotHeight = 210;
+      const maxValue = Math.max(1, ...buckets.flatMap((bucket) => [bucket.sales, bucket.purchase, Math.max(0, bucket.profit)]));
+      const visible = buckets.length > 12 ? buckets.filter((_, index) => index % Math.ceil(buckets.length / 12) === 0 || index === buckets.length - 1) : buckets;
+      const step = 500 / Math.max(1, visible.length);
+      const barWidth = Math.min(22, Math.max(6, step * 0.24));
+      const linePoints = [];
+      const bars = visible.map((bucket, index) => {
+        const center = 70 + step * index + step / 2;
+        const salesHeight = (bucket.sales / maxValue) * plotHeight;
+        const purchaseHeight = (bucket.purchase / maxValue) * plotHeight;
+        const profitY = baseY - (Math.max(0, bucket.profit) / maxValue) * plotHeight;
+        linePoints.push(center + ',' + profitY);
+        return '<rect x="' + (center - barWidth - 1) + '" y="' + (baseY - salesHeight) + '" width="' + barWidth + '" height="' + salesHeight + '" rx="4" fill="#4dafff"></rect>' +
+          '<rect x="' + (center + 1) + '" y="' + (baseY - purchaseHeight) + '" width="' + barWidth + '" height="' + purchaseHeight + '" rx="4" fill="#f59e0b"></rect>' +
+          '<text x="' + center + '" y="298" fill="#6b7280" font-size="11" font-weight="700" text-anchor="middle">' + formatBucketLabel(bucket) + '</text>';
+      }).join('');
+      const grid = [0, 1, 2, 3, 4].map((index) => {
+        const y = baseY - index * (plotHeight / 4);
+        const value = Math.round(maxValue * index / 4 / 10000);
+        return '<line x1="58" y1="' + y + '" x2="590" y2="' + y + '" stroke="#e5e7eb"></line><text x="50" y="' + (y + 4) + '" fill="#6b7280" font-size="11" text-anchor="end">' + value + '</text>';
+      }).join('');
+      chart.innerHTML = grid + bars + (linePoints.length ? '<polyline points="' + linePoints.join(' ') + '" fill="none" stroke="#16a36a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>' : '');
+    }
+
+    function renderSalesStats() {
+      if (!window.TthingSalesStats) return;
+      const result = window.TthingSalesStats.aggregateSales(readOrders(), readProducts(), { rangeKey: currentSalesRange });
+      document.getElementById('salesTotal').textContent = formatWon(result.summary.sales);
+      document.getElementById('purchaseTotal').textContent = formatWon(result.summary.purchase);
+      document.getElementById('profitTotal').textContent = formatWon(result.summary.profit);
+      document.getElementById('salesOrderCount').textContent = formatOrderCount(result.summary.orderCount);
+      const rows = document.getElementById('salesTableRows');
+      const populated = result.buckets.filter((bucket) => bucket.orderCount > 0);
+      rows.innerHTML = populated.length ? populated.slice(-12).reverse().map((bucket) =>
+        '<tr><td><strong>' + formatBucketLabel(bucket) + '</strong><br><span class="chip">' + formatOrderCount(bucket.orderCount) + '</span></td>' +
+        '<td><strong>' + formatWon(bucket.sales) + '</strong></td><td><strong>' + formatWon(bucket.purchase) + '</strong></td><td><strong>' + formatWon(bucket.profit) + '</strong></td></tr>'
+      ).join('') : '<tr><td class="sales-empty" colspan="4">선택한 기간의 주문 데이터가 없습니다.</td></tr>';
+      document.getElementById('salesCostNotice').textContent = result.summary.unknownCostOrders
+        ? '공급가가 없는 주문 ' + result.summary.unknownCostOrders + '건은 매입가가 0원으로 계산되었습니다. 상품 등록에서 공급가를 입력해 주세요.'
+        : '순수익 = 매출가 - 매입가 (배송비, 결제수수료, 세금 제외)';
+      document.getElementById('salesUpdatedAt').textContent = new Date().toLocaleString('ko-KR') + ' 기준 · 차트 단위/만원';
+      renderSalesChart(result.buckets);
     }
 
     function applyOrderStats() {
@@ -1373,7 +1390,7 @@
       const mm = String(now.getMinutes()).padStart(2, '0');
       const ss = String(now.getSeconds()).padStart(2, '0');
       const salesUpdatedAt = document.getElementById('salesUpdatedAt');
-      if (salesUpdatedAt) salesUpdatedAt.textContent = '2026-05-27 ' + hh + ':' + mm + ':' + ss + ' 실시간 갱신 · 단위/만원';
+      if (salesUpdatedAt) salesUpdatedAt.dataset.clock = hh + ':' + mm + ':' + ss;
     }
 
     document.querySelectorAll('.tab').forEach((tab) => {
@@ -1387,17 +1404,29 @@
       });
     });
 
+    document.querySelectorAll('[data-sales-range]').forEach((button) => {
+      button.addEventListener('click', () => {
+        currentSalesRange = button.dataset.salesRange;
+        document.querySelectorAll('[data-sales-range]').forEach((item) => item.classList.toggle('active', item === button));
+        renderSalesStats();
+      });
+    });
+
     menuToggle.addEventListener('click', () => document.body.classList.toggle('nav-open'));
     overlay.addEventListener('click', () => document.body.classList.remove('nav-open'));
     applyOrderStats();
+    renderSalesStats();
     updateLiveDashboard();
     window.addEventListener('storage', (event) => {
-      if (event.key === ORDER_STORAGE_KEY || event.key === ORDER_UPDATED_KEY) applyOrderStats();
+      if (event.key === ORDER_STORAGE_KEY || event.key === ORDER_UPDATED_KEY || event.key === PRODUCT_STORAGE_KEY) {
+        applyOrderStats();
+        renderSalesStats();
+      }
     });
-    window.addEventListener('focus', applyOrderStats);
-    window.addEventListener('pageshow', applyOrderStats);
+    window.addEventListener('focus', () => { applyOrderStats(); renderSalesStats(); });
+    window.addEventListener('pageshow', () => { applyOrderStats(); renderSalesStats(); });
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) applyOrderStats();
+      if (!document.hidden) { applyOrderStats(); renderSalesStats(); }
     });
     setInterval(() => {
       if (!document.hidden) updateLiveDashboard();
