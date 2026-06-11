@@ -270,6 +270,21 @@
     return [];
   }
 
+  async function loadImportedProducts() {
+    if (Array.isArray(window.TTHING_IMPORTED_PRODUCTS) && window.TTHING_IMPORTED_PRODUCTS.length) {
+      return window.TTHING_IMPORTED_PRODUCTS;
+    }
+    try {
+      const response = await fetch('tthing-products.json', { cache: 'no-store' });
+      if (!response.ok) return [];
+      const products = await response.json();
+      return Array.isArray(products) ? products : [];
+    } catch (error) {
+      console.error('상품 데이터를 불러오지 못했습니다.', error);
+      return [];
+    }
+  }
+
   async function collectProducts() {
     const deletedCodes = readDeletedCodes();
     
@@ -280,9 +295,10 @@
     const adminListProducts = (await fetchAdminListProducts())
       .filter(item => !deletedCodes.has(item.code));
 
-    const importedProducts = Array.isArray(window.TTHING_IMPORTED_PRODUCTS)
-      ? window.TTHING_IMPORTED_PRODUCTS.filter((item) => item && item.code && !deletedCodes.has(item.code) && canShowByExposure(item)).map(normalizeImportedProduct)
-      : [];
+    const importedSource = await loadImportedProducts();
+    const importedProducts = importedSource
+      .filter((item) => item && item.code && !deletedCodes.has(item.code) && canShowByExposure(item))
+      .map(normalizeImportedProduct);
 
     const merged = new Map();
 
