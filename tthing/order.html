@@ -469,16 +469,21 @@
       } catch (error) {}
     }
 
-    function applyCustomerPoints() {
+    function applyCustomerPoints(adminOrder) {
       if (!currentCustomer) return;
       const key = "tthingCustomerDetail:" + currentCustomer.id;
       const saved = getCustomerSaved(currentCustomer);
       const pointLog = saved.pointLog || [];
       const nextPoints = Math.max(0, Number(currentCustomer.points || 0) - currentTotals.usedPoints + currentTotals.earnPoints);
       const nextTotal = Number(currentCustomer.total || 0) + currentTotals.productTotal;
-      if (currentTotals.usedPoints > 0) pointLog.push({ date: new Date().toISOString().slice(0, 10), type: "차감", amount: currentTotals.usedPoints, reason: "주문 결제 사용" });
-      if (currentTotals.earnPoints > 0) pointLog.push({ date: new Date().toISOString().slice(0, 10), type: "추가", amount: currentTotals.earnPoints, reason: "구매금액 2% 적립" });
-      localStorage.setItem(key, JSON.stringify({ ...saved, points: nextPoints, pointLog, total: nextTotal, grade: nextTotal >= 10000 ? "우수회원" : "일반회원" }));
+      if (currentTotals.usedPoints > 0) pointLog.push({ date: new Date().toISOString().slice(0, 10), type: "차감", amount: currentTotals.usedPoints, reason: "주문 결제 사용", orderNo: adminOrder?.no || "" });
+      if (currentTotals.earnPoints > 0) pointLog.push({ date: new Date().toISOString().slice(0, 10), type: "추가", amount: currentTotals.earnPoints, reason: "구매금액 2% 적립", orderNo: adminOrder?.no || "" });
+      const nextDetail = { ...saved, points: nextPoints, pointLog, total: nextTotal, grade: nextTotal >= 10000 ? "우수회원" : "일반회원" };
+      localStorage.setItem(key, JSON.stringify(nextDetail));
+      const session = readJson("tthingCustomerSession", null);
+      if (session && session.authenticated && (session.user === currentCustomer.id || session.user === currentCustomer.user)) {
+        localStorage.setItem("tthingCustomerSession", JSON.stringify({ ...session, points: nextPoints, total: nextTotal, grade: nextDetail.grade }));
+      }
     }
 
     async function prepareKopayPayment(orderNo) {
@@ -574,7 +579,7 @@
       localStorage.setItem("tthingAdminOrders", JSON.stringify(saved));
       localStorage.setItem("tthingAdminOrdersUpdatedAt", String(Date.now()));
       localStorage.removeItem("tthingOrderDraft");
-      applyCustomerPoints();
+      applyCustomerPoints(adminOrder);
       if (adminOrder.status === "unpaid") {
         const telegramItems = adminOrder.items.map((item, index) => {
           const optionText = item.option ? ` / 옵션: ${item.option}` : "";

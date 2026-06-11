@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const root = __dirname;
 const dataDir = path.join(root, 'data');
 const mainBannerFile = path.join(dataDir, 'main-banner.json');
+const storeSettingsFile = path.join(dataDir, 'store-settings.json');
 const bannerUploadDir = path.join(root, 'tthing', 'uploads', 'main-banners');
 
 function loadEnvFile(filePath = path.join(root, '.env')) {
@@ -44,6 +45,11 @@ const kopayConfig = {
   mkey: process.env.KOPAY_MKEY || '',
   baseUrl: process.env.KOPAY_BASE_URL || 'https://payments.korpay.com/v1',
   returnUrl: process.env.KOPAY_RETURN_URL || ('http://localhost:' + port + '/api/kopay/return')
+};
+const alimtalkConfig = {
+  apiKey: process.env.ALIMTALK_API_KEY || '',
+  businessKey: process.env.ALIMTALK_BUSINESS_KEY || '',
+  kakaoLoginKey: process.env.ALIMTALK_KAKAO_LOGIN_KEY || ''
 };
 
 let mobileOK = null;
@@ -389,6 +395,79 @@ function writeMainBannerData(data) {
   fs.writeFileSync(mainBannerFile, JSON.stringify(data, null, 2));
 }
 
+
+const defaultStoreSettings = {
+  businessName: '현',
+  kakaoChannelName: '띵베이프',
+  kakaoChannelUrl: 'http://pf.kakao.com/_QyBAn',
+  kakaoChatUrl: 'http://pf.kakao.com/_QyBAn/chat',
+  senderName: '띵베이프',
+  senderProfileId: '띵베이프',
+  templateIds: ['1453539', '859460'],
+  bankName: '카카오뱅크',
+  bankAccount: '3333-24-7965978',
+  accountHolder: '한명현',
+  customerServicePhone: '010-5320-5322',
+  courier: '로젠택배',
+  testCustomerPhone: '010-5320-5322'
+};
+
+function readStoreSettings() {
+  try {
+    return { ...defaultStoreSettings, ...JSON.parse(fs.readFileSync(storeSettingsFile, 'utf8')) };
+  } catch (error) {
+    return { ...defaultStoreSettings };
+  }
+}
+
+function cleanSetting(value, maxLength = 200) {
+  return String(value || '').trim().slice(0, maxLength);
+}
+
+function normalizeStoreSettings(payload) {
+  const templateIds = Array.isArray(payload.templateIds)
+    ? payload.templateIds
+    : String(payload.templateIds || '').split(/[\s,]+/);
+  return {
+    businessName: cleanSetting(payload.businessName),
+    kakaoChannelName: cleanSetting(payload.kakaoChannelName),
+    kakaoChannelUrl: cleanSetting(payload.kakaoChannelUrl, 500),
+    kakaoChatUrl: cleanSetting(payload.kakaoChatUrl, 500),
+    senderName: cleanSetting(payload.senderName),
+    senderProfileId: cleanSetting(payload.senderProfileId),
+    templateIds: templateIds.map(value => cleanSetting(value, 100)).filter(Boolean).slice(0, 20),
+    bankName: cleanSetting(payload.bankName),
+    bankAccount: cleanSetting(payload.bankAccount),
+    accountHolder: cleanSetting(payload.accountHolder),
+    customerServicePhone: cleanSetting(payload.customerServicePhone),
+    courier: cleanSetting(payload.courier),
+    testCustomerPhone: cleanSetting(payload.testCustomerPhone)
+  };
+}
+
+function alimtalkSecretStatus() {
+  return {
+    apiKey: !!alimtalkConfig.apiKey,
+    businessKey: !!alimtalkConfig.businessKey,
+    kakaoLoginKey: !!alimtalkConfig.kakaoLoginKey
+  };
+}
+
+async function handleStoreSettings(req, res) {
+  if (req.method === 'GET') {
+    sendJson(res, 200, { settings: readStoreSettings(), secrets: alimtalkSecretStatus() });
+    return;
+  }
+  if (req.method === 'POST') {
+    const settings = normalizeStoreSettings(await readBody(req));
+    fs.mkdirSync(dataDir, { recursive: true });
+    fs.writeFileSync(storeSettingsFile, JSON.stringify(settings, null, 2));
+    sendJson(res, 200, { settings, secrets: alimtalkSecretStatus() });
+    return;
+  }
+  sendJson(res, 405, { error: 'method_not_allowed' });
+}
+
 function isDataBannerImage(image) {
   return typeof image === 'string' && /^data:image\/(png|jpe?g|webp|gif);base64,/i.test(image);
 }
@@ -468,6 +547,7 @@ async function handleApi(req, res) {
   try {
     const pathname = new URL(req.url, 'http://localhost').pathname;
     if (pathname === '/api/main-banner') return await handleMainBanner(req, res);
+    if (pathname === '/api/store-settings') return await handleStoreSettings(req, res);
     if (req.method === 'GET' && pathname === '/api/kopay/status') return await handleKopayStatus(req, res);
     if (req.method === 'POST' && pathname === '/api/kopay/prepare') return await handleKopayPrepare(req, res);
     if ((req.method === 'GET' || req.method === 'POST') && pathname === '/api/kopay/return') return await handleKopayReturn(req, res);

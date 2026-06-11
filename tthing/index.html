@@ -16,6 +16,7 @@
   <meta property="og:description" content="띵베이프는 무니코틴 입호흡 액상, 무니코틴 폐호흡 액상, 일회용 전자담배, 전자담배 기기와 코일/팟 소모품을 판매하는 전자담배 전문 쇼핑몰입니다.">
   <meta property="og:url" content="https://tthing.kr/tthing/index.html">
   <link rel="canonical" href="https://tthing.kr/tthing/index.html">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon.png">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"띵베이프 - 무니코틴 전자담배 액상 쇼핑몰","description":"띵베이프는 무니코틴 입호흡 액상, 무니코틴 폐호흡 액상, 일회용 전자담배, 전자담배 기기와 코일/팟 소모품을 판매하는 전자담배 전문 쇼핑몰입니다.","url":"https://tthing.kr/tthing/index.html","isPartOf":{"@type":"WebSite","name":"띵베이프","url":"https://tthing.kr/tthing/index.html"},"publisher":{"@type":"Organization","name":"띵베이프","url":"https://tthing.kr/tthing/index.html","telephone":"010-5320-5322","email":"eowlqk1@naver.com"},"potentialAction":{"@type":"SearchAction","target":"https://tthing.kr/tthing/index.html?keyword={search_term_string}","query-input":"required name=search_term_string"}}</script>
 <style>
     :root {
@@ -78,21 +79,72 @@
     .logo {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      font-size: 30px;
-      font-weight: 900;
+      gap: 12px;
+      font-size: 0;
+      line-height: 1;
       letter-spacing: 0;
     }
 
     .logo-mark {
-      width: 36px;
-      height: 36px;
-      border-radius: 11px;
-      background: linear-gradient(135deg, var(--green), #acc078);
+      position: relative;
+      flex: 0 0 auto;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
       display: inline-grid;
       place-items: center;
-      color: #fff;
-      font-size: 17px;
+      overflow: hidden;
+      color: transparent;
+      background: linear-gradient(145deg, #171717 0%, #2f3d25 58%, #7fa254 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 10px 22px rgba(0,0,0,.14);
+    }
+
+    .logo-mark::before {
+      content: "";
+      width: 17px;
+      height: 24px;
+      border: 3px solid #fff;
+      border-top: 0;
+      border-radius: 0 0 10px 10px;
+      transform: translateY(4px);
+    }
+
+    .logo-mark::after {
+      content: "";
+      position: absolute;
+      top: 7px;
+      left: 50%;
+      width: 11px;
+      height: 9px;
+      border-radius: 5px 5px 3px 3px;
+      background: #fff;
+      transform: translateX(-50%);
+    }
+
+    .logo-text {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .logo-text strong {
+      display: block;
+      color: var(--ink);
+      font-size: 27px;
+      font-weight: 950;
+      line-height: .95;
+      white-space: nowrap;
+    }
+
+    .logo-text em {
+      display: block;
+      color: #6f7f53;
+      font-size: 10px;
+      font-style: normal;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: .18em;
+      white-space: nowrap;
     }
 
     .search {
@@ -129,10 +181,15 @@
     .topArea_user a { display: inline-flex; align-items: center; gap: 5px; min-height: 38px; white-space: nowrap; }
     .head-ico { display: none; }
     .menu_user { position: relative; }
-    .menu_user_list { position: absolute; right: 0; top: 100%; z-index: 80; width: 150px; margin: 0; padding: 8px 0; list-style: none; border: 1px solid var(--line); border-radius: 8px; background: #fff; box-shadow: 0 12px 28px rgba(0,0,0,.12); opacity: 0; transform: translateY(4px); pointer-events: none; transition: opacity .16s ease, transform .16s ease; }
-    .menu_user:hover .menu_user_list { opacity: 1; transform: translateY(0); pointer-events: auto; }
-    .menu_user_list a { display: block; padding: 9px 14px; font-size: 13px; font-weight: 700; }
-    .menu_user_list a:hover { background: #f8f8f8; }
+    .menu_user_trigger { display: inline-flex; align-items: center; gap: 6px; min-height: 38px; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; font-weight: 900; cursor: pointer; white-space: nowrap; }
+    .menu_user_trigger::after { content: "▾"; font-size: 10px; transition: transform .16s ease; }
+    .menu_user_list { position: absolute; right: 0; top: 100%; z-index: 80; width: 170px; margin: 0; padding: 8px 0; list-style: none; border: 1px solid var(--line); border-radius: 8px; background: #fff; box-shadow: 0 12px 28px rgba(0,0,0,.12); opacity: 0; transform: translateY(4px); pointer-events: none; transition: opacity .16s ease, transform .16s ease; }
+    .menu_user:hover .menu_user_list,
+    .menu_user:focus-within .menu_user_list,
+    .menu_user.is-open .menu_user_list { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .menu_user.is-open .menu_user_trigger::after { transform: rotate(180deg); }
+    .menu_user_list a { display: block; padding: 10px 14px; font-size: 13px; font-weight: 700; }
+    .menu_user_list a:hover, .menu_user_list a:focus { background: #f8f8f8; color: var(--green); }
     .count { min-width: 19px; height: 19px; padding: 0 6px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; background: #191919; color: #fff; font-size: 12px; line-height: 1; }
 
     .actions {
@@ -965,14 +1022,27 @@
         min-height: 78px;
       }
 
-      .logo {
-        font-size: 25px;
+      .logo-mark {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
       }
 
-      .logo-mark {
-        width: 32px;
-        height: 32px;
+      .logo-mark::before {
+        width: 14px;
+        height: 20px;
+        border-width: 2px;
+        transform: translateY(4px);
       }
+
+      .logo-mark::after {
+        top: 7px;
+        width: 9px;
+        height: 7px;
+      }
+
+      .logo-text strong { font-size: 23px; }
+      .logo-text em { font-size: 9px; letter-spacing: .12em; }
 
       .icon {
         width: 38px;
@@ -1037,15 +1107,6 @@
     }
   
 
-    .logo { gap: 12px !important; font-size: 0 !important; line-height: 1 !important; letter-spacing: 0 !important; }
-    .logo-mark { position: relative !important; flex: 0 0 auto !important; width: 42px !important; height: 42px !important; border-radius: 14px !important; display: inline-grid !important; place-items: center !important; overflow: hidden !important; color: transparent !important; background: linear-gradient(145deg, #171717 0%, #2f3d25 58%, #7fa254 100%) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 10px 22px rgba(0,0,0,.14) !important; }
-    .logo-mark::before { content: ""; width: 17px; height: 24px; border: 3px solid #fff; border-top: 0; border-radius: 0 0 10px 10px; transform: translateY(4px); }
-    .logo-mark::after { content: ""; position: absolute; top: 7px; left: 50%; width: 11px; height: 9px; border-radius: 5px 5px 3px 3px; background: #fff; transform: translateX(-50%); }
-    .logo-text { display: grid; gap: 4px; min-width: 0; }
-    .logo-text strong { display: block; color: var(--ink, #171717); font-size: 27px; font-weight: 950; line-height: .95; white-space: nowrap; }
-    .logo-text em { display: block; color: #6f7f53; font-size: 10px; font-style: normal; font-weight: 900; line-height: 1; letter-spacing: .18em; white-space: nowrap; }
-    @media (max-width: 680px) { .logo-mark { width: 36px !important; height: 36px !important; border-radius: 12px !important; } .logo-mark::before { width: 14px; height: 20px; border-width: 2px; transform: translateY(4px); } .logo-mark::after { top: 7px; width: 9px; height: 7px; } .logo-text strong { font-size: 23px; } .logo-text em { font-size: 9px; letter-spacing: .12em; } }
-
 
 .thumb.has-img { background:#fff; }
 .thumb.has-img::before { display:none; }
@@ -1097,9 +1158,10 @@
   <header class="head">
     <div class="wrap">
       <a class="logo" href="index.html"><span class="logo-mark" aria-hidden="true"></span><span class="logo-text"><strong>띵베이프</strong><em>TTHING VAPE</em></span></a><form class="search"><input id="searchInput" type="search" placeholder="상품명을 검색해보세요"><button type="submit" aria-label="검색">⌕</button></form><div class="topArea_user">
-        <div class="menu_user pc_view">
-          <a href="mypage.html">마이페이지</a>
-          <ul class="menu_user_list">
+        <div class="menu_user">
+          <button class="menu_user_trigger" type="button" aria-expanded="false" aria-controls="homeMypageMenu">마이페이지</button>
+          <ul class="menu_user_list" id="homeMypageMenu">
+            <li><a href="mypage.html">기본정보</a></li>
             <li><a href="orders.html">주문조회</a></li>
             <li><a href="recent-products.html">최근 본 상품</a></li>
             <li><a href="wishlist.html">관심상품</a></li>
@@ -1491,6 +1553,28 @@
       }
     }
 
+
+    const mypageMenu = document.querySelector(".menu_user");
+    const mypageTrigger = document.querySelector(".menu_user_trigger");
+    if (mypageMenu && mypageTrigger) {
+      mypageTrigger.addEventListener("click", () => {
+        const isOpen = mypageMenu.classList.toggle("is-open");
+        mypageTrigger.setAttribute("aria-expanded", String(isOpen));
+      });
+      document.addEventListener("click", (event) => {
+        if (!mypageMenu.contains(event.target)) {
+          mypageMenu.classList.remove("is-open");
+          mypageTrigger.setAttribute("aria-expanded", "false");
+        }
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          mypageMenu.classList.remove("is-open");
+          mypageTrigger.setAttribute("aria-expanded", "false");
+          mypageTrigger.focus();
+        }
+      });
+    }
 
     document.querySelector(".search").addEventListener("submit", (event) => {
       event.preventDefault();

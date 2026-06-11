@@ -76,7 +76,7 @@
     .option label { display:block; margin-bottom:8px; font-weight:900; }
     select, .qty input { width:100%; height:46px; border:1px solid var(--line); border-radius:6px; padding:0 12px; background:#fff; }
     .qty { margin-top:16px; }
-    .actions-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:24px; }
+    .actions-row { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:24px; }
     .btn { min-height:50px; border-radius:6px; border:1px solid var(--ink); display:inline-flex; align-items:center; justify-content:center; font-weight:900; background:#fff; cursor:pointer; }
     .btn.primary { background:var(--ink); color:#fff; }
     .tabs { display:flex; gap:0; margin-top:70px; border-bottom:1px solid var(--line); }
@@ -93,6 +93,8 @@
 
     .buy-now { background: #ff4d2d; border-color: #ff4d2d; color: #fff; box-shadow: 0 10px 24px rgba(255,77,45,.24); }
     .cart-btn { background: #fff; color: var(--ink); }
+    .wishlist-btn { background:#fff; color:var(--ink); border-color:var(--line); }
+    .wishlist-btn.is-active { background:#fff4f5; border-color:#e85b68; color:#d63b49; }
     .side-buybar { position: fixed; right: 22px; top: 108px; z-index: 40; width: 300px; padding: 18px; border: 1px solid var(--line); border-radius: 12px; background: #fff; box-shadow: 0 18px 42px rgba(0,0,0,.16); opacity: 0; transform: translateX(18px); pointer-events: none; transition: opacity .2s ease, transform .2s ease; }
     .side-buybar.visible { opacity: 1; transform: translateX(0); pointer-events: auto; }
     .side-buybar h2 { margin: 0 0 12px; font-size: 18px; line-height: 1.35; }
@@ -228,7 +230,7 @@
         </div>
         <div class="selected-options" id="selectedOptions"></div>
         <div class="selected-total"><span>총 상품금액</span><span id="totalPrice">0원</span></div>
-        <div class="actions-row"><button class="btn cart-btn" type="button">장바구니</button><button class="btn buy-now" type="button">바로구매하기</button></div>
+        <div class="actions-row"><button class="btn wishlist-btn" type="button" aria-pressed="false">관심상품</button><button class="btn cart-btn" type="button">장바구니</button><button class="btn buy-now" type="button">바로구매하기</button></div>
       </div>
     </section>
     <div class="tabs"><a href="#info">상품정보</a><a href="#ship">배송/교환</a><a href="#review">리뷰</a></div>
@@ -244,7 +246,7 @@
 
     <div class="selected-options" id="sideSelectedOptions"></div>
     <div class="selected-total"><span>총 상품금액</span><span id="sideTotalPrice">0원</span></div>
-    <div class="actions-row"><button class="btn cart-btn" type="button">장바구니</button><button class="btn buy-now" type="button">바로구매하기</button></div>
+    <div class="actions-row"><button class="btn wishlist-btn" type="button" aria-pressed="false">관심상품</button><button class="btn cart-btn" type="button">장바구니</button><button class="btn buy-now" type="button">바로구매하기</button></div>
   </aside>
   <script src="tthing-store-import.js?v=20260605-new24"></script>
   <script>
@@ -288,13 +290,17 @@
 
     const escapeAttr = (value) => String(value || "").replace(/[&<>\"\x27\x60]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "\x27": "&#39;", "\x60": "&#96;" }[char]));
     const RECENT_KEY = "tthingRecentProducts";
+    const SESSION_KEY = "tthingCustomerSession";
+    const readSession = () => { try { return JSON.parse(localStorage.getItem(SESSION_KEY) || "null"); } catch (error) { return null; } };
+    const wishlistKey = () => { const session = readSession(); return "tthingWishlistProducts:" + (session && session.authenticated && session.user ? session.user : "guest"); };
+    const readWishlist = () => { try { return JSON.parse(localStorage.getItem(wishlistKey()) || "[]"); } catch (error) { return []; } };
     const readRecentProducts = () => { try { return JSON.parse(localStorage.getItem(RECENT_KEY) || "[]"); } catch (error) { return []; } };
     const writeRecentProduct = (product) => {
       if (!product || !product.code) return;
       const image = (product.productImages && product.productImages[0]) || (product.images && product.images[0]) || "";
       const price = product.salePrice || product.discountPrice || product.price || "";
       const recent = readRecentProducts().filter((item) => item.code !== product.code);
-      recent.unshift({ code: product.code, name: product.name || product.code, image, price, viewedAt: new Date().toISOString() });
+      recent.unshift({ code: product.code, name: product.name || product.code, image, price, href: "product-detail.html?product=" + encodeURIComponent(product.code), viewedAt: new Date().toISOString() });
       localStorage.setItem(RECENT_KEY, JSON.stringify(recent.slice(0, 12)));
       renderRecentQuickMenu();
     };
@@ -306,6 +312,30 @@
       list.innerHTML = recent.map((item) => '<li><a href="product-detail.html?product=' + encodeURIComponent(item.code) + '">' + (item.image ? '<img src="' + escapeAttr(item.image) + '" alt="' + escapeAttr(item.name) + '" onerror="this.style.display=\'none\'">' : '') + '<span>' + escapeAttr(item.name) + '</span></a></li>').join("");
     };
     const productImageAlt = (product) => product.altText || product.imageAlt || product.seo?.imageAlt || product.name;
+    const wishlistProduct = (product) => ({
+      code: product.code,
+      name: product.name || product.code,
+      image: (product.productImages && product.productImages[0]) || (product.images && product.images[0]) || "",
+      price: product.salePrice || product.discountPrice || product.price || "",
+      href: "product-detail.html?product=" + encodeURIComponent(product.code),
+      addedAt: new Date().toISOString()
+    });
+    function syncWishlistButtons() {
+      const active = !!(currentProduct && readWishlist().some((item) => item.code === currentProduct.code));
+      document.querySelectorAll(".wishlist-btn").forEach((button) => {
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-pressed", String(active));
+        button.textContent = active ? "관심상품 해제" : "관심상품";
+      });
+    }
+    function toggleWishlist() {
+      if (!currentProduct) return;
+      const list = readWishlist();
+      const exists = list.some((item) => item.code === currentProduct.code);
+      const next = exists ? list.filter((item) => item.code !== currentProduct.code) : [wishlistProduct(currentProduct), ...list.filter((item) => item.code !== currentProduct.code)];
+      localStorage.setItem(wishlistKey(), JSON.stringify(next.slice(0, 100)));
+      syncWishlistButtons();
+    }
     const SITE_ORIGIN = "https://tthing.kr";
     const absoluteUrl = (value) => {
       if (!value) return "";
@@ -405,6 +435,7 @@
       const storedProduct = code && !deletedCodes.has(code) ? adminProducts[code] : null;
       const importedProduct = code && !deletedCodes.has(code) && Array.isArray(window.TTHING_IMPORTED_PRODUCTS) ? window.TTHING_IMPORTED_PRODUCTS.find((item) => item && item.code === code) : null;
       const product = importedProduct ? { ...importedProduct, ...(storedProduct || {}) } : storedProduct;
+      currentProduct = product || null;
       if (importedProduct) {
         adminProducts[importedProduct.code] = { ...importedProduct, ...(adminProducts[importedProduct.code] || {}) };
         localStorage.setItem("tthingAdminProducts", JSON.stringify(adminProducts));
@@ -515,6 +546,7 @@
       });
       if (!productImages.length) mainPhoto.classList.add("is-missing");
       writeRecentProduct(product);
+      syncWishlistButtons();
       const canSell = product.selling !== "F";
       document.querySelectorAll(".buy-now,.cart-btn").forEach((button) => {
         button.disabled = !canSell;
@@ -680,6 +712,8 @@
       }));
       location.href = "order.html";
     }
+
+    document.querySelectorAll(".wishlist-btn").forEach((button) => button.addEventListener("click", toggleWishlist));
 
     document.querySelectorAll(".buy-now").forEach((button) => {
       button.addEventListener("click", goOrder);

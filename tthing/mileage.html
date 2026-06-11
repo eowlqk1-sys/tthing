@@ -52,13 +52,49 @@ footer h3 { margin:0 0 12px; color:#fff; }
     .logo-text em { display: block; color: #6f7f53; font-size: 10px; font-style: normal; font-weight: 900; line-height: 1; letter-spacing: .18em; white-space: nowrap; }
     @media (max-width: 680px) { .logo-mark { width: 36px !important; height: 36px !important; border-radius: 12px !important; } .logo-mark::before { width: 14px; height: 20px; border-width: 2px; transform: translateY(4px); } .logo-mark::after { top: 7px; width: 9px; height: 7px; } .logo-text strong { font-size: 23px; } .logo-text em { font-size: 9px; letter-spacing: .12em; } }
 
-</style></head><body id="top">
+
+.account-content { margin-top:22px; }
+.account-products { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:24px 18px; }
+.account-product { min-width:0; position:relative; }
+.account-thumb { aspect-ratio:1; border:1px solid var(--line); border-radius:10px; background:#fbfaf6; overflow:hidden; display:grid; place-items:center; }
+.account-thumb img { width:100%; height:100%; object-fit:contain; padding:8px; }
+.account-product strong { display:block; margin-top:12px; line-height:1.45; word-break:keep-all; }
+.account-price { display:block; margin-top:6px; color:#d84632; font-weight:900; }
+.account-product small { display:block; margin-top:6px; color:var(--sub); }
+.account-product button { margin-top:10px; min-height:36px; padding:0 14px; border:1px solid var(--line); border-radius:6px; background:#fff; cursor:pointer; font-weight:800; }
+.account-empty { min-height:180px; display:grid; place-items:center; align-content:center; gap:10px; color:var(--sub); text-align:center; }
+.account-empty strong { color:var(--ink); font-size:18px; }
+.account-empty a { min-height:40px; padding:0 16px; border-radius:6px; display:inline-flex; align-items:center; background:#171717; color:#fff; font-weight:900; }
+.account-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-bottom:24px; }
+.account-summary div { padding:20px; border:1px solid var(--line); border-radius:10px; background:#faf8f3; }
+.account-summary span { display:block; color:var(--sub); font-size:13px; }
+.account-summary strong { display:block; margin-top:8px; font-size:24px; }
+.account-table { border-top:2px solid var(--ink); }
+.account-row { display:grid; grid-template-columns:130px 1fr 130px; gap:12px; padding:15px 12px; border-bottom:1px solid var(--line); align-items:center; }
+.account-head { background:#fafafa; font-weight:900; }
+.account-row strong { text-align:right; }
+.account-row .plus { color:#3f7f2c; }
+.account-row .minus { color:#d84632; }
+.account-note { margin-top:16px!important; padding:14px 16px; border-radius:8px; background:#faf8f3; }
+.coupon-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+.coupon-card { padding:24px; border:1px solid #d7e1ca; border-left:7px solid var(--green); border-radius:12px; background:#fbfff7; }
+.coupon-card.disabled { opacity:.55; filter:grayscale(.5); }
+.coupon-status { display:inline-flex; min-height:25px; padding:0 9px; border-radius:999px; align-items:center; background:var(--green); color:#fff; font-size:12px; font-weight:900; }
+.coupon-card h3 { margin:14px 0 8px; }
+.coupon-card > strong { display:block; color:#d84632; font-size:25px; }
+.coupon-card p { margin-top:10px; }
+.coupon-card small { display:block; margin-top:12px; color:var(--sub); }
+@media (max-width:760px) { .account-products { grid-template-columns:repeat(2,minmax(0,1fr)); } .account-summary,.coupon-list { grid-template-columns:1fr; } .account-row { grid-template-columns:90px 1fr; } .account-row strong { grid-column:2; text-align:left; } }
+
+</style></head><body id="top" data-account-page="mileage">
   <div class="bar"><div class="wrap"><a href="login.html">로그인</a><a href="signup.html">회원가입</a><a href="orders.html">주문조회</a></div></div>
   <header class="head"><div class="wrap"><a class="logo" href="index.html"><span class="logo-mark" aria-hidden="true"></span><span class="logo-text"><strong>띵베이프</strong><em>TTHING VAPE</em></span></a><form class="search"><input type="search" placeholder="상품명을 검색해보세요"><button type="submit" aria-label="검색">⌕</button></form><div class="topArea_user"><div class="menu_user pc_view"><a href="mypage.html">마이페이지</a><ul class="menu_user_list"><li><a href="orders.html">주문조회</a></li><li><a href="recent-products.html">최근 본 상품</a></li><li><a href="wishlist.html">관심상품</a></li><li><a href="mileage.html">적립금</a></li><li><a href="coupons.html">쿠폰</a></li><li><a href="my-posts.html">나의 게시글</a></li></ul></div><div class="menu_basket"><a href="basket.html">장바구니 <span class="count"><span>0</span></span></a></div></div></div></header>
   <nav class="gnb"><div class="wrap"><a href="best.html">BEST</a><a href="new.html">NEW</a><a href="liquid.html">액상</a><a href="disposable.html">일회용전자담배</a><a href="device.html">기기</a><a href="supply.html">소모품</a><a href="timesale.html">TIME SALE</a><a href="board.html">게시판</a></div></nav>
   <section class="page-hero"><div class="wrap"><h1>적립금</h1><p class="lead">적립금 적립 및 사용 내역을 확인하는 페이지입니다.</p></div></section>
-  <main><section class="panel"><h2>적립금</h2><p>적립금 적립 및 사용 내역을 확인하는 페이지입니다.</p></section></main>
+  <main><section class="panel"><h2>적립금</h2><p>가입 적립금과 구매 후 적립·사용 내역을 확인할 수 있습니다.</p><div class="account-content" id="accountContent"></div></section></main>
   <footer><div class="wrap"><div><h3>Company Info</h3><div>상호 띵베이프 · 대표자 한명현 · 사업자등록번호 282-20-01652</div><div>통신판매업신고 2022-서울양천-0783 · 주소 서울특별시 양천구 화곡로8길 20-3 302호</div><div class="foot-links"><a href="#">회사소개</a><a href="#">이용약관</a><a href="#">개인정보처리방침</a><a href="#">이용안내</a></div></div><div><h3>Customer Service</h3><div>010-5320-5322</div><div>이메일 eowlqk1@naver.com · 운영시간 평일 09:00 ~ 18:00 (점심시간 12:00 ~ 13:00)</div></div><div><h3>Bank Account</h3><div>카카오뱅크 3333-24-7965978</div><div>예금주 한명현</div></div></div></footer>
+
+<script src="account-data.js?v=20260609-account"></script>
 
 <script id="tthingAuthRuntime">
 (function(){

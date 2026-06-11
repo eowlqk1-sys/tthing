@@ -567,7 +567,19 @@ footer h3 { margin:0 0 12px; color:#fff; }
       adultVerified: document.getElementById("identityAdult").value === "Y",
       loggedAt: Date.now()
     };
-    localStorage.setItem("tthingCustomerSession", JSON.stringify(session));
+    const signupDate = new Date();
+    const expiryDate = new Date(signupDate);
+    expiryDate.setDate(expiryDate.getDate() + 30);
+    const customerDetail = {
+      points: 3000,
+      pointLog: [{ date: signupDate.toISOString().slice(0, 10), type: "추가", amount: 3000, reason: "신규회원 가입 적립금", benefitId: "signup-3000" }],
+      total: 0,
+      grade: "일반회원"
+    };
+    const welcomeCoupon = { id: "welcome-10", name: "신규회원 10% 할인 쿠폰", type: "percent", value: 10, minOrder: 20000, maxDiscount: 5000, issuedAt: signupDate.toISOString(), expiresAt: expiryDate.toISOString(), used: false };
+    localStorage.setItem("tthingCustomerDetail:" + session.user, JSON.stringify(customerDetail));
+    localStorage.setItem("tthingCustomerCoupons:" + session.user, JSON.stringify([welcomeCoupon]));
+    localStorage.setItem("tthingCustomerSession", JSON.stringify({ ...session, points: 3000 }));
     location.href = "index.html";
     return false;
   }

@@ -1,0 +1,18 @@
+{
+  "businessName": "현",
+  "kakaoChannelName": "띵베이프",
+  "kakaoChannelUrl": "http://pf.kakao.com/_QyBAn",
+  "kakaoChatUrl": "http://pf.kakao.com/_QyBAn/chat",
+  "senderName": "띵베이프",
+  "senderProfileId": "띵베이프",
+  "templateIds": [
+    "1453539",
+    "859460"
+  ],
+  "bankName": "카카오뱅크",
+  "bankAccount": "3333-24-7965978",
+  "accountHolder": "한명현",
+  "customerServicePhone": "010-5320-5322",
+  "courier": "로젠택배",
+  "testCustomerPhone": "010-5320-5322"
+}
