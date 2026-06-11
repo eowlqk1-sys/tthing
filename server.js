@@ -609,11 +609,24 @@ function isBlockedStaticPath(filePath) {
 }
 
 function serveStatic(req, res) {
-  const urlPath = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
+  let urlPath = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
   if (urlPath === '/') {
     res.writeHead(302, { Location: '/tthing/index.html' });
     res.end();
     return;
+  }
+  if (urlPath === '/admin' || urlPath === '/admin/') {
+    res.writeHead(302, { Location: hasAdminSession(req) ? '/admin/index.html' : '/admin/login.html?next=index.html' });
+    res.end();
+    return;
+  }
+  if (urlPath.startsWith('/admin/')) {
+    if (!urlPath.endsWith('/login.html') && !hasAdminSession(req)) {
+      res.writeHead(302, { Location: '/admin/login.html?next=' + encodeURIComponent(urlPath.split('/').pop() || 'index.html') });
+      res.end();
+      return;
+    }
+    urlPath = '/tthingadmin/' + urlPath.slice('/admin/'.length);
   }
   if (urlPath.startsWith('/tthingadmin/') && !urlPath.endsWith('/login.html') && !hasAdminSession(req)) {
     res.writeHead(302, { Location: '/tthingadmin/login.html?next=' + encodeURIComponent(urlPath.split('/').pop() || 'index.html') });
