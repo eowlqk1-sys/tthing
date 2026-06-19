@@ -28,17 +28,29 @@
     }
   }
 
-  function isCustomerLoggedIn() {
+  function readCustomerSession() {
     try {
       const session = JSON.parse(localStorage.getItem("tthingCustomerSession") || "null");
-      return !!(session && session.authenticated);
+      return session && session.authenticated ? session : null;
     } catch (error) {
-      return false;
+      return null;
     }
   }
 
+  function isCustomerLoggedIn() {
+    return !!readCustomerSession();
+  }
+
+  function isVipCustomer() {
+    const session = readCustomerSession();
+    return !!(session && String(session.grade || "").includes("우수회원"));
+  }
+
   function canShowByExposure(item) {
-    return !item || item.exposure !== "member" || isCustomerLoggedIn();
+    if (!item || !item.exposure || item.exposure === "all") return true;
+    if (item.exposure === "member") return isCustomerLoggedIn();
+    if (item.exposure === "vip") return isVipCustomer();
+    return true;
   }
 
   function readHiddenDisplayCodes() {

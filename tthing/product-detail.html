@@ -406,12 +406,19 @@
     }
 
     function isCustomerLoggedIn() {
-      try {
-        const session = JSON.parse(localStorage.getItem("tthingCustomerSession") || "null");
-        return !!(session && session.authenticated);
-      } catch (error) {
-        return false;
-      }
+      return !!readSession();
+    }
+
+    function isVipCustomer() {
+      const session = readSession();
+      return !!(session && String(session.grade || "").includes("우수회원"));
+    }
+
+    function canShowByExposure(product) {
+      if (!product || !product.exposure || product.exposure === "all") return true;
+      if (product.exposure === "member") return isCustomerLoggedIn();
+      if (product.exposure === "vip") return isVipCustomer();
+      return true;
     }
 
     function applyProduct() {
@@ -441,7 +448,7 @@
         localStorage.setItem("tthingAdminProducts", JSON.stringify(adminProducts));
         localStorage.setItem("tthingAdminProductsUpdatedAt", String(Date.now()));
       }
-      if (!product || product.display === "F" || (product.exposure === "member" && !isCustomerLoggedIn())) {
+      if (!product || product.display === "F" || !canShowByExposure(product)) {
         upsertMeta("robots", "noindex,nofollow");
         productName.textContent = "등록된 상품이 없습니다.";
         sideProductName.textContent = "등록된 상품이 없습니다.";
