@@ -20,6 +20,53 @@
   const toNumber = (value) => Number(String(value || "0").replace(/[^0-9.-]/g, "")) || 0;
   const compact = (value) => String(value || "").replace(/\s+/g, "");
 
+  function inferCategory(item) {
+    const raw = item && item.raw ? item.raw : item || {};
+    const values = [
+      raw.category,
+      raw.categoryName,
+      raw.largeCategory,
+      raw.middleCategory,
+      raw.smallCategory,
+      raw.detailCategory,
+      ...(Array.isArray(raw.categories) ? raw.categories : []),
+      raw.name,
+      raw.summary,
+      raw.simple,
+      raw.desc,
+      raw.searchKeywords,
+      raw.seo && raw.seo.keywords,
+      raw.seo && raw.seo.searchKeywords,
+      ...(Array.isArray(raw.options) ? raw.options : []),
+      ...(Array.isArray(raw.optionItems) ? raw.optionItems.map((option) => option && option.name) : [])
+    ];
+    const text = compact(values.filter(Boolean).join(" ")).toLowerCase();
+    if (!text) return "";
+    if (/코일|coil/i.test(text)) return "소모품 > 코일";
+    if (/팟|pod|카트리지|cartridge/i.test(text)) return "소모품 > 팟";
+    if (/기기|기체|device|kit|킷|모드/i.test(text)) return "기기";
+    if (/일회용|disposable/i.test(text)) return compact(text).includes("무니코틴") ? "일회용전자담배 > 무니코틴일회용" : "일회용전자담배 > 일회용";
+    if (/폐호흡|dtl/i.test(text)) return "액상 > 폐호흡";
+    if (/입호흡|액상|liquid|30ml|100ml|쥬스|주스/i.test(text)) return compact(text).includes("무니코틴") ? "액상 > 무니코틴입호흡" : "액상 > 입호흡";
+    return "";
+  }
+
+  function categoryList(item, fallbackCategory = "") {
+    const raw = item && item.raw ? item.raw : item || {};
+    const list = [
+      raw.category,
+      raw.categoryName,
+      raw.largeCategory,
+      raw.middleCategory,
+      raw.smallCategory,
+      raw.detailCategory,
+      ...(Array.isArray(raw.categories) ? raw.categories : []),
+      fallbackCategory,
+      inferCategory(raw)
+    ].filter(Boolean).map(String);
+    return [...new Set(list)];
+  }
+
   function readDeletedCodes() {
     try {
       return new Set(JSON.parse(localStorage.getItem(DELETED_KEY) || "[]"));
@@ -141,7 +188,7 @@
   function normalizeSavedProduct(item) {
     const price = item.salePrice || item.discountPrice || item.price || "0원";
     const image = (item.productImages && item.productImages[0]) || (item.images && item.images[0]) || "";
-    const category = item.category || (item.categories && item.categories[0]) || "";
+    const category = item.category || (item.categories && item.categories[0]) || inferCategory(item) || "";
     return {
       raw: item,
       code: item.code,
@@ -152,7 +199,7 @@
       unit: item.saleUnit || item.discountUnit || item.unit || toNumber(price),
       image,
       category,
-      categories: item.categories && item.categories.length ? item.categories : [category].filter(Boolean),
+      categories: categoryList(item, category),
       display: item.display || "T",
       selling: item.selling || "T",
       exposure: item.exposure || "all",
@@ -166,7 +213,7 @@
 
   function normalizeAdminRow(item) {
     const price = won(item.sale || item.price || item.unit || 0);
-    const category = item.category || "";
+    const category = item.category || inferCategory(item) || "";
     return {
       raw: item,
       code: item.code,
@@ -177,7 +224,7 @@
       unit: toNumber(item.sale || item.price || item.unit),
       image: item.img || (item.productImages && item.productImages[0]) || (item.images && item.images[0]) || "",
       category,
-      categories: [category].filter(Boolean),
+      categories: categoryList(item, category),
       display: item.display || "T",
       selling: item.selling || "T",
       exposure: item.exposure || "all",
@@ -191,9 +238,9 @@
   function normalizeImportedProduct(item) {
     const rawPrice = item.salePrice || item.priceText || item.price || item.sale || item.unit || 0;
     const price = won(rawPrice);
-    const category = item.category || (item.categories && item.categories[0]) || "";
+    const category = item.category || (item.categories && item.categories[0]) || inferCategory(item) || "";
     const image = (item.productImages && item.productImages[0]) || (item.images && item.images[0]) || item.img || "";
-    const categories = Array.isArray(item.categories) && item.categories.length ? item.categories : [category].filter(Boolean);
+    const categories = categoryList(item, category);
     return {
       raw: item,
       code: item.code,
@@ -256,7 +303,7 @@
       simple: item.desc,
       desc: item.desc,
       category: item.category,
-      categories: item.categories,
+      categories: categoryList(raw, item.category),
       display: raw.display || item.display || "T",
       selling: raw.selling || item.selling || "T",
       exposure: raw.exposure || item.exposure || "all",
@@ -359,10 +406,11 @@
   }
 
   function matchesPage(item, page) {
-    const cats = (item.categories || []).map(compact).join(" ");
-    const cat = compact(item.category || "");
+    const raw = item.raw || {};
+    const cats = categoryList(item, item.category).map(compact).join(" ");
+    const cat = compact(item.category || inferCategory(item) || "");
     const name = compact(item.name || "");
-    const combined = (cats + " " + cat + " " + name).toLowerCase();
+    const combined = (cats + " " + cat + " " + name + " " + compact(raw.summary || raw.simple || raw.desc || raw.searchKeywords || "")).toLowerCase();
     
     if (page === "liquid") return /액상|입호흡|폐호흡|liquid/i.test(combined);
     if (page === "disposable") return /일회용전자담배|일회용|disposable/i.test(combined);
@@ -375,9 +423,10 @@
   }
 
   function blockForCategory(item, page) {
-    const category = compact(item.category || "");
+    const raw = item.raw || {};
+    const category = categoryList(item, item.category).map(compact).join(" ");
     const name = compact(item.name || "");
-    const combined = (category + " " + name).toLowerCase();
+    const combined = (category + " " + name + " " + compact(raw.summary || raw.simple || raw.desc || raw.searchKeywords || "")).toLowerCase();
 
     const maps = {
       liquid: [[/무니코틴|zero/i, "zero"], [/입호흡|mtl/i, "mtl"], [/폐호흡|dtl/i, "dtl"]],
@@ -656,4 +705,5 @@
     if (event.key === STORAGE_KEY || event.key === DELETED_KEY || event.key === UPDATED_KEY) refresh();
   });
   window.addEventListener("hashchange", refresh);
+  window.addEventListener("tthing-products-updated", refresh);
 })();
