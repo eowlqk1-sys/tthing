@@ -248,7 +248,7 @@
     <div class="selected-total"><span>총 상품금액</span><span id="sideTotalPrice">0원</span></div>
     <div class="actions-row"><button class="btn wishlist-btn" type="button" aria-pressed="false">관심상품</button><button class="btn cart-btn" type="button">장바구니</button><button class="btn buy-now" type="button">바로구매하기</button></div>
   </aside>
-  <script src="tthing-store-import.js?v=20260605-new24"></script>
+  <script src="tthing-store-import.js?v=20260619-member-grades"></script>
   <script>
     const sideBuybar = document.getElementById("sideBuybar");
     const flavor = document.getElementById("flavor");
@@ -409,15 +409,30 @@
       return !!readSession();
     }
 
-    function isVipCustomer() {
+    function currentCustomerGradeKey() {
       const session = readSession();
-      return !!(session && String(session.grade || "").includes("우수회원"));
+      if (!session) return "";
+      return String(session.grade || "").includes("우수회원") ? "vip" : "basic";
+    }
+
+    function isVipCustomer() {
+      return currentCustomerGradeKey() === "vip";
+    }
+
+    function normalizedMemberGrades(product) {
+      if (product && product.exposure === "vip") return ["vip"];
+      if (product && Array.isArray(product.memberGrades) && product.memberGrades.length) return product.memberGrades;
+      if (product && product.exposure === "member") return ["basic", "vip"];
+      return [];
     }
 
     function canShowByExposure(product) {
       if (!product || !product.exposure || product.exposure === "all") return true;
-      if (product.exposure === "member") return isCustomerLoggedIn();
       if (product.exposure === "vip") return isVipCustomer();
+      if (product.exposure === "member") {
+        const grade = currentCustomerGradeKey();
+        return !!grade && normalizedMemberGrades(product).includes(grade);
+      }
       return true;
     }
 

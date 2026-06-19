@@ -41,15 +41,30 @@
     return !!readCustomerSession();
   }
 
-  function isVipCustomer() {
+  function currentCustomerGradeKey() {
     const session = readCustomerSession();
-    return !!(session && String(session.grade || "").includes("우수회원"));
+    if (!session) return "";
+    return String(session.grade || "").includes("우수회원") ? "vip" : "basic";
+  }
+
+  function isVipCustomer() {
+    return currentCustomerGradeKey() === "vip";
+  }
+
+  function normalizedMemberGrades(item) {
+    if (item && item.exposure === "vip") return ["vip"];
+    if (item && Array.isArray(item.memberGrades) && item.memberGrades.length) return item.memberGrades;
+    if (item && item.exposure === "member") return ["basic", "vip"];
+    return [];
   }
 
   function canShowByExposure(item) {
     if (!item || !item.exposure || item.exposure === "all") return true;
-    if (item.exposure === "member") return isCustomerLoggedIn();
     if (item.exposure === "vip") return isVipCustomer();
+    if (item.exposure === "member") {
+      const grade = currentCustomerGradeKey();
+      return !!grade && normalizedMemberGrades(item).includes(grade);
+    }
     return true;
   }
 
@@ -137,6 +152,7 @@
       display: item.display || "T",
       selling: item.selling || "T",
       exposure: item.exposure || "all",
+      memberGrades: normalizedMemberGrades(item),
       badge: (Array.isArray(item.mainDisplay) && item.mainDisplay.includes("timesale")) || item.discountEnabled ? "SALE" : "NEW",
       mainDisplay: Array.isArray(item.mainDisplay) ? item.mainDisplay : [],
       updatedAt: item.updatedAt || "",
@@ -161,6 +177,7 @@
       display: item.display || "T",
       selling: item.selling || "T",
       exposure: item.exposure || "all",
+      memberGrades: normalizedMemberGrades(item),
       badge: String(category).includes("타임세일") ? "SALE" : "ITEM",
       updatedAt: item.updatedAt || "",
       fromAdminList: true
@@ -187,6 +204,7 @@
       display: item.display || "T",
       selling: item.selling || "T",
       exposure: item.exposure || "all",
+      memberGrades: normalizedMemberGrades(item),
       badge: item.badge || (compact(category).includes("타임세일") ? "SALE" : "ITEM"),
       updatedAt: item.updatedAt || "",
       fromImported: true
@@ -238,6 +256,7 @@
       display: raw.display || item.display || "T",
       selling: raw.selling || item.selling || "T",
       exposure: raw.exposure || item.exposure || "all",
+      memberGrades: normalizedMemberGrades({ ...item, ...raw }),
       price: item.price,
       unit: item.unit,
       salePrice: item.price,
