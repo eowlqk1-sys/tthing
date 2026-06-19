@@ -412,7 +412,10 @@
     function currentCustomerGradeKey() {
       const session = readSession();
       if (!session) return "";
-      return String(session.grade || "").includes("우수회원") ? "vip" : "basic";
+      const grade = String(session.grade || "").toLowerCase();
+      if (grade.includes("vip")) return "vip";
+      if (grade.includes("우수")) return "excellent";
+      return "basic";
     }
 
     function isVipCustomer() {
@@ -422,7 +425,7 @@
     function normalizedMemberGrades(product) {
       if (product && product.exposure === "vip") return ["vip"];
       if (product && Array.isArray(product.memberGrades) && product.memberGrades.length) return product.memberGrades;
-      if (product && product.exposure === "member") return ["basic", "vip"];
+      if (product && product.exposure === "member") return ["basic", "excellent", "vip"];
       return [];
     }
 
@@ -431,7 +434,8 @@
       if (product.exposure === "vip") return isVipCustomer();
       if (product.exposure === "member") {
         const grade = currentCustomerGradeKey();
-        return !!grade && normalizedMemberGrades(product).includes(grade);
+        const grades = normalizedMemberGrades(product);
+        return !!grade && (grades.includes(grade) || (grade === "excellent" && grades.includes("vip")));
       }
       return true;
     }
