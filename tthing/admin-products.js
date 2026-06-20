@@ -102,7 +102,7 @@
   }
 
   function normalizedMemberGrades(item) {
-    if (item && item.exposure === "vip") return ["vip"];
+    if (item && item.exposure === "vip") return ["excellent"];
     if (item && Array.isArray(item.memberGrades) && item.memberGrades.length) return item.memberGrades;
     if (item && item.exposure === "member") return ["basic", "excellent", "vip"];
     return [];
@@ -110,11 +110,11 @@
 
   function canShowByExposure(item) {
     if (!item || !item.exposure || item.exposure === "all") return true;
-    if (item.exposure === "vip") return isVipCustomer();
+    if (item.exposure === "vip") return currentCustomerGradeKey() === "excellent";
     if (item.exposure === "member") {
       const grade = currentCustomerGradeKey();
       const grades = normalizedMemberGrades(item);
-      return !!grade && (grades.includes(grade) || (grade === "excellent" && grades.includes("vip")));
+      return !!grade && grades.includes(grade);
     }
     return true;
   }
