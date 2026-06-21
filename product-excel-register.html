@@ -407,6 +407,14 @@
       }
     }
 
+    function persistAdminProductsToServer() {
+      try {
+        const products = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+        const deletedCodes = JSON.parse(localStorage.getItem(DELETED_KEY) || '[]');
+        fetch('/api/admin-products', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ products, deletedCodes }) }).catch(() => {});
+      } catch (error) {}
+    }
+
     function saveProducts(products) {
       if (!products.length) {
         renderStatus('저장할 상품이 없습니다. 파일을 선택하거나 표를 붙여넣은 뒤 다시 눌러주세요.', 'err');
@@ -432,6 +440,7 @@
         localStorage.setItem('tthingAdminProductsUpdatedAt', String(Date.now()));
         localStorage.setItem(DELETED_KEY, JSON.stringify(Array.from(deleted)));
         localStorage.setItem('tthingLastAdminProductCode', products[products.length - 1].code);
+        persistAdminProductsToServer();
         renderStatus('상품 ' + products.length + '건을 저장했습니다. 상품목록에서 확인할 수 있습니다.', 'ok');
         return true;
       } catch (error) {

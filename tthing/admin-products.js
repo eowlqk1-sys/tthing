@@ -4,7 +4,10 @@
   const DELETED_KEY = "tthingDeletedProductCodes";
   const ADMIN_PRODUCT_URLS = ["/tthingadmin/product.html", "/product.html"];
   const RECENT_KEY = "tthingRecentProducts";
+  const SERVER_PRODUCTS_URL = "/api/admin-products";
   const PAGE_SIZE = 40;
+  let serverSavedMap = {};
+  let serverDeletedCodes = new Set();
   const esc = (value) => String(value || "").replace(/[&<>"']/g, (char) => ({
     "&": "&amp;",
     "<": "&lt;",
@@ -68,11 +71,28 @@
   }
 
   function readDeletedCodes() {
+    const deleted = new Set(serverDeletedCodes);
     try {
-      return new Set(JSON.parse(localStorage.getItem(DELETED_KEY) || "[]"));
-    } catch (error) {
-      return new Set();
-    }
+      JSON.parse(localStorage.getItem(DELETED_KEY) || "[]").forEach((code) => deleted.add(code));
+    } catch (error) {}
+    return deleted;
+  }
+
+  async function loadServerAdminProducts() {
+    try {
+      const response = await fetch(SERVER_PRODUCTS_URL, { cache: "no-store" });
+      if (!response.ok) return;
+      const data = await response.json();
+      serverSavedMap = data && data.products && typeof data.products === "object" ? data.products : {};
+      serverDeletedCodes = new Set(Array.isArray(data && data.deletedCodes) ? data.deletedCodes : []);
+      const local = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      const merged = { ...serverSavedMap, ...local };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+      if (serverDeletedCodes.size) {
+        const localDeleted = JSON.parse(localStorage.getItem(DELETED_KEY) || "[]");
+        localStorage.setItem(DELETED_KEY, JSON.stringify([...new Set([...serverDeletedCodes, ...localDeleted])]));
+      }
+    } catch (error) {}
   }
 
   function readCustomerSession() {
@@ -93,7 +113,7 @@
     if (!session) return "";
     const grade = String(session.grade || "").toLowerCase();
     if (grade.includes("vip")) return "vip";
-    if (grade.includes("우수")) return "excellent";
+    if (grade.includes("우수") || grade.includes("excellent")) return "excellent";
     return "basic";
   }
 
@@ -119,6 +139,38 @@
     return true;
   }
 
+  function policyForProduct(code) {
+    if (!code) return null;
+    let policy = null;
+    const imported = Array.isArray(window.TTHING_IMPORTED_PRODUCTS) ? window.TTHING_IMPORTED_PRODUCTS : [];
+    const importedItem = imported.find((item) => item && item.code === code);
+    if (importedItem) policy = importedItem;
+    if (serverSavedMap && serverSavedMap[code]) policy = { ...(policy || {}), ...serverSavedMap[code] };
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      if (saved && saved[code]) policy = { ...(policy || {}), ...saved[code] };
+    } catch (error) {}
+    return policy;
+  }
+
+  function productCodeFromLink(link) {
+    if (!link) return "";
+    if (link.dataset && link.dataset.code) return link.dataset.code;
+    try {
+      return new URL(link.getAttribute("href") || "", location.href).searchParams.get("product") || "";
+    } catch (error) {
+      return "";
+    }
+  }
+
+  function setProductLinkHidden(link, hidden) {
+    const card = link.closest(".product, .sale-product, .admin-product, .linked-card");
+    const target = card || link;
+    target.hidden = hidden;
+    if (hidden) target.setAttribute("data-policy-hidden", "true");
+    else target.removeAttribute("data-policy-hidden");
+  }
+
   function readHiddenDisplayCodes() {
     const hidden = new Set();
     const imported = Array.isArray(window.TTHING_IMPORTED_PRODUCTS) ? window.TTHING_IMPORTED_PRODUCTS : [];
@@ -126,7 +178,7 @@
       if (item && item.code && item.display === "F") hidden.add(item.code);
     });
     try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      const saved = { ...serverSavedMap, ...JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") };
       Object.values(saved).forEach((item) => {
         if (!item || !item.code) return;
         if (item.display === "F") hidden.add(item.code);
@@ -139,17 +191,16 @@
   function removeHiddenProductCards() {
     const deleted = readDeletedCodes();
     const hidden = readHiddenDisplayCodes();
-    if (!deleted.size && !hidden.size) return;
     document.querySelectorAll('a[href*="product-detail.html?product="], a[data-code]').forEach((link) => {
-      let code = link.dataset.code || "";
-      if (!code) {
-        try {
-          code = new URL(link.getAttribute("href"), location.href).searchParams.get("product") || "";
-        } catch (error) {}
+      const code = productCodeFromLink(link);
+      if (!code) return;
+      const policy = policyForProduct(code);
+      const restricted = policy && (policy.display === "F" || policy.selling === "F" || !canShowByExposure(policy));
+      if (!deleted.has(code) && !hidden.has(code) && !restricted) {
+        setProductLinkHidden(link, false);
+        return;
       }
-      if (!deleted.has(code) && !hidden.has(code)) return;
-      const card = link.closest(".product, .sale-product, .admin-product");
-      (card || link).remove();
+      setProductLinkHidden(link, true);
     });
   }
 
@@ -175,7 +226,7 @@
     const deleted = new Set(JSON.parse(localStorage.getItem(DELETED_KEY) || "[]"));
     const merged = {};
     try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      const saved = { ...serverSavedMap, ...JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") };
       Object.keys(saved).forEach((code) => {
         const item = saved[code] || {};
         if (/^live-/.test(code) || item.origin === "tthing.store" || deleted.has(code)) return;
@@ -683,6 +734,7 @@
   async function run() {
     renderRecentQuickMenu();
     removeHiddenProductCards();
+    await loadServerAdminProducts();
     const products = await collectProducts();
     console.log("띵베이프 상품 로드 완료:", products.length, "건");
     const page = location.pathname.split("/").pop().replace(".html", "") || "index";
@@ -702,7 +754,7 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
   else run();
   window.addEventListener("storage", (event) => {
-    if (event.key === STORAGE_KEY || event.key === DELETED_KEY || event.key === UPDATED_KEY) refresh();
+    if (event.key === STORAGE_KEY || event.key === DELETED_KEY || event.key === UPDATED_KEY || event.key === "tthingCustomerSession") refresh();
   });
   window.addEventListener("hashchange", refresh);
   window.addEventListener("tthing-products-updated", refresh);

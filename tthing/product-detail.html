@@ -414,7 +414,7 @@
       if (!session) return "";
       const grade = String(session.grade || "").toLowerCase();
       if (grade.includes("vip")) return "vip";
-      if (grade.includes("우수")) return "excellent";
+    if (grade.includes("우수") || grade.includes("excellent")) return "excellent";
       return "basic";
     }
 
@@ -440,11 +440,19 @@
       return true;
     }
 
-    function applyProduct() {
+    async function applyProduct() {
       const params = new URLSearchParams(location.search);
       const code = params.get("product") || localStorage.getItem("tthingLastAdminProductCode");
       const deletedCodes = new Set(JSON.parse(localStorage.getItem("tthingDeletedProductCodes") || "[]"));
       let adminProducts = JSON.parse(localStorage.getItem("tthingAdminProducts") || "{}");
+      try {
+        const response = await fetch('/api/admin-products', { cache: 'no-store' });
+        if (response.ok) {
+          const data = await response.json();
+          if (data && data.products && typeof data.products === 'object') adminProducts = { ...data.products, ...adminProducts };
+          if (Array.isArray(data && data.deletedCodes)) data.deletedCodes.forEach((code) => deletedCodes.add(code));
+        }
+      } catch (error) {}
       try {
         const legacyProducts = JSON.parse(localStorage.getItem("tthingCustomerProducts") || "{}");
         let migrated = false;

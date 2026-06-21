@@ -7,6 +7,7 @@ const root = __dirname;
 const dataDir = path.join(root, 'data');
 const mainBannerFile = path.join(dataDir, 'main-banner.json');
 const storeSettingsFile = path.join(dataDir, 'store-settings.json');
+const adminProductsFile = path.join(dataDir, 'admin-products.json');
 const bannerUploadDir = path.join(root, 'tthing', 'uploads', 'main-banners');
 
 function loadEnvFile(filePath = path.join(root, '.env')) {
@@ -553,6 +554,55 @@ function normalizeMainBannerData(data, options = {}) {
   return { banners, updatedAt: data.updatedAt || '' };
 }
 
+function readAdminProductsData() {
+  if (!fs.existsSync(adminProductsFile)) return { products: {}, deletedCodes: [], updatedAt: '' };
+  try {
+    const data = JSON.parse(fs.readFileSync(adminProductsFile, 'utf8'));
+    return {
+      products: data && data.products && typeof data.products === 'object' ? data.products : {},
+      deletedCodes: Array.isArray(data && data.deletedCodes) ? data.deletedCodes : [],
+      updatedAt: String((data && data.updatedAt) || '')
+    };
+  } catch (error) {
+    return { products: {}, deletedCodes: [], updatedAt: '' };
+  }
+}
+
+function normalizeAdminProductsPayload(payload) {
+  const products = payload && payload.products && typeof payload.products === 'object' ? payload.products : {};
+  const normalized = {};
+  Object.values(products).slice(0, 2000).forEach((item) => {
+    if (!item || typeof item !== 'object' || !item.code) return;
+    const code = String(item.code).slice(0, 120);
+    normalized[code] = {
+      ...item,
+      code,
+      name: String(item.name || '').slice(0, 300),
+      display: item.display === 'F' ? 'F' : 'T',
+      selling: item.selling === 'F' ? 'F' : 'T',
+      exposure: ['all', 'member', 'vip'].includes(item.exposure) ? item.exposure : 'all',
+      memberGrades: Array.isArray(item.memberGrades) ? item.memberGrades.map(String).slice(0, 12) : []
+    };
+  });
+  const deletedCodes = Array.isArray(payload && payload.deletedCodes) ? payload.deletedCodes.map(String).slice(0, 5000) : [];
+  return { products: normalized, deletedCodes, updatedAt: new Date().toISOString() };
+}
+
+async function handleAdminProducts(req, res) {
+  if (req.method === 'GET') {
+    sendJson(res, 200, readAdminProductsData());
+    return;
+  }
+  if (req.method === 'POST') {
+    const saved = normalizeAdminProductsPayload(await readBody(req));
+    fs.mkdirSync(dataDir, { recursive: true });
+    fs.writeFileSync(adminProductsFile, JSON.stringify(saved, null, 2));
+    sendJson(res, 200, saved);
+    return;
+  }
+  sendJson(res, 405, { error: 'method_not_allowed' });
+}
+
 async function handleMainBanner(req, res) {
   if (req.method === 'GET') {
     sendJson(res, 200, normalizeMainBannerData(readMainBannerData()));
@@ -584,6 +634,7 @@ async function handleApi(req, res) {
     if (req.method === 'POST' && pathname === '/api/admin/login') return await handleAdminLogin(req, res);
     if (pathname === '/api/main-banner') return await handleMainBanner(req, res);
     if (pathname === '/api/store-settings') return await handleStoreSettings(req, res);
+    if (pathname === '/api/admin-products') return await handleAdminProducts(req, res);
     if (req.method === 'GET' && pathname === '/api/kopay/status') return await handleKopayStatus(req, res);
     if (req.method === 'POST' && pathname === '/api/kopay/prepare') return await handleKopayPrepare(req, res);
     if ((req.method === 'GET' || req.method === 'POST') && pathname === '/api/kopay/return') return await handleKopayReturn(req, res);
