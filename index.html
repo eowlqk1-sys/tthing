@@ -730,6 +730,32 @@
       font-weight: 900;
     }
 
+    .category-shortcuts {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .category-shortcut {
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: #fff;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .category-shortcut span {
+      color: var(--blue);
+      font-size: 12px;
+    }
+
     .mobile-overlay {
       display: none;
       position: fixed;
@@ -743,6 +769,7 @@
       .sales-layout { grid-template-columns: 1fr; }
       .live-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .todo-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .category-shortcuts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
     @media (max-width: 840px) {
@@ -767,7 +794,8 @@
       .page-head { align-items: stretch; flex-direction: column; }
       .todo-grid,
       .live-grid,
-      .live-feed { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .live-feed,
+      .category-shortcuts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .sales-table { font-size: 12px; }
       .sales-table th,
       .sales-table td { padding: 11px 6px; }
@@ -776,7 +804,8 @@
     @media (max-width: 480px) {
       .todo-grid,
       .live-grid,
-      .live-feed { grid-template-columns: 1fr; }
+      .live-feed,
+      .category-shortcuts { grid-template-columns: 1fr; }
       .profile span { display: none; }
       h1 { font-size: 22px; }
     }
@@ -913,17 +942,17 @@
           <a class="nav-link" href="orders.html"><span class="nav-ico">≡</span>주문</a>
           <a class="nav-link" href="product.html"><span class="nav-ico">□</span>상품</a>
           <a class="nav-link" href="customer.html"><span class="nav-ico">◎</span>고객</a>
-          <a class="nav-link" href="#"><span class="nav-ico">✉</span>메시지</a>
+          <a class="nav-link" href="board.html?type=qna"><span class="nav-ico">✉</span>메시지</a>
           <a class="nav-link" href="board.html"><span class="nav-ico">◫</span>게시판</a><a class="nav-link" href="popup.html"><span class="nav-ico">▣</span>팝업</a>
         </div>
         <div class="nav-section">
           <div class="nav-title">운영</div>
           <a class="nav-link" href="promotion.html"><span class="nav-ico">%</span>프로모션</a>
-          <a class="nav-link" href="#"><span class="nav-ico">▣</span>통합엑셀</a>
+          <a class="nav-link" href="product-excel-register.html"><span class="nav-ico">▣</span>통합엑셀</a>
         </div>
         <div class="nav-section">
           <div class="nav-title">채널/설정</div>
-          <a class="nav-link" href="#"><span class="nav-ico">＋</span>마켓플러스</a>
+          <a class="nav-link" href="settings.html#market-plus"><span class="nav-ico">＋</span>마켓플러스</a>
           <a class="nav-link" href="settings.html"><span class="nav-ico">⚙</span>쇼핑몰 설정</a>
         </div>
       </nav>
@@ -953,7 +982,7 @@
             <h1>관리자 대시보드</h1>
             <p>오늘 주문 처리, 매출 현황, 상품 운영 상태를 한 번에 확인합니다.</p>
           </div>
-          <button class="primary" type="button">상품 등록</button>
+          <a class="primary" href="product-register.html">상품 등록</a>
         </div>
 
         <div class="grid">
@@ -1142,6 +1171,30 @@
                     <div class="feed-item"><strong>칠렉스 프라임 포토후기 등록</strong><span data-live="boardTime3">8분 전 · 구매후기</span></div>
                     <div class="feed-item"><strong>입금확인 요청</strong><span data-live="boardTime4">12분 전 · 주문문의</span></div>
                   </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-head">
+                <div class="card-title">카테고리별 상품 관리</div>
+              </div>
+              <div class="card-body">
+                <div class="category-shortcuts">
+                  <a class="category-shortcut" href="product.html?category=액상"><strong>액상 전체</strong><span>열기</span></a>
+                  <a class="category-shortcut" href="product.html?category=액상%20%3E%20무니코틴입호흡"><strong>무니코틴입호흡</strong><span>열기</span></a>
+                  <a class="category-shortcut" href="product.html?category=액상%20%3E%20무니코틴폐호흡"><strong>무니코틴폐호흡</strong><span>열기</span></a>
+                  <a class="category-shortcut" href="product.html?category=액상%20%3E%20입호흡"><strong>입호흡</strong><span>열기</span></a>
+                  <a class="category-shortcut" href="product.html?category=액상%20%3E%20폐호흡"><strong>폐호흡</strong><span>열기</span></a>
+                  <a class="category-shortcut" href="product.html?category=일회용전자담배"><strong>일회용 전체</strong><span>열기</span></a>
+                  <a class="category-shortcut" href="product.html?category=일회용전자담배%20%3E%20무니코틴일회용"><strong>무니코틴일회용</strong><span>열기</span></a>
+                  <a class="category-shortcut" href="product.html?category=일회용전자담배%20%3E%20일회용"><strong>일회용</strong><span>열기</span></a>
+                  <a class="category-shortcut" href="product.html?category=기기"><strong>기기</strong><span>열기</span></a>
+                  <a class="category-shortcut" href="product.html?category=소모품%20%3E%20코일"><strong>코일</strong><span>열기</span></a>
+                  <a class="category-shortcut" href="product.html?category=소모품%20%3E%20팟"><strong>팟</strong><span>열기</span></a>
+                  <a class="category-shortcut" href="product.html?category=베스트"><strong>베스트</strong><span>열기</span></a>
+                  <a class="category-shortcut" href="product.html?category=타임세일"><strong>타임세일</strong><span>열기</span></a>
+                  <a class="category-shortcut" href="product.html?category=신상"><strong>신상</strong><span>열기</span></a>
                 </div>
               </div>
             </section>
