@@ -78,10 +78,13 @@
 <script>
 const STORAGE_KEY='tthingAdminProducts';
 const UPDATE_KEY='tthingAdminProductsUpdatedAt';
+const SERVER_PRODUCTS_URL='/api/admin-products';
 const PAGE_SIZE=100;
 const imported=Array.isArray(window.TTHING_IMPORTED_PRODUCTS)?window.TTHING_IMPORTED_PRODUCTS:[];
 const importedMap=new Map(imported.map((item,index)=>[String(item.code||'import-'+index),item]));
 function readSaved(){try{const value=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');return value&&typeof value==='object'&&!Array.isArray(value)?value:{}}catch{return {}}}
+async function loadServerSaved(){try{const response=await fetch(SERVER_PRODUCTS_URL,{cache:'no-store'});if(!response.ok)return;const data=await response.json();const serverProducts=data&&data.products&&typeof data.products==='object'?data.products:{};const local=readSaved();localStorage.setItem(STORAGE_KEY,JSON.stringify({...serverProducts,...local}));const serverDeleted=Array.isArray(data&&data.deletedCodes)?data.deletedCodes:[];const localDeleted=[...readDeletedCodes()];localStorage.setItem('tthingDeletedProductCodes',JSON.stringify([...new Set([...serverDeleted,...localDeleted])]));}catch(error){}}
+async function saveServerSaved(){try{const response=await fetch(SERVER_PRODUCTS_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({products:saved,deletedCodes:[...readDeletedCodes()]})});if(!response.ok)throw new Error('server_save_failed');return true}catch(error){showNotice('서버 저장에 실패했습니다. 다시 시도해 주세요.',true);return false}}
 let saved=readSaved();
 const categoryMap={"액상":["무니코틴입호흡","무니코틴폐호흡","입호흡","폐호흡"],"일회용전자담배":["무니코틴일회용","일회용"],"기기":[""],"소모품":["코일","팟"]};
 function readDeletedCodes(){try{return new Set(JSON.parse(localStorage.getItem('tthingDeletedProductCodes')||'[]'))}catch{return new Set()}}
@@ -147,7 +150,7 @@ document.getElementById('checkAll').addEventListener('change',event=>{document.q
 document.getElementById('searchButton').addEventListener('click',applySearch);search.addEventListener('keydown',event=>{if(event.key==='Enter')applySearch()});
 document.getElementById('clearSearch').addEventListener('click',()=>{search.value='';applySearch()});
 document.getElementById('prev').addEventListener('click',()=>{if(page>1){page--;render()}});document.getElementById('next').addEventListener('click',()=>{if(page*PAGE_SIZE<filtered.length){page++;render()}});
-document.getElementById('apply').addEventListener('click',()=>{
+document.getElementById('apply').addEventListener('click',async()=>{
   const fields=[...document.querySelectorAll('.use-field:checked')].flatMap(box=>(box.dataset.controls||box.dataset.control||'').split(',').filter(Boolean));
   if(!fields.length){showNotice('변경할 정보 항목을 하나 이상 체크해 주세요.',true);return}
   const scope=document.querySelector('input[name="scope"]:checked').value;
@@ -167,9 +170,10 @@ document.getElementById('apply').addEventListener('click',()=>{
     base.updatedAt=new Date().toISOString();saved[item.code]=base;
   });
   localStorage.setItem(STORAGE_KEY,JSON.stringify(saved));localStorage.setItem(UPDATE_KEY,String(Date.now()));
+  if(!await saveServerSaved())return;
   showNotice(targets.length.toLocaleString('ko-KR')+'개 상품 정보를 변경했습니다. 고객홈에도 반영됩니다.');render();
 });
-render();
+loadServerSaved().then(()=>{saved=readSaved();products=loadProducts();filtered=[...products];render()});
 </script>
 </body>
 </html>
