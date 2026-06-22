@@ -423,15 +423,23 @@
     }
 
     function normalizedMemberGrades(product) {
-      if (product && product.exposure === "vip") return ["excellent"];
-      if (product && Array.isArray(product.memberGrades) && product.memberGrades.length) return product.memberGrades;
+      const expand = (grades) => {
+        const set = new Set(grades);
+        if (set.has("vip") || set.has("excellent")) {
+          set.add("vip");
+          set.add("excellent");
+        }
+        return [...set];
+      };
+      if (product && product.exposure === "vip") return ["vip", "excellent"];
+      if (product && Array.isArray(product.memberGrades) && product.memberGrades.length) return expand(product.memberGrades.map(String));
       if (product && product.exposure === "member") return ["basic", "excellent", "vip"];
       return [];
     }
 
     function canShowByExposure(product) {
       if (!product || !product.exposure || product.exposure === "all") return true;
-      if (product.exposure === "vip") return currentCustomerGradeKey() === "excellent";
+      if (product.exposure === "vip") return ["vip", "excellent"].includes(currentCustomerGradeKey());
       if (product.exposure === "member") {
         const grade = currentCustomerGradeKey();
         const grades = normalizedMemberGrades(product);
