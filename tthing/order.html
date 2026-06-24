@@ -469,6 +469,18 @@
       } catch (error) {}
     }
 
+    function sendSmsNotification(purpose, order) {
+      if (!purpose || !order || !order.phone) return;
+      try {
+        fetch('/api/sms/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ purpose, order }),
+          keepalive: true
+        }).catch(() => {});
+      } catch (error) {}
+    }
+
     function applyCustomerPoints(adminOrder) {
       if (!currentCustomer) return;
       const key = "tthingCustomerDetail:" + currentCustomer.id;
@@ -583,6 +595,7 @@
       localStorage.setItem("tthingAdminOrdersUpdatedAt", String(Date.now()));
       localStorage.removeItem("tthingOrderDraft");
       applyCustomerPoints(adminOrder);
+      sendSmsNotification(adminOrder.status === "unpaid" ? "order_received" : "payment_completed", adminOrder);
       if (adminOrder.status === "unpaid") {
         const telegramItems = adminOrder.items.map((item, index) => {
           const optionText = item.option ? ` / 옵션: ${item.option}` : "";

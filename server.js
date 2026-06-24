@@ -56,6 +56,13 @@ const alimtalkConfig = {
   businessKey: process.env.ALIMTALK_BUSINESS_KEY || '',
   kakaoLoginKey: process.env.ALIMTALK_KAKAO_LOGIN_KEY || ''
 };
+const aligoConfig = {
+  userId: process.env.ALIGO_USER_ID || '',
+  apiKey: process.env.ALIGO_API_KEY || '',
+  sender: process.env.ALIGO_SENDER || '',
+  testMode: process.env.ALIGO_TEST_MODE || 'N',
+  endpoint: process.env.ALIGO_ENDPOINT || 'https://apis.aligo.in/send/'
+};
 
 let mobileOK = null;
 try {
@@ -100,6 +107,151 @@ async function handleAdminLogin(req, res) {
 function sendJson(res, status, body) {
   res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
   res.end(JSON.stringify(body));
+}
+
+function normalizePhone(value) {
+  return String(value || '').replace(/[^0-9]/g, '');
+}
+
+function formatWon(value) {
+  return Number(value || 0).toLocaleString('ko-KR');
+}
+
+function isSmsReady() {
+  return !!(aligoConfig.userId && aligoConfig.apiKey && normalizePhone(aligoConfig.sender));
+}
+
+function smsSecretStatus() {
+  return {
+    userId: !!aligoConfig.userId,
+    apiKey: !!aligoConfig.apiKey,
+    sender: !!normalizePhone(aligoConfig.sender),
+    testMode: aligoConfig.testMode === 'Y'
+  };
+}
+
+function smsMessageType(message) {
+  return String(message || '').length > 90 ? 'LMS' : 'SMS';
+}
+
+function truncateSms(value, max = 1900) {
+  return String(value || '').trim().slice(0, max);
+}
+
+function firstProductName(order) {
+  const items = Array.isArray(order.items) ? order.items : [];
+  if (items.length) {
+    const first = String(items[0].name || '').trim();
+    return items.length > 1 ? first + ' 외 ' + (items.length - 1) + '건' : first;
+  }
+  return String(order.product || '').split(/\n|<br\s*\/?\s*>/i)[0].trim();
+}
+
+function buildSmsTemplate(purpose, payload) {
+  const order = payload.order || payload;
+  const name = String(payload.name || order.buyer || order.receiver || '고객').trim();
+  const orderNo = String(payload.orderNo || order.no || '').trim();
+  const amount = formatWon(payload.amount || order.amount);
+  const product = firstProductName(order);
+  const invoice = String(payload.invoice || order.invoice || '').replace(/^.*·\s*/, '').trim();
+  const courier = String(payload.courier || '로젠택배').trim();
+  const code = String(payload.code || '').trim();
+  const customMessage = truncateSms(payload.message || '');
+
+  if (purpose === 'signup_verification') {
+    return {
+      title: '띵베이프 인증번호',
+      message: ['[띵베이프]', '회원가입 인증번호는 ' + code + ' 입니다.', '3분 이내에 입력해 주세요.'].join('\n')
+    };
+  }
+  if (purpose === 'order_received') {
+    return {
+      title: '띵베이프 주문 안내',
+      message: ['[띵베이프]', name + '님 주문이 접수되었습니다.', '주문번호: ' + orderNo, product ? '상품: ' + product : '', '결제금액: ' + amount + '원'].filter(Boolean).join('\n')
+    };
+  }
+  if (purpose === 'payment_completed') {
+    return {
+      title: '띵베이프 결제 안내',
+      message: ['[띵베이프]', name + '님 결제가 확인되었습니다.', '주문번호: ' + orderNo, '결제금액: ' + amount + '원', '배송 준비를 시작하겠습니다.'].join('\n')
+    };
+  }
+  if (purpose === 'shipping_started') {
+    return {
+      title: '띵베이프 배송 안내',
+      message: ['[띵베이프]', name + '님 주문 상품이 배송중입니다.', '주문번호: ' + orderNo, '택배사: ' + courier, invoice ? '송장번호: ' + invoice : '송장번호가 등록되었습니다.'].join('\n')
+    };
+  }
+  if (purpose === 'admin_custom' && customMessage) {
+    return {
+      title: truncateSms(payload.title || '띵베이프 안내', 40),
+      message: customMessage
+    };
+  }
+  return null;
+}
+
+async function sendAligoSms({ to, title, message }) {
+  if (!isSmsReady()) {
+    return { ok: false, skipped: true, error: 'sms_not_ready' };
+  }
+  const receiver = normalizePhone(to);
+  if (receiver.length < 10) {
+    return { ok: false, error: 'invalid_receiver' };
+  }
+  const body = new URLSearchParams({
+    key: aligoConfig.apiKey,
+    user_id: aligoConfig.userId,
+    sender: normalizePhone(aligoConfig.sender),
+    receiver,
+    msg: truncateSms(message),
+    msg_type: smsMessageType(message),
+    title: truncateSms(title || '띵베이프 안내', 40),
+    testmode_yn: aligoConfig.testMode === 'Y' ? 'Y' : 'N'
+  });
+  const response = await fetch(aligoConfig.endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+    body
+  });
+  const text = await response.text();
+  let result = {};
+  try { result = JSON.parse(text); }
+  catch (error) { result = { raw: text }; }
+  const successCode = String(result.result_code || result.code || '');
+  return {
+    ok: response.ok && (successCode === '1' || successCode === 'success' || result.success_cnt),
+    status: response.status,
+    result
+  };
+}
+
+async function sendPurposeSms(purpose, payload) {
+  const template = buildSmsTemplate(purpose, payload);
+  if (!template) return { ok: false, error: 'invalid_sms_template' };
+  return await sendAligoSms({
+    to: payload.to || payload.phone || payload.receiverPhone || payload.order?.receiverPhone || payload.order?.phone,
+    ...template
+  });
+}
+
+async function handleSmsStatus(req, res) {
+  sendJson(res, 200, { configured: isSmsReady(), secrets: smsSecretStatus() });
+}
+
+async function handleSmsSend(req, res) {
+  const payload = await readBody(req);
+  const purpose = String(payload.purpose || '').trim();
+  if (purpose === 'admin_custom' && !hasAdminSession(req)) {
+    sendJson(res, 401, { ok: false, error: 'admin_required' });
+    return;
+  }
+  if (!['order_received', 'payment_completed', 'shipping_started', 'admin_custom'].includes(purpose)) {
+    sendJson(res, 400, { ok: false, error: 'invalid_purpose' });
+    return;
+  }
+  const result = await sendPurposeSms(purpose, payload);
+  sendJson(res, result.ok ? 200 : 502, result);
 }
 
 function readRawBody(req) {
@@ -219,7 +371,12 @@ async function handleDreamAuthStart(req, res) {
   const txId = crypto.randomUUID();
   const mockCode = String(Math.floor(100000 + Math.random() * 900000));
   pending.set(txId, { name, phone, birth, mockCode, createdAt: Date.now() });
-  sendJson(res, 200, { txId, mockCode, expiresIn: 180 });
+  const sms = await sendPurposeSms('signup_verification', { to: phone, name, code: mockCode }).catch((error) => ({ ok: false, error: error.message }));
+  if (sms.ok) {
+    sendJson(res, 200, { txId, smsSent: true, expiresIn: 180 });
+    return;
+  }
+  sendJson(res, 200, { txId, mockCode, smsError: sms.error || 'sms_send_failed', expiresIn: 180 });
 }
 
 async function handleDreamAuthRequest(req, res) {
@@ -485,7 +642,11 @@ function alimtalkSecretStatus() {
   return {
     apiKey: !!alimtalkConfig.apiKey,
     businessKey: !!alimtalkConfig.businessKey,
-    kakaoLoginKey: !!alimtalkConfig.kakaoLoginKey
+    kakaoLoginKey: !!alimtalkConfig.kakaoLoginKey,
+    smsUserId: !!aligoConfig.userId,
+    smsApiKey: !!aligoConfig.apiKey,
+    smsSender: !!normalizePhone(aligoConfig.sender),
+    smsTestMode: aligoConfig.testMode === 'Y'
   };
 }
 
@@ -635,6 +796,8 @@ async function handleApi(req, res) {
     if (pathname === '/api/main-banner') return await handleMainBanner(req, res);
     if (pathname === '/api/store-settings') return await handleStoreSettings(req, res);
     if (pathname === '/api/admin-products') return await handleAdminProducts(req, res);
+    if (req.method === 'GET' && pathname === '/api/sms/status') return await handleSmsStatus(req, res);
+    if (req.method === 'POST' && pathname === '/api/sms/send') return await handleSmsSend(req, res);
     if (req.method === 'GET' && pathname === '/api/kopay/status') return await handleKopayStatus(req, res);
     if (req.method === 'POST' && pathname === '/api/kopay/prepare') return await handleKopayPrepare(req, res);
     if ((req.method === 'GET' || req.method === 'POST') && pathname === '/api/kopay/return') return await handleKopayReturn(req, res);

@@ -409,6 +409,18 @@
       } catch (error) {}
     }
 
+    function sendSmsNotification(purpose, order) {
+      if (!purpose || !order || !order.phone) return;
+      try {
+        fetch('/api/sms/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ purpose, order }),
+          keepalive: true
+        }).catch(() => {});
+      } catch (error) {}
+    }
+
     let currentStatus = ["unpaid", "ready", "ship", "done", "cancel"].includes(savedStatus) ? savedStatus : "unpaid";
 
     const defaultOrders = [
@@ -530,6 +542,7 @@
         currentStatus = "ready";
         saveCurrentStatus();
         targets.forEach((order) => {
+          sendSmsNotification("payment_completed", order);
           sendTelegramAlert([
             "[배송준비중 전환]",
             `주문번호: ${order.no}`,
@@ -800,6 +813,7 @@
       if (input && input.value.trim()) setInvoice(order, input.value.trim());
       order.status = "ship";
       order.shippedAt = new Date().toISOString();
+      sendSmsNotification("shipping_started", order);
       currentStatus = "ship";
       saveCurrentStatus();
       saveOrders();
