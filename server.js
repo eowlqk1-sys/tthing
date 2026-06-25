@@ -46,10 +46,10 @@ const dreamKeyPassword = process.env.DREAM_KEY_PASSWORD || '';
 const dreamClientPrefix = (process.env.DREAM_CLIENT_PREFIX || 'EOWLQK1').replace(/[^0-9a-z]/gi, '').slice(0, 8) || 'EOWLQK1';
 const kopayConfig = {
   mode: process.env.KOPAY_MODE || 'prod',
-  mid: process.env.KOPAY_MID || '',
-  mkey: process.env.KOPAY_MKEY || '',
-  baseUrl: process.env.KOPAY_BASE_URL || 'https://payments.korpay.com/v1',
-  returnUrl: process.env.KOPAY_RETURN_URL || ('http://localhost:' + port + '/api/kopay/return')
+  mid: String(process.env.KOPAY_MID || '').trim(),
+  mkey: String(process.env.KOPAY_MKEY || '').trim(),
+  baseUrl: String(process.env.KOPAY_BASE_URL || 'https://payments.korpay.com/v1').trim(),
+  returnUrl: String(process.env.KOPAY_RETURN_URL || ('http://localhost:' + port + '/api/kopay/return')).trim()
 };
 const alimtalkConfig = {
   apiKey: process.env.ALIMTALK_API_KEY || '',
