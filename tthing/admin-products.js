@@ -121,25 +121,26 @@
     return currentCustomerGradeKey() === "vip";
   }
 
+  function normalizeGradeKey(value) {
+    const grade = String(value || "").toLowerCase();
+    if (grade.includes("vip")) return "vip";
+    if (grade.includes("우수") || grade.includes("excellent")) return "excellent";
+    if (grade.includes("일반") || grade.includes("basic")) return "basic";
+    return grade;
+  }
+
   function normalizedMemberGrades(item) {
-    const expand = (grades) => {
-      const set = new Set(grades);
-      if (set.has("vip") || set.has("excellent")) {
-        set.add("vip");
-        set.add("excellent");
-      }
-      return [...set];
-    };
-    if (item && item.exposure === "vip") return ["vip", "excellent"];
-    if (item && Array.isArray(item.memberGrades) && item.memberGrades.length) return expand(item.memberGrades.map(String));
+    if (item && Array.isArray(item.memberGrades) && item.memberGrades.length) {
+      return [...new Set(item.memberGrades.map(normalizeGradeKey).filter(Boolean))];
+    }
+    if (item && item.exposure === "vip") return ["excellent"];
     if (item && item.exposure === "member") return ["basic", "excellent", "vip"];
     return [];
   }
 
   function canShowByExposure(item) {
     if (!item || !item.exposure || item.exposure === "all") return true;
-    if (item.exposure === "vip") return ["vip", "excellent"].includes(currentCustomerGradeKey());
-    if (item.exposure === "member") {
+    if (item.exposure === "vip" || item.exposure === "member") {
       const grade = currentCustomerGradeKey();
       const grades = normalizedMemberGrades(item);
       return !!grade && grades.includes(grade);
@@ -405,7 +406,10 @@
         const html = await response.text();
         const match = html.match(/const products\s*=\s*(\[[\s\S]*?\])\s*;/) || html.match(/const products\s*=\s*(\[[\s\S]*?\])\s*,\s*comma=/);
         if (!match) continue;
-        return Function("return " + match[1])().filter((item) => item && item.code && item.display !== "F" && item.selling !== "F" && canShowByExposure(item)).map(normalizeAdminRow);
+        return Function("return " + match[1])()
+          .map((item) => (item && item.code ? { ...item, ...(policyForProduct(item.code) || {}) } : item))
+          .filter((item) => item && item.code && item.display !== "F" && item.selling !== "F" && canShowByExposure(item))
+          .map(normalizeAdminRow);
       } catch (error) {}
     }
     return [];
@@ -438,7 +442,8 @@
 
     const importedSource = await loadImportedProducts();
     const importedProducts = importedSource
-      .filter((item) => item && item.code && !deletedCodes.has(item.code) && canShowByExposure(item))
+      .map((item) => (item && item.code ? { ...item, ...(policyForProduct(item.code) || {}) } : item))
+      .filter((item) => item && item.code && !deletedCodes.has(item.code) && item.display !== "F" && item.selling !== "F" && canShowByExposure(item))
       .map(normalizeImportedProduct);
 
     const merged = new Map();
@@ -743,6 +748,7 @@
     renderRecentQuickMenu();
     removeHiddenProductCards();
     await loadServerAdminProducts();
+    removeHiddenProductCards();
     const products = await collectProducts();
     console.log("띵베이프 상품 로드 완료:", products.length, "건");
     const page = location.pathname.split("/").pop().replace(".html", "") || "index";

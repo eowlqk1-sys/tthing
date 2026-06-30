@@ -422,25 +422,26 @@
       return currentCustomerGradeKey() === "vip";
     }
 
+    function normalizeGradeKey(value) {
+      const grade = String(value || "").toLowerCase();
+      if (grade.includes("vip")) return "vip";
+      if (grade.includes("우수") || grade.includes("excellent")) return "excellent";
+      if (grade.includes("일반") || grade.includes("basic")) return "basic";
+      return grade;
+    }
+
     function normalizedMemberGrades(product) {
-      const expand = (grades) => {
-        const set = new Set(grades);
-        if (set.has("vip") || set.has("excellent")) {
-          set.add("vip");
-          set.add("excellent");
-        }
-        return [...set];
-      };
-      if (product && product.exposure === "vip") return ["vip", "excellent"];
-      if (product && Array.isArray(product.memberGrades) && product.memberGrades.length) return expand(product.memberGrades.map(String));
+      if (product && Array.isArray(product.memberGrades) && product.memberGrades.length) {
+        return [...new Set(product.memberGrades.map(normalizeGradeKey).filter(Boolean))];
+      }
+      if (product && product.exposure === "vip") return ["excellent"];
       if (product && product.exposure === "member") return ["basic", "excellent", "vip"];
       return [];
     }
 
     function canShowByExposure(product) {
       if (!product || !product.exposure || product.exposure === "all") return true;
-      if (product.exposure === "vip") return ["vip", "excellent"].includes(currentCustomerGradeKey());
-      if (product.exposure === "member") {
+      if (product.exposure === "vip" || product.exposure === "member") {
         const grade = currentCustomerGradeKey();
         const grades = normalizedMemberGrades(product);
         return !!grade && grades.includes(grade);
@@ -483,7 +484,7 @@
         localStorage.setItem("tthingAdminProducts", JSON.stringify(adminProducts));
         localStorage.setItem("tthingAdminProductsUpdatedAt", String(Date.now()));
       }
-      if (!product || product.display === "F" || !canShowByExposure(product)) {
+      if (!product || product.display === "F" || product.selling === "F" || !canShowByExposure(product)) {
         upsertMeta("robots", "noindex,nofollow");
         productName.textContent = "등록된 상품이 없습니다.";
         sideProductName.textContent = "등록된 상품이 없습니다.";

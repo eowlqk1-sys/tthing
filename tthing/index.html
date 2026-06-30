@@ -1441,8 +1441,9 @@
     const products = [];
 
     const readCustomerGradeKey=()=>{try{const session=JSON.parse(localStorage.getItem("tthingCustomerSession")||"null");if(!(session&&session.authenticated))return "";const grade=String(session.grade||"").toLowerCase();if(grade.includes("vip"))return "vip";if(grade.includes("우수")||grade.includes("excellent"))return "excellent";return "basic"}catch(e){return ""}};
-    const normalizedMemberGrades=item=>{const expand=grades=>{const set=new Set(grades);if(set.has("vip")||set.has("excellent")){set.add("vip");set.add("excellent")}return [...set]};if(item&&item.exposure==="vip")return ["vip","excellent"];if(item&&Array.isArray(item.memberGrades)&&item.memberGrades.length)return expand(item.memberGrades.map(String));if(item&&item.exposure==="member")return ["basic","excellent","vip"];return []};
-    const canShowByExposure=item=>{if(!item||!item.exposure||item.exposure==="all")return true;if(item.exposure==="vip")return ["vip","excellent"].includes(readCustomerGradeKey());if(item.exposure==="member"){const grade=readCustomerGradeKey();const grades=normalizedMemberGrades(item);return !!grade&&(grades.includes(grade))}return true};
+    const normalizeGradeKey=value=>{const grade=String(value||"").toLowerCase();if(grade.includes("vip"))return "vip";if(grade.includes("우수")||grade.includes("excellent"))return "excellent";if(grade.includes("일반")||grade.includes("basic"))return "basic";return grade};
+    const normalizedMemberGrades=item=>{if(item&&Array.isArray(item.memberGrades)&&item.memberGrades.length)return [...new Set(item.memberGrades.map(normalizeGradeKey).filter(Boolean))];if(item&&item.exposure==="vip")return ["excellent"];if(item&&item.exposure==="member")return ["basic","excellent","vip"];return []};
+    const canShowByExposure=item=>{if(!item||!item.exposure||item.exposure==="all")return true;if(item.exposure==="vip"||item.exposure==="member"){const grade=readCustomerGradeKey();const grades=normalizedMemberGrades(item);return !!grade&&grades.includes(grade)}return true};
     const normalizeAdminProduct=(item)=>({code:item.code,name:item.name,desc:item.summary||item.simple||item.desc||item.category||"",origin:item.origin||"",price:item.salePrice||item.discountPrice||item.price||"0원",tag:item.category||"admin",badge:(item.mainDisplay||[]).includes("timesale")||item.discountEnabled?"SALE":"ITEM",image:(item.productImages&&item.productImages[0])||(item.images&&item.images[0])||"",mainDisplay:Array.isArray(item.mainDisplay)?item.mainDisplay:[],display:item.display||"T",selling:item.selling||"T",exposure:item.exposure||"all",memberGrades:normalizedMemberGrades(item),updatedAt:item.updatedAt||"",searchText:[item.name,item.code,item.summary,item.simple,item.desc,item.searchKeywords,item.seo?.keywords,item.seo?.searchKeywords,(item.optionItems||[]).map(option=>option.name).join(" "),(item.options||[]).join(" ")].filter(Boolean).join(" ")});
     const getSearchProducts = () => {
       const deletedCodes = new Set(JSON.parse(localStorage.getItem("tthingDeletedProductCodes") || "[]"));
@@ -1690,7 +1691,7 @@
   render();
 })();
 </script>
-<script src="admin-products.js?v=20260622-grade-sync"></script>
+<script src="admin-products.js?v=20260630-grade-visibility"></script>
 
 <script id="tthingAuthRuntime">
 (function(){
